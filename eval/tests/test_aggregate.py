@@ -26,7 +26,6 @@ def _parser_run(parsed: dict | None = None, **overrides) -> ParserRun:
         parsed=parsed,
         error=None,
         duration_ms=5.0,
-        html_cached=True,
         publisher_domain="example.com",
     )
     defaults.update(overrides)
@@ -85,3 +84,49 @@ class TestSummarize:
         assert "per_failure_mode" in out
         assert out["overall"]["rows"] == 1
         assert out["overall"]["pdf_url_accuracy"] == 1.0
+
+    def test_overall_includes_new_precision_recall_keys(self) -> None:
+        rows = [_gold_row()]
+        runs = [
+            _parser_run(
+                parsed={
+                    "authors": [{"name": "Jane Doe", "affiliations": [{"name": "MIT"}]}],
+                    "abstract": rows[0].abstract,
+                    "urls": [{"url": rows[0].pdf_url, "content_type": "pdf"}],
+                }
+            )
+        ]
+        out = summarize([score_row(g, r) for g, r in zip(rows, runs)])
+        overall = out["overall"]
+        for key in (
+            "authors_precision_strict",
+            "authors_recall_strict",
+            "authors_precision_soft",
+            "authors_recall_soft",
+            "affiliations_precision_strict",
+            "affiliations_recall_strict",
+            "affiliations_precision_soft",
+            "affiliations_recall_soft",
+            "affiliations_precision_fuzzy",
+            "affiliations_recall_fuzzy",
+            "abstract_match_rate",
+            "abstract_match_threshold",
+            "pdf_url_precision",
+            "pdf_url_recall",
+        ):
+            assert key in overall, f"expected {key} in overall summary"
+
+    def test_pdf_micro_precision_recall_on_perfect_match(self) -> None:
+        rows = [_gold_row()]
+        runs = [
+            _parser_run(
+                parsed={
+                    "authors": [{"name": "Jane Doe", "affiliations": [{"name": "MIT"}]}],
+                    "abstract": rows[0].abstract,
+                    "urls": [{"url": rows[0].pdf_url, "content_type": "pdf"}],
+                }
+            )
+        ]
+        out = summarize([score_row(g, r) for g, r in zip(rows, runs)])
+        assert out["overall"]["pdf_url_precision"] == 1.0
+        assert out["overall"]["pdf_url_recall"] == 1.0

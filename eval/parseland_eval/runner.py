@@ -1,26 +1,25 @@
-"""Invoke parseland-lib against cached HTML for each gold row."""
+"""Invoke the deployed Parseland service for every gold row.
+
+Each run resolves DOI → harvest UUID via Taxicab, then fetches the extracted
+metadata from the Parseland service. There is no in-process fallback — if
+the live service is down, the eval fails loudly rather than quietly scoring
+a different parser.
+"""
 from __future__ import annotations
 
 import logging
-import sys
-import time
-import traceback
-from dataclasses import dataclass, field
-from pathlib import Path
+from dataclasses import dataclass
 from typing import Any
 from urllib.parse import urlparse
 
-from parseland_eval.fetch import read_cached
+from parseland_eval.api import (
+    fetch_parsed,
+    parsed_api_to_parseland_shape,
+    resolve_harvest_uuid,
+)
 from parseland_eval.gold import GoldRow
-from parseland_eval.paths import PARSELAND_LIB
 
 log = logging.getLogger(__name__)
-
-
-def _ensure_parseland_lib_on_path() -> None:
-    lib_str = str(PARSELAND_LIB)
-    if lib_str not in sys.path:
-        sys.path.insert(0, lib_str)
 
 
 @dataclass(frozen=True)
@@ -29,51 +28,68 @@ class ParserRun:
     parsed: dict[str, Any] | None
     error: str | None
     duration_ms: float
-    html_cached: bool
     publisher_domain: str
+    harvest_uuid: str | None = None
+    taxicab_duration_ms: float = 0.0
+    parseland_duration_ms: float = 0.0
 
 
 def _publisher_domain(url: str) -> str:
     try:
         host = urlparse(url).netloc.lower()
         return host.removeprefix("www.")
-    except Exception:
+    except Exception:  # noqa: BLE001
         return ""
 
 
 def run_one(row: GoldRow) -> ParserRun:
-    _ensure_parseland_lib_on_path()
-    from parseland_lib.parse import parse_page  # type: ignore[import-not-found]
-
-    html = read_cached(row.doi)
-    if html is None:
+    """Call the deployed Parseland service via Taxicab for a single gold row."""
+    publisher = _publisher_domain(row.link)
+    uuid, taxicab_call = resolve_harvest_uuid(row.doi)
+    if uuid is None:
+        err = taxicab_call.error or "taxicab-no-html"
         return ParserRun(
             doi=row.doi,
             parsed=None,
-            error="html-not-cached",
-            duration_ms=0.0,
-            html_cached=False,
-            publisher_domain=_publisher_domain(row.link),
+            error=f"taxicab: {err}",
+            duration_ms=taxicab_call.duration_ms,
+            publisher_domain=publisher,
+            harvest_uuid=None,
+            taxicab_duration_ms=taxicab_call.duration_ms,
+            parseland_duration_ms=0.0,
         )
 
-    start = time.perf_counter()
-    try:
-        parsed = parse_page(html, namespace="doi", resolved_url=row.link)
-        err = None
-    except Exception as exc:  # noqa: BLE001 — record any parser crash
-        parsed = None
-        err = f"{type(exc).__name__}: {exc}\n{traceback.format_exc(limit=3)}"
-    duration_ms = (time.perf_counter() - start) * 1000.0
+    body, parseland_call = fetch_parsed(uuid)
+    if body is None:
+        err = parseland_call.error or "parseland-no-body"
+        return ParserRun(
+            doi=row.doi,
+            parsed=None,
+            error=f"parseland: {err}",
+            duration_ms=taxicab_call.duration_ms + parseland_call.duration_ms,
+            publisher_domain=publisher,
+            harvest_uuid=uuid,
+            taxicab_duration_ms=taxicab_call.duration_ms,
+            parseland_duration_ms=parseland_call.duration_ms,
+        )
 
+    parsed = parsed_api_to_parseland_shape(body)
     return ParserRun(
         doi=row.doi,
         parsed=parsed,
-        error=err,
-        duration_ms=duration_ms,
-        html_cached=True,
-        publisher_domain=_publisher_domain(row.link),
+        error=None,
+        duration_ms=taxicab_call.duration_ms + parseland_call.duration_ms,
+        publisher_domain=publisher,
+        harvest_uuid=uuid,
+        taxicab_duration_ms=taxicab_call.duration_ms,
+        parseland_duration_ms=parseland_call.duration_ms,
     )
 
 
 def run_all(rows: list[GoldRow]) -> list[ParserRun]:
-    return [run_one(r) for r in rows]
+    out: list[ParserRun] = []
+    for idx, row in enumerate(rows, start=1):
+        if idx == 1 or idx % 10 == 0:
+            log.info("runner: %d/%d doi=%s", idx, len(rows), row.doi)
+        out.append(run_one(row))
+    return out

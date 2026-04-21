@@ -1,0 +1,561 @@
+{
+  "run_id": "20260421T163644Z",
+  "label": "api-smoke",
+  "eval_version": "0.1.0",
+  "timestamp_utc": "2026-04-21T16:36:44.432237+00:00",
+  "source": "api",
+  "summary": {
+    "overall": {
+      "rows": 5,
+      "authors_scored_rows": 4,
+      "authors_f1_strict": 0.25,
+      "authors_f1_soft": 0.25,
+      "authors_precision_strict": 0.25,
+      "authors_recall_strict": 0.25,
+      "authors_precision_soft": 0.25,
+      "authors_recall_soft": 0.25,
+      "affiliations_f1_strict": 1.0,
+      "affiliations_f1_soft": 1.0,
+      "affiliations_f1_fuzzy": 1.0,
+      "affiliations_precision_strict": 1.0,
+      "affiliations_recall_strict": 1.0,
+      "affiliations_precision_soft": 1.0,
+      "affiliations_recall_soft": 1.0,
+      "affiliations_precision_fuzzy": 1.0,
+      "affiliations_recall_fuzzy": 1.0,
+      "abstract_ratio_soft": 0.20534105002066969,
+      "abstract_ratio_fuzzy": 0.20436306651820693,
+      "abstract_strict_match_rate": 0.2,
+      "abstract_present_rate": 0.6,
+      "abstract_match_rate": 0.2,
+      "abstract_match_threshold": 0.85,
+      "pdf_url_accuracy": 0.0,
+      "pdf_url_divergence_rate": 0.2,
+      "pdf_url_precision": 0.0,
+      "pdf_url_recall": 0.0,
+      "errors": 0,
+      "duration_ms_mean": 807.8962165862322
+    },
+    "per_publisher": {
+      "doi.org": {
+        "rows": 5,
+        "authors_f1_soft": 0.25,
+        "authors_precision_soft": 0.25,
+        "authors_recall_soft": 0.25,
+        "affiliations_f1_fuzzy": 1.0,
+        "affiliations_precision_fuzzy": 1.0,
+        "affiliations_recall_fuzzy": 1.0,
+        "abstract_ratio_fuzzy": 0.20436306651820693,
+        "abstract_match_rate": 0.2,
+        "pdf_url_accuracy": 0.0,
+        "pdf_url_precision": 0.0,
+        "pdf_url_recall": 0.0,
+        "errors": 0
+      }
+    },
+    "per_failure_mode": {
+      "clean": {
+        "rows": 2,
+        "authors_f1_soft": 0.0,
+        "authors_precision_soft": 0.0,
+        "authors_recall_soft": 0.0,
+        "abstract_ratio_fuzzy": 0.0024330900243308973,
+        "abstract_match_rate": 0.0,
+        "pdf_url_accuracy": 0.0,
+        "pdf_url_precision": 0.0,
+        "pdf_url_recall": 0.0
+      },
+      "image_only": {
+        "rows": 1,
+        "authors_f1_soft": 0.0,
+        "authors_precision_soft": 0.0,
+        "authors_recall_soft": 0.0,
+        "abstract_ratio_fuzzy": 0.016949152542372836,
+        "abstract_match_rate": 0.0,
+        "pdf_url_accuracy": 0.0,
+        "pdf_url_precision": 0.0,
+        "pdf_url_recall": 0.0
+      },
+      "login": {
+        "rows": 1,
+        "authors_f1_soft": 1.0,
+        "authors_precision_soft": 1.0,
+        "authors_recall_soft": 1.0,
+        "abstract_ratio_fuzzy": 1.0,
+        "abstract_match_rate": 1.0,
+        "pdf_url_accuracy": 0.0,
+        "pdf_url_precision": 0.0,
+        "pdf_url_recall": 0.0
+      },
+      "non_article": {
+        "rows": 1,
+        "authors_f1_soft": 0.0,
+        "authors_precision_soft": 0.0,
+        "authors_recall_soft": 0.0,
+        "abstract_ratio_fuzzy": 0.0,
+        "abstract_match_rate": 0.0,
+        "pdf_url_accuracy": 0.0,
+        "pdf_url_precision": 0.0,
+        "pdf_url_recall": 0.0
+      }
+    }
+  },
+  "rows": [
+    {
+      "no": 1,
+      "doi": "10.1016/j.clpl.2024.100067",
+      "link": "https://doi.org/10.1016/j.clpl.2024.100067",
+      "publisher_domain": "doi.org",
+      "gold": {
+        "authors": [
+          {
+            "name": "Giulia Alessandri",
+            "affiliations": [
+              "Scuola Superiore Sant'Anna, Piazza Martiri della Libertà 33, Pisa, PI, 56127, Italy"
+            ],
+            "is_corresponding": true
+          },
+          {
+            "name": "Tiberio Daddi",
+            "affiliations": [
+              "Scuola Superiore Sant'Anna, Piazza Martiri della Libertà 33, Pisa, PI, 56127, Italy"
+            ],
+            "is_corresponding": false
+          },
+          {
+            "name": "Fabio Iraldo",
+            "affiliations": [
+              "Scuola Superiore Sant'Anna, Piazza Martiri della Libertà 33, Pisa, PI, 56127, Italy"
+            ],
+            "is_corresponding": false
+          }
+        ],
+        "abstract": "The issue of sustainable food production has become increasingly important in recent years, starting from Sustainable Development Goals in 2015, moving through important events like Farm to Fork strategy up until the United Nations Food System Summit in 2021. The wine industry also, as a niche of the agri-food sector, has been influenced by this change, but despite its economic and cultural value, its sustainability issues have not been sufficiently explored by academia. The present research expands the debate on environmental sustainability in the wine industry by observing how management academia has addressed this topic over the last twelve years, defining the state of the art of a quite new and unexplored topic. The research has been structured as a systematic literature review of academic papers from 2009 till the first half of 2022. This methodology provides a clear overview of sustainable management practices, effective and potential, throughout the entire agri-food wine production process.\nThe papers identified are categorized and divided into major (most recurrent) and secondary topics, according to the prevalence criterion.\nThe findings and discussion section provides an in-depth description and analysis of each category, as well as research gaps identification and possible academic issues. Since it was not possible to find similar works, this research would like to be seen as an opportunity to develop the research on environmental sustainability in the wine industry and align the interest of academia and wine stakeholders defining the path for future research.",
+        "pdf_url": "https://pdf.sciencedirectassets.com/777795/1-s2.0-S2666791624X00020/1-s2.0-S2666791624000137/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIQDO109Rck6MhSGAkjoG%2BrEdzQ5GOJpfEU6Gi6SP6QDdqwIgJTjw87XQmOTlhCImoRH%2BbfMksrfC0x97z4kdX0jTkr8quwUIqv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAFGgwwNTkwMDM1NDY4NjUiDJvHlO7AqJCltoZh6yqPBQerM%2FDPU3b7JZHllSQCNgMJILTEyMK5X8FzRNgR0COxdeaMdcl%2FH7ddLuhEp8tnt9PTs0Axvq9BA9HFXNesHmELxDN0WAgmpOvpbRoWFr6nGrsqQd5waA1y9qSzlk1xICS6h9lj9GF0jeBg01s3tQy4s98GNy0oHTT4TJjAZ1aN7zWKE5c134tj7OpOAQKTzBp%2Bp%2FvCsIfV7IJLb9xQvAyi9AglxUqAcCvPqscwGkfyYn7GppOtS%2FbkGuvNsB5HEpIQlPfuBfttrl9ldCUF0H68WVu46%2FKlsQR7%2BeEVHwmJ9m%2FnO7XwJvtqUDGH%2ByMr3b4iAaT1bn8HmVl6AIlRlpTTbgqz3yWWlx1Yxxqmior2xg6ZCZ%2BgMlYPdqkXUy5K23d8j7A9t4h83rzodiq3VhH6668jz42N4zaZfpTOzxbFdCRw235NlesX4JkU2doB3Iz%2BYwSiXXjkF129QvQ1O7ufltbnGR81QNT7PCoJf4BnMexx0H4bsLFSVxcjJWovamKBlhQ3lCH3hQPQPSXXq7nBnYPfP7z2RoSI87ZSIOudHYMPdZn4CsR6UMIzifKg78Jcsh9Rwo1hFmUVnuSe0H46006FZF6Bs%2FgU8Qt%2BXl8Q%2BKorzODFYG4MK3FOEbPhKF3g4LOc6xmGdxCCjdJlKSZhVkI6E2berGdeeBkjH5CZKqnIDuIsQ0Cq35UekJiXNr%2FNts5z3M%2FrDDsPvWVgu04qstPOsKj%2B8Am%2B9GexpcVx2yy6uw2trKd73PWba6iEP6wDmrXyVruuQWRNikx45bDzvDkOGpfyGZu9rDWMmefN%2BxYkXb%2BqiBQJmLpNd7dEkReOdiBTvWGwRR9VrE4mDReBTksdh3zAtTw4eGabGYUwg%2F7%2BzgY6sQHyQXXn44SAsQrFKG2ohzMloj5EkwsCCFQ58g43MpwGQmpcwyMeHUBmw1XPrcCRvHvVDznRwi6w5NDu4nJ8e4Zj%2FmmOzSSu8em5EU4bw9hn96Ve2LWnmPBmUS2vD6GBvwOvcgPxToktJxXa%2Bv%2BCX766l6HyugATIYMmRtfJN%2Bj9juv6IBB7LCcPLgjI5Y1tuefWgG3USD%2B51KZa%2Fg00I6UeEzUIIF7PRHs3%2FCZBDUG04GU%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260415T180059Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAQ3PHCVTYXDOY35CV%2F20260415%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=1aecdc5703f56b90aa71b5ef9e378bf2535486b5b06cc2915f0f03aa6cb0fb02&hash=6104be49131466c373c4601908ac76d02cad884efa15746896e4c0e61d61ba2f&host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&pii=S2666791624000137&tid=spdf-24641268-b108-4ea0-ab37-ddb54ebd904f&sid=86eeab0b20c7344f820b3c2329e597d713d4gxrqa&type=client&tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&rh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&ua=10145c0b010305055b02&rr=9eccda5e1801e8f5&cc=us",
+        "gold_quality": "ok",
+        "failure_modes": [],
+        "notes": "",
+        "has_bot_check": false,
+        "status": true
+      },
+      "parsed": {
+        "authors": [],
+        "abstract": null,
+        "urls": [],
+        "license": null,
+        "version": "publishedVersion"
+      },
+      "score": {
+        "doi": "10.1016/j.clpl.2024.100067",
+        "no": 1,
+        "publisher_domain": "doi.org",
+        "parser_name": null,
+        "duration_ms": 576.818959088996,
+        "error": null,
+        "gold_quality": "ok",
+        "failure_modes": [],
+        "has_bot_check": false,
+        "authors": {
+          "matched": [],
+          "gold_unmatched": [
+            0,
+            1,
+            2
+          ],
+          "parsed_unmatched": [],
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "precision_soft": 0.0,
+          "recall_soft": 0.0,
+          "f1_soft": 0.0
+        },
+        "affiliations": null,
+        "abstract": {
+          "strict_match": false,
+          "soft_ratio": 0.0,
+          "fuzzy_ratio": 0.0,
+          "length_ratio": 0.0,
+          "present": false,
+          "match_at_threshold": false
+        },
+        "pdf_url": {
+          "strict_match": false,
+          "present": false,
+          "expected_present": true,
+          "divergent": false
+        },
+        "bot_check_flag": false
+      },
+      "error": null,
+      "duration_ms": 576.818959088996,
+      "source": "api",
+      "harvest_uuid": "120d33d8-7d11-4e53-a4f5-bc6980f76b77",
+      "taxicab_duration_ms": 122.26400000508875,
+      "parseland_duration_ms": 454.5549590839073
+    },
+    {
+      "no": 2,
+      "doi": "10.2307/3283523",
+      "link": "https://doi.org/10.2307/3283523",
+      "publisher_domain": "doi.org",
+      "gold": {
+        "authors": [
+          {
+            "name": "David S. Lindsay",
+            "affiliations": [],
+            "is_corresponding": false
+          },
+          {
+            "name": "Maria A. Toivio-Kinnucan",
+            "affiliations": [],
+            "is_corresponding": false
+          },
+          {
+            "name": "Byron L. Blagburn",
+            "affiliations": [],
+            "is_corresponding": false
+          }
+        ],
+        "abstract": "N/A",
+        "pdf_url": "N/A",
+        "gold_quality": "ok",
+        "failure_modes": [
+          "image_only"
+        ],
+        "notes": "Rasses were not accessible with link but with a screenshot could have been retreived",
+        "has_bot_check": false,
+        "status": true
+      },
+      "parsed": {
+        "authors": [],
+        "abstract": "David S. Lindsay, Maria A. Toivio-Kinnucan, Byron L. Blagburn, Ultrastructural Determination of Cystogenesis by Various Toxoplasma gondii Isolates in Cell Culture, The Journal of Parasitology, Vol. 79, No. 2 (Apr., 1993), pp. 289-292",
+        "urls": [],
+        "license": "cc-by",
+        "version": "publishedVersion"
+      },
+      "score": {
+        "doi": "10.2307/3283523",
+        "no": 2,
+        "publisher_domain": "doi.org",
+        "parser_name": null,
+        "duration_ms": 454.20112495776266,
+        "error": null,
+        "gold_quality": "ok",
+        "failure_modes": [
+          "image_only"
+        ],
+        "has_bot_check": false,
+        "authors": {
+          "matched": [],
+          "gold_unmatched": [
+            0,
+            1,
+            2
+          ],
+          "parsed_unmatched": [],
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "precision_soft": 0.0,
+          "recall_soft": 0.0,
+          "f1_soft": 0.0
+        },
+        "affiliations": null,
+        "abstract": {
+          "strict_match": false,
+          "soft_ratio": 0.016949152542372836,
+          "fuzzy_ratio": 0.016949152542372836,
+          "length_ratio": 77.66666666666667,
+          "present": true,
+          "match_at_threshold": false
+        },
+        "pdf_url": {
+          "strict_match": false,
+          "present": false,
+          "expected_present": true,
+          "divergent": false
+        },
+        "bot_check_flag": false
+      },
+      "error": null,
+      "duration_ms": 454.20112495776266,
+      "source": "api",
+      "harvest_uuid": "b95beef4-1c51-426b-8285-d89318c9929d",
+      "taxicab_duration_ms": 60.385707998648286,
+      "parseland_duration_ms": 393.8154169591144
+    },
+    {
+      "no": 3,
+      "doi": "10.1007/bf00731021",
+      "link": "https://doi.org/10.1007/bf00731021",
+      "publisher_domain": "doi.org",
+      "gold": {
+        "authors": [
+          {
+            "name": "Jean Haensler",
+            "affiliations": [
+              "Laboratoire de Chimie Bio-organique (CNRS URA 1386), Faculté de Pharmacie, Université Louis Pasteur, BP 24, 67041, Illkirch Cedex, France"
+            ],
+            "is_corresponding": false
+          },
+          {
+            "name": "Francis Schuber",
+            "affiliations": [
+              "Laboratoire de Chimie Bio-organique (CNRS URA 1386), Faculté de Pharmacie, Université Louis Pasteur, BP 24, 67041, Illkirch Cedex, France"
+            ],
+            "is_corresponding": false
+          }
+        ],
+        "abstract": "Liposomes bearing at their surface mono- and triantennary galactosyl ligands were prepared and their interaction with the galactose receptor of mouse peritoneal macrophages studied. Triantennary structures were synthesized by coupling derivatives of 1-thio-β-d-galactose to the amino groups of lysyl-lysine dipeptide. Galactosylated liposomes were obtained either by synthesis of neo-galactolipids followed by their incorporation into the vesicles or by neo-galactosylation of preformed liposomes by reaction between thiol-functionalized galactosyl ligands and vesicles bearing maleimido groups. The interaction of the galactosylated liposomes with the macrophage lectin was remarkably sensitive to the topology of the ligands, i.e., a spacer-arm length about 3 nm was necessary and, in contrast to results obtained with the galactose receptor of other cells, the triantennary structure did not provide additional binding. Related to the strategy of drug delivery with targeted liposomes, these results indicate that lectins from different cells might possibly be distinguished by using multiantennary ligands having optimal geometries.",
+        "pdf_url": "https://wayf.springernature.com/?redirect_uri=https%3A%2F%2Flink.springer.com%2Farticle%2F10.1007%2FBF00731021",
+        "gold_quality": "ok",
+        "failure_modes": [
+          "login"
+        ],
+        "notes": "Needs access login",
+        "has_bot_check": false,
+        "status": true
+      },
+      "parsed": {
+        "authors": [
+          {
+            "name": "Jean Haensler ",
+            "affiliations": [
+              {
+                "name": "Laboratoire de Chimie Bio-organique (CNRS URA 1386), Faculté de Pharmacie, Université Louis Pasteur, BP 24, 67041, Illkirch Cedex, France"
+              }
+            ],
+            "is_corresponding": null
+          },
+          {
+            "name": " Francis Schuber",
+            "affiliations": [
+              {
+                "name": "Laboratoire de Chimie Bio-organique (CNRS URA 1386), Faculté de Pharmacie, Université Louis Pasteur, BP 24, 67041, Illkirch Cedex, France"
+              }
+            ],
+            "is_corresponding": null
+          }
+        ],
+        "abstract": "Liposomes bearing at their surface mono- and triantennary galactosyl ligands were prepared and their interaction with the galactose receptor of mouse peritoneal macrophages studied. Triantennary structures were synthesized by coupling derivatives of 1-thio-β-d-galactose to the amino groups of lysyl-lysine dipeptide. Galactosylated liposomes were obtained either by synthesis of neo-galactolipids followed by their incorporation into the vesicles or by neo-galactosylation of preformed liposomes by reaction between thiol-functionalized galactosyl ligands and vesicles bearing maleimido groups. The interaction of the galactosylated liposomes with the macrophage lectin was remarkably sensitive to the topology of the ligands, i.e., a spacer-arm length about 3 nm was necessary and, in contrast to results obtained with the galactose receptor of other cells, the triantennary structure did not provide additional binding. Related to the strategy of drug delivery with targeted liposomes, these results indicate that lectins from different cells might possibly be distinguished by using multiantennary ligands having optimal geometries.",
+        "urls": [
+          {
+            "url": "https://link.springer.com/content/pdf/10.1007/BF00731021.pdf",
+            "content_type": "pdf"
+          }
+        ],
+        "license": null,
+        "version": "publishedVersion"
+      },
+      "score": {
+        "doi": "10.1007/bf00731021",
+        "no": 3,
+        "publisher_domain": "doi.org",
+        "parser_name": null,
+        "duration_ms": 841.7438340838999,
+        "error": null,
+        "gold_quality": "ok",
+        "failure_modes": [
+          "login"
+        ],
+        "has_bot_check": false,
+        "authors": {
+          "matched": [
+            {
+              "gold_index": 1,
+              "parsed_index": 1,
+              "key_match": true,
+              "name_ratio": 100.0
+            },
+            {
+              "gold_index": 0,
+              "parsed_index": 0,
+              "key_match": true,
+              "name_ratio": 100.0
+            }
+          ],
+          "gold_unmatched": [],
+          "parsed_unmatched": [],
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "precision_soft": 1.0,
+          "recall_soft": 1.0,
+          "f1_soft": 1.0
+        },
+        "affiliations": {
+          "strict_f1": 1.0,
+          "soft_f1": 1.0,
+          "fuzzy_f1": 1.0,
+          "strict_precision": 1.0,
+          "strict_recall": 1.0,
+          "soft_precision": 1.0,
+          "soft_recall": 1.0,
+          "fuzzy_precision": 1.0,
+          "fuzzy_recall": 1.0,
+          "matched": 2,
+          "gold_total": 2,
+          "parsed_total": 2
+        },
+        "abstract": {
+          "strict_match": true,
+          "soft_ratio": 1.0,
+          "fuzzy_ratio": 1.0,
+          "length_ratio": 1.0,
+          "present": true,
+          "match_at_threshold": true
+        },
+        "pdf_url": {
+          "strict_match": false,
+          "present": true,
+          "expected_present": true,
+          "divergent": true
+        },
+        "bot_check_flag": false
+      },
+      "error": null,
+      "duration_ms": 841.7438340838999,
+      "source": "api",
+      "harvest_uuid": "90a6a97a-e2b5-4916-841c-22e573cfcf3a",
+      "taxicab_duration_ms": 60.401624999940395,
+      "parseland_duration_ms": 781.3422090839595
+    },
+    {
+      "no": 4,
+      "doi": "10.1063/pt.5.6117",
+      "link": "https://doi.org/10.1063/pt.5.6117",
+      "publisher_domain": "doi.org",
+      "gold": {
+        "authors": [
+          {
+            "name": "Shacheenatha Jha",
+            "affiliations": [],
+            "is_corresponding": false
+          }
+        ],
+        "abstract": "N/A",
+        "pdf_url": "N/A",
+        "gold_quality": "ok",
+        "failure_modes": [
+          "non_article"
+        ],
+        "notes": "its a obituary",
+        "has_bot_check": false,
+        "status": true
+      },
+      "parsed": {
+        "authors": [],
+        "abstract": null,
+        "urls": [],
+        "license": null,
+        "version": "publishedVersion"
+      },
+      "score": {
+        "doi": "10.1063/pt.5.6117",
+        "no": 4,
+        "publisher_domain": "doi.org",
+        "parser_name": null,
+        "duration_ms": 569.2432068753988,
+        "error": null,
+        "gold_quality": "ok",
+        "failure_modes": [
+          "non_article"
+        ],
+        "has_bot_check": false,
+        "authors": {
+          "matched": [],
+          "gold_unmatched": [
+            0
+          ],
+          "parsed_unmatched": [],
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "precision_soft": 0.0,
+          "recall_soft": 0.0,
+          "f1_soft": 0.0
+        },
+        "affiliations": null,
+        "abstract": {
+          "strict_match": false,
+          "soft_ratio": 0.0,
+          "fuzzy_ratio": 0.0,
+          "length_ratio": 0.0,
+          "present": false,
+          "match_at_threshold": false
+        },
+        "pdf_url": {
+          "strict_match": false,
+          "present": false,
+          "expected_present": true,
+          "divergent": false
+        },
+        "bot_check_flag": false
+      },
+      "error": null,
+      "duration_ms": 569.2432068753988,
+      "source": "api",
+      "harvest_uuid": "379ab43d-0790-417e-a357-40c8a628c27c",
+      "taxicab_duration_ms": 61.184915946796536,
+      "parseland_duration_ms": 508.0582909286022
+    },
+    {
+      "no": 5,
+      "doi": "10.1097/00006324-197608000-00012",
+      "link": "https://doi.org/10.1097/00006324-197608000-00012",
+      "publisher_domain": "doi.org",
+      "gold": {
+        "authors": [],
+        "abstract": "N/A",
+        "pdf_url": "https://onlinelibrary.wiley.com/doi/epdf/10.1002/ovs2.70042",
+        "gold_quality": "journal-title-leaked",
+        "failure_modes": [],
+        "notes": "",
+        "has_bot_check": true,
+        "status": true
+      },
+      "parsed": {
+        "authors": [],
+        "abstract": "Optometry and Vision Science is the most authoritative source for current developments in optometry, physiological optics, and vision science. This frequently cited monthly scientific journal has served primary eye care practitioners for more than 75 years, promoting vital interdisciplinary exchange among optometrists and vision scientists worldwide.\n\nOfficial Journal of the American Academy of Optometry.",
+        "urls": [],
+        "license": null,
+        "version": "publishedVersion"
+      },
+      "score": {
+        "doi": "10.1097/00006324-197608000-00012",
+        "no": 5,
+        "publisher_domain": "doi.org",
+        "parser_name": null,
+        "duration_ms": 1597.4739579251036,
+        "error": null,
+        "gold_quality": "journal-title-leaked",
+        "failure_modes": [],
+        "has_bot_check": true,
+        "authors": null,
+        "affiliations": null,
+        "abstract": {
+          "strict_match": false,
+          "soft_ratio": 0.009756097560975618,
+          "fuzzy_ratio": 0.0048661800486617945,
+          "length_ratio": 136.0,
+          "present": true,
+          "match_at_threshold": false
+        },
+        "pdf_url": {
+          "strict_match": false,
+          "present": false,
+          "expected_present": true,
+          "divergent": false
+        },
+        "bot_check_flag": true
+      },
+      "error": null,
+      "duration_ms": 1597.4739579251036,
+      "source": "api",
+      "harvest_uuid": "05571f38-6a41-40ae-b3ef-894280943b03",
+      "taxicab_duration_ms": 64.704249962233,
+      "parseland_duration_ms": 1532.7697079628706
+    }
+  ]
+}

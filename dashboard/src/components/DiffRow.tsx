@@ -21,6 +21,7 @@ export function DiffRow({ row }: Props) {
   const aScore = row.score.authors;
   const absScore = row.score.abstract;
   const pdfScore = row.score.pdf_url;
+  const matched = absScore.match_at_threshold ?? absScore.fuzzy_ratio >= 0.85;
 
   return (
     <div className="diff-row">
@@ -31,6 +32,7 @@ export function DiffRow({ row }: Props) {
         <div className="tags">
           {row.gold.has_bot_check && <span className="tag bot">bot</span>}
           {row.gold.status && <span className="tag ok">gold ok</span>}
+          {row.source && <span className="tag">src:{row.source}</span>}
           {row.gold.failure_modes.slice(0, 2).map((m) => (
             <span key={m} className="tag">
               {m.replace(/_/g, " ")}
@@ -60,21 +62,13 @@ export function DiffRow({ row }: Props) {
       <div className="scores">
         {aScore ? (
           <span className={aScore.f1_soft >= 0.9 ? "good" : aScore.f1_soft > 0 ? "" : "bad"}>
-            authors {pct(aScore.f1_soft)}
+            authors P {pct(aScore.precision_soft)} / R {pct(aScore.recall_soft)}
           </span>
         ) : (
           <span className="faint">authors skip</span>
         )}
-        <span
-          className={
-            absScore.fuzzy_ratio >= 0.85
-              ? "good"
-              : absScore.fuzzy_ratio > 0
-              ? ""
-              : "bad"
-          }
-        >
-          abstract {pct(absScore.fuzzy_ratio)}
+        <span className={matched ? "good" : absScore.fuzzy_ratio > 0 ? "" : "bad"}>
+          abstract {matched ? "✓" : "✗"} ({pct(absScore.fuzzy_ratio)})
         </span>
         <span className={pdfScore.strict_match ? "good" : pdfScore.expected_present ? "bad" : ""}>
           pdf {pdfScore.strict_match ? "✓" : pdfScore.expected_present ? "✗" : "—"}

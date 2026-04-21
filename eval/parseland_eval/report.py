@@ -54,6 +54,9 @@ def row_payload(gold: GoldRow, run: ParserRun, score: RowScore) -> dict[str, Any
         "score": _asdict(score),
         "error": run.error,
         "duration_ms": run.duration_ms,
+        "harvest_uuid": run.harvest_uuid,
+        "taxicab_duration_ms": run.taxicab_duration_ms,
+        "parseland_duration_ms": run.parseland_duration_ms,
     }
 
 
@@ -64,6 +67,7 @@ def write_run(
     summary: dict[str, Any],
     *,
     label: str | None = None,
+    source: str | None = None,
 ) -> Path:
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -75,6 +79,7 @@ def write_run(
         "label": label,
         "eval_version": __version__,
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "source": source or "api",
         "summary": summary,
         "rows": [row_payload(g, r, s) for g, r, s in zip(rows, runs, scores)],
     }
@@ -100,6 +105,7 @@ def _update_index() -> None:
                 "run_id": head.get("run_id"),
                 "label": head.get("label"),
                 "timestamp_utc": head.get("timestamp_utc"),
+                "source": head.get("source"),
                 "summary": head.get("summary", {}).get("overall", {}),
             }
         )

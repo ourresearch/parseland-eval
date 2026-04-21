@@ -12,4 +12,3 @@ HTML_CACHE = EVAL_DIR / "html-cache"
 RUNS_DIR = EVAL_DIR / "runs"
 SILVER_DIR = EVAL_DIR / "silver"
 PROMPTS_DIR = ROOT / "eval" / "parseland_eval" / "prompts"
-PARSELAND_LIB = ROOT

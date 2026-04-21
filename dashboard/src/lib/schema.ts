@@ -26,6 +26,13 @@ const AffiliationResultSchema = z.object({
   strict_f1: z.number(),
   soft_f1: z.number(),
   fuzzy_f1: z.number(),
+  // Precision/recall optional for back-compat with pre-2026-04-21 runs.
+  strict_precision: z.number().optional(),
+  strict_recall: z.number().optional(),
+  soft_precision: z.number().optional(),
+  soft_recall: z.number().optional(),
+  fuzzy_precision: z.number().optional(),
+  fuzzy_recall: z.number().optional(),
   matched: z.number(),
   gold_total: z.number(),
   parsed_total: z.number(),
@@ -37,6 +44,7 @@ const AbstractResultSchema = z.object({
   fuzzy_ratio: z.number(),
   length_ratio: z.number(),
   present: z.boolean(),
+  match_at_threshold: z.boolean().optional(),
 });
 
 const PdfUrlResultSchema = z.object({
@@ -94,6 +102,11 @@ const RowPayloadSchema = z.object({
   score: RowScoreSchema,
   error: z.string().nullable(),
   duration_ms: z.number(),
+  // Live-API runner metadata; optional for back-compat with --source=lib runs.
+  source: z.enum(["api", "lib"]).optional(),
+  harvest_uuid: z.string().nullable().optional(),
+  taxicab_duration_ms: z.number().optional(),
+  parseland_duration_ms: z.number().optional(),
 });
 
 export const OverallSchema = z.object({
@@ -101,15 +114,29 @@ export const OverallSchema = z.object({
   authors_scored_rows: z.number(),
   authors_f1_strict: z.number(),
   authors_f1_soft: z.number(),
+  authors_precision_strict: z.number().optional(),
+  authors_recall_strict: z.number().optional(),
+  authors_precision_soft: z.number().optional(),
+  authors_recall_soft: z.number().optional(),
   affiliations_f1_strict: z.number(),
   affiliations_f1_soft: z.number(),
   affiliations_f1_fuzzy: z.number(),
+  affiliations_precision_strict: z.number().optional(),
+  affiliations_recall_strict: z.number().optional(),
+  affiliations_precision_soft: z.number().optional(),
+  affiliations_recall_soft: z.number().optional(),
+  affiliations_precision_fuzzy: z.number().optional(),
+  affiliations_recall_fuzzy: z.number().optional(),
   abstract_ratio_soft: z.number(),
   abstract_ratio_fuzzy: z.number(),
   abstract_strict_match_rate: z.number(),
   abstract_present_rate: z.number(),
+  abstract_match_rate: z.number().optional(),
+  abstract_match_threshold: z.number().optional(),
   pdf_url_accuracy: z.number(),
   pdf_url_divergence_rate: z.number(),
+  pdf_url_precision: z.number().optional(),
+  pdf_url_recall: z.number().optional(),
   errors: z.number(),
   duration_ms_mean: z.number(),
 });
@@ -117,17 +144,29 @@ export const OverallSchema = z.object({
 export const PerPublisherEntrySchema = z.object({
   rows: z.number(),
   authors_f1_soft: z.number(),
+  authors_precision_soft: z.number().optional(),
+  authors_recall_soft: z.number().optional(),
   affiliations_f1_fuzzy: z.number(),
+  affiliations_precision_fuzzy: z.number().optional(),
+  affiliations_recall_fuzzy: z.number().optional(),
   abstract_ratio_fuzzy: z.number(),
+  abstract_match_rate: z.number().optional(),
   pdf_url_accuracy: z.number(),
+  pdf_url_precision: z.number().optional(),
+  pdf_url_recall: z.number().optional(),
   errors: z.number(),
 });
 
 export const PerFailureModeEntrySchema = z.object({
   rows: z.number(),
   authors_f1_soft: z.number(),
+  authors_precision_soft: z.number().optional(),
+  authors_recall_soft: z.number().optional(),
   abstract_ratio_fuzzy: z.number(),
+  abstract_match_rate: z.number().optional(),
   pdf_url_accuracy: z.number(),
+  pdf_url_precision: z.number().optional(),
+  pdf_url_recall: z.number().optional(),
 });
 
 export const RunSchema = z.object({
@@ -135,6 +174,7 @@ export const RunSchema = z.object({
   label: z.string().nullable().optional(),
   eval_version: z.string(),
   timestamp_utc: z.string(),
+  source: z.enum(["api", "lib"]).nullable().optional(),
   summary: z.object({
     overall: OverallSchema,
     per_publisher: z.record(PerPublisherEntrySchema),
@@ -148,6 +188,7 @@ export const IndexEntrySchema = z.object({
   run_id: z.string().nullable(),
   label: z.string().nullable().optional(),
   timestamp_utc: z.string().nullable(),
+  source: z.enum(["api", "lib"]).nullable().optional(),
   summary: OverallSchema.partial(),
 });
 

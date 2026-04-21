@@ -56,3 +56,15 @@ class TestAuthorMatching:
         r = score_authors(gold, parsed)
         assert r.precision < 1.0
         assert r.recall == 1.0
+
+    def test_soft_mode_separates_precision_and_recall(self) -> None:
+        # Two gold, parser gets one right and invents a plausible-looking one
+        # that still misses the key — soft precision should drop below 1.0.
+        gold = [_mk("Jane Doe"), _mk("John Smith")]
+        parsed = [_mk("Jane Doe"), _mk("Unrelated Stranger Xyz")]
+        r = score_authors(gold, parsed)
+        # Strict key-match path should lose recall on the missed John Smith.
+        assert r.recall < 1.0
+        # Soft ratios are independent of strict P/R and must be surfaced.
+        assert 0.0 <= r.precision_soft <= 1.0
+        assert 0.0 <= r.recall_soft <= 1.0

@@ -27,6 +27,12 @@ class AffiliationResult:
     strict_f1: float
     soft_f1: float
     fuzzy_f1: float
+    strict_precision: float
+    strict_recall: float
+    soft_precision: float
+    soft_recall: float
+    fuzzy_precision: float
+    fuzzy_recall: float
     matched: int
     gold_total: int
     parsed_total: int
@@ -60,15 +66,25 @@ def _extract_affs(author: Any) -> list[str]:
     return out
 
 
-def _pair_f1(gold: Sequence[str], parsed: Sequence[str], *, strict: bool, threshold: float) -> tuple[float, int]:
+def _pair_f1(
+    gold: Sequence[str],
+    parsed: Sequence[str],
+    *,
+    strict: bool,
+    threshold: float,
+) -> tuple[float, float, float, int]:
+    """Return (f1, precision, recall, tp).
+
+    The empty-both case returns (1.0, 1.0, 1.0, 0) — no gold expected and parser
+    produced none: a perfect answer. Any asymmetric empty is (0.0, 0.0, 0.0, 0).
+    """
     if not gold and not parsed:
-        return 1.0, 0
+        return 1.0, 1.0, 1.0, 0
     if not gold or not parsed:
-        return 0.0, 0
+        return 0.0, 0.0, 0.0, 0
     used_g: set[int] = set()
     used_p: set[int] = set()
     tp = 0
-    # Greedy: score every pair, sort desc, assign.
     scored: list[tuple[float, int, int]] = []
     for gi, g in enumerate(gold):
         for pi, p in enumerate(parsed):
@@ -89,11 +105,11 @@ def _pair_f1(gold: Sequence[str], parsed: Sequence[str], *, strict: bool, thresh
     fp = len(parsed) - tp
     fn = len(gold) - tp
     if not tp:
-        return 0.0, 0
+        return 0.0, 0.0, 0.0, 0
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
     f1 = 2 * precision * recall / (precision + recall)
-    return f1, tp
+    return f1, precision, recall, tp
 
 
 def score_affiliations(
@@ -112,14 +128,22 @@ def score_affiliations(
     fuzzy_g = tuple(_drop_filler(a) for a in soft_g)
     fuzzy_p = tuple(_drop_filler(a) for a in soft_p)
 
-    strict_f1, _ = _pair_f1(strict_g, strict_p, strict=True, threshold=100.0)
-    soft_f1, _ = _pair_f1(soft_g, soft_p, strict=False, threshold=95.0)
-    fuzzy_f1, matched = _pair_f1(fuzzy_g, fuzzy_p, strict=False, threshold=fuzzy_threshold)
+    strict_f1, strict_p_, strict_r, _ = _pair_f1(strict_g, strict_p, strict=True, threshold=100.0)
+    soft_f1, soft_p_, soft_r, _ = _pair_f1(soft_g, soft_p, strict=False, threshold=95.0)
+    fuzzy_f1, fuzzy_p_, fuzzy_r, matched = _pair_f1(
+        fuzzy_g, fuzzy_p, strict=False, threshold=fuzzy_threshold
+    )
 
     return AffiliationResult(
         strict_f1=strict_f1,
         soft_f1=soft_f1,
         fuzzy_f1=fuzzy_f1,
+        strict_precision=strict_p_,
+        strict_recall=strict_r,
+        soft_precision=soft_p_,
+        soft_recall=soft_r,
+        fuzzy_precision=fuzzy_p_,
+        fuzzy_recall=fuzzy_r,
         matched=matched,
         gold_total=len(gold_raw),
         parsed_total=len(parsed_raw),

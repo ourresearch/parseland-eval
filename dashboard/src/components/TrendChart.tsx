@@ -6,10 +6,22 @@ interface Props {
 }
 
 const METRICS = [
-  { key: "authors_f1_soft", label: "Authors F1", stroke: "var(--accent)" },
-  { key: "abstract_ratio_fuzzy", label: "Abstract ratio", stroke: "var(--amber)" },
-  { key: "pdf_url_accuracy", label: "PDF accuracy", stroke: "var(--ok)" },
+  // Two lines per field: precision + recall where available, else the legacy metric.
+  { key: "authors_precision_soft", fallback: "authors_f1_soft", label: "Authors P", stroke: "var(--accent)", dash: "" },
+  { key: "authors_recall_soft", fallback: "authors_f1_soft", label: "Authors R", stroke: "var(--accent)", dash: "4 3" },
+  { key: "pdf_url_precision", fallback: "pdf_url_accuracy", label: "PDF P", stroke: "var(--ok)", dash: "" },
+  { key: "pdf_url_recall", fallback: "pdf_url_accuracy", label: "PDF R", stroke: "var(--ok)", dash: "4 3" },
+  { key: "abstract_match_rate", fallback: "abstract_ratio_fuzzy", label: "Abstract match", stroke: "var(--amber)", dash: "" },
 ] as const;
+
+type Summary = Record<string, number | undefined>;
+
+function resolve(summary: Summary, metric: (typeof METRICS)[number]): number {
+  const v = summary[metric.key];
+  if (typeof v === "number") return v;
+  const fb = summary[metric.fallback];
+  return typeof fb === "number" ? fb : 0;
+}
 
 export function TrendChart({ runs }: Props) {
   const ordered = [...runs].reverse();
@@ -36,7 +48,6 @@ export function TrendChart({ runs }: Props) {
   return (
     <div className="trend">
       <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label="Score trend over runs">
-        {/* y grid */}
         {[0, 0.25, 0.5, 0.75, 1].map((tick) => (
           <g key={tick}>
             <line
@@ -59,23 +70,23 @@ export function TrendChart({ runs }: Props) {
             </text>
           </g>
         ))}
-        {/* lines */}
         {METRICS.map((metric) => {
           const pts = ordered.map((r, i) => {
-            const v = (r.summary as Record<string, number | undefined>)[metric.key] ?? 0;
+            const v = resolve(r.summary as Summary, metric);
             return `${xFor(i)},${yFor(v)}`;
           });
           return (
-            <g key={metric.key}>
+            <g key={metric.label}>
               <polyline
                 fill="none"
                 stroke={metric.stroke}
                 strokeWidth={2}
+                strokeDasharray={metric.dash || undefined}
                 points={pts.join(" ")}
                 vectorEffect="non-scaling-stroke"
               />
               {ordered.map((r, i) => {
-                const v = (r.summary as Record<string, number | undefined>)[metric.key] ?? 0;
+                const v = resolve(r.summary as Summary, metric);
                 return (
                   <circle
                     key={i}
@@ -95,7 +106,6 @@ export function TrendChart({ runs }: Props) {
             </g>
           );
         })}
-        {/* x labels */}
         {ordered.map((r, i) => (
           <text
             key={i}
@@ -112,16 +122,19 @@ export function TrendChart({ runs }: Props) {
       </svg>
       <div className="legend">
         {METRICS.map((m) => (
-          <span key={m.key}>
+          <span key={m.label}>
             <span
               className="swatch"
               style={{
                 display: "inline-block",
-                width: 10,
+                width: 18,
                 height: 2,
                 background: m.stroke,
                 marginRight: "0.5em",
                 verticalAlign: "middle",
+                borderTop: m.dash ? `2px dashed ${"var(--paper-raised)"}` : undefined,
+                // Visual hint for dashed recall line without extra CSS.
+                opacity: m.dash ? 0.7 : 1,
               }}
             />
             {m.label}
