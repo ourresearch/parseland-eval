@@ -80,3 +80,79 @@ As of 2026-04-21: `10.36838/v4i6.14`, `10.1371/journal.pone.0192138.t002`. These
 - Commit messages mention the oxjob number when relevant (e.g., `#130`).
 - Schema / metric changes go with a representative run JSON so the dashboard has something to render.
 - Never commit secrets — the Anthropic / OpenAI keys live in `.env` (symlinked from `parseland-lib/eval`), which is `.gitignore`'d.
+
+---
+
+## Gold-standard scale-up (oxjob #122)
+
+Adds a separate sprint on top of the existing eval harness to grow gold from 100 → 10,000 Crossref DOIs inside a $1–2k budget. Scripts live under `eval/scripts/` — these are experiments, distinct from the core `parseland_eval` runner above. Source of truth for the sprint is `~/Documents/OpenAlex/oxjobs/working/parseland-gold-standard/`. Draft per-session updates go into `parseland-eval/OXJOB.md` + `NEXT-TO-DO.md` at the repo root.
+
+### New scripts (all under `eval/scripts/`)
+
+| Script | Purpose |
+|---|---|
+| `sample_50_random_dois.py` | Pulls 50 random DOIs from Crossref `/works?sample=50`, de-duped against manual gold |
+| `extract_with_agent_browser.py` | **Pass A** — Python subprocess drives `agent-browser` (headed Chromium), single Claude call per DOI with tool-use schema |
+| `extract_with_agent_claude.py` | **Pass B** — Claude-driven agent loop over `agent-browser` tools (7 browser tools + `record_extraction`, 15-turn cap, 40K-input-token budget) |
+| `extract_with_real_chrome.py` | Pass C fallback — `agent-browser --auto-connect` attaching to user's running Chrome |
+| `extract_with_browser_use.py` | **Pass C** — `browser-use` library + real Chrome over CDP (Profile 2), pre-built agent loop |
+| `compare_passive_vs_agentic.py` | Field-by-field diff between extracted CSVs |
+| `gpt_review.py` | OpenAI GPT-4o Structured Outputs reviewer over extracted CSVs |
+| `pilot_report.py` | Summary + auto-append to oxjob `LEARNING.md` |
+
+### New module
+
+- `eval/parseland_eval/pricing.py` — Anthropic + OpenAI rate tables with prompt-caching multipliers (write 1.25x, read 0.10x).
+
+### External deps added for this sprint
+
+- **Global npm:** `agent-browser` (Vercel's Rust+Node CLI). Install: `npm install -g agent-browser && agent-browser install`.
+- **Python:** `openai~=1.50`, `browser-use`. `browser-use` pulls transitive `openai 2.16.0` which violates the pin — not a blocker today, but use a separate venv if Pass A/B need reruns.
+
+### Dotenv gotcha — critical
+
+Use `load_dotenv(..., override=True)` in *every* pilot script. Without `override=True`, a stale shell-exported `ANTHROPIC_API_KEY` silently shadows the clean value in `eval/.env` and produces `APIConnectionError` / `LocalProtocolError: Illegal header value` that looks like an SSL bug but isn't. Burned ~45 min on this 2026-04-21.
+
+### Claude-in-Chrome (`/chrome`) — client-side only
+
+The `/chrome` slash command activates the Anthropic Chrome extension in the Claude Code *client UI*. It does **not** inject browser-control tools into the API session of an assistant driving work programmatically. Assistants cannot invoke `/chrome` via the Skill tool — the runtime explicitly rejects it ("chrome is a UI command, not a skill"). For programmatic real-Chrome automation, use `agent-browser --auto-connect` or `browser-use` (both connect via CDP to a Chrome launched with `--remote-debugging-port=9222`).
+
+### Launching real Chrome for Pass C
+
+```bash
+# Quit Chrome fully (Cmd-Q) first.
+open -a "Google Chrome" --args \
+  --remote-debugging-port=9222 \
+  --profile-directory="Profile 2"
+```
+
+`--profile-directory` name varies per user. Get list via `ls -1 "$HOME/Library/Application Support/Google/Chrome/" | grep -E "^(Default|Profile)"`.
+
+### Pilot findings (2026-04-21)
+
+| Metric | Pass A (passive, headed) | Pass B (Claude+agent-browser) | Pass C (browser-use+real Chrome) |
+|---|---|---|---|
+| rows OK | 50/50 | 28/50 (22 token-budget failures) | pending |
+| cost | **$1.10** | $5.09 | pending |
+| wall | 460s | 1040s | pending |
+| authors hit | **46%** | 38% | pending |
+| abstract hit | **36%** | 26% | pending |
+| pdf_url hit | **28%** | 26% | pending |
+| bot-check rate | 38% | 16% | pending |
+
+Headless (Pass A earlier run) saw 60% bot-checks and 28% authors — headful cuts bot-checks by more than a third and nearly doubles author extraction. Keep headful.
+
+Pass B is **worse than Pass A** as-configured because 40K-input-token budget per DOI is too tight given cumulative tool-output re-sending. Either raise the budget to ~100K or use `browser-use`'s built-in agent loop (Pass C).
+
+### Proxy / Zyte position
+
+Zyte residential proxies are detectable via `is_residential_proxy` flags by commercial bot-detection APIs. If already running from a clean home/residential IP, Zyte adds nothing for anti-bot and costs money. Keep Zyte as a per-publisher fallback if specific publishers block our production IPs; don't use by default.
+
+### Parallelization at 10K scale (open, see `OXJOB.md`)
+
+Three paths evaluated:
+- **Mac Mini local** — 2–4 concurrent headful Chrome → 10K in ~2 days, $600 one-time
+- **Linux cloud VM with Xvfb** — 8+ concurrent, 10K in ~6–12 h, ~$30/mo
+- **Browserbase / browser-use Cloud** — 50+ concurrent, blows budget at sustained scale ($72/day)
+
+Recommendation: **Mac Mini for one-shot 10K build**. Keep Xvfb as scalable fallback. Full writeup in `OXJOB.md`.

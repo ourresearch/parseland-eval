@@ -1,0 +1,45 @@
+{
+  "no": 48,
+  "doi": "10.2514/6.2012-1628",
+  "link": "https://doi.org/10.2514/6.2012-1628",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Yung Tseng Chung"
+      },
+      {
+        "name": "Derek Krebs"
+      },
+      {
+        "name": "Hana Tong"
+      },
+      {
+        "name": "Clay Fulcher"
+      }
+    ],
+    "abstract": null,
+    "pdf_url": null,
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "Article is paywalled (\"No Access\") on the AIAA ARC platform. Title: \"Validation of Component Vibrations Predicted from Response Matching Method by Finite Element Acoustic Analysis\". Published in the 53rd AIAA/ASME/ASCE/AHS/ASC Structures, Structural Dynamics and Materials Conference, 23–26 April 2012, Honolulu, Hawaii. No abstract is publicly available; no PDF link is provided."
+  },
+  "turn_count": 5,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_get_text": 1,
+    "browser_snapshot": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 31618,
+    "output_tokens": 705,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.105429,
+  "duration_s": 21.091976166004315,
+  "error": null
+}

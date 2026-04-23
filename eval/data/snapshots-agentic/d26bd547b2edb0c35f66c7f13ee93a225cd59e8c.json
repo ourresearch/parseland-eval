@@ -1,0 +1,36 @@
+{
+  "no": 32,
+  "doi": "10.3406/topoi.1997.1760",
+  "link": "https://doi.org/10.3406/topoi.1997.1760",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Nehmé, Laïla"
+      }
+    ],
+    "abstract": null,
+    "pdf_url": "https://www.persee.fr/docAsPDF/topoi_1161-9473_1997_num_7_2_1760.pdf",
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": true,
+    "notes": "Article in French. Title: \"L'espace cultuel de Pétra à l'époque nabatéenne\". Published in Topoi. Orient-Occident, 1997, Vol. 7, No. 2, pp. 1023–1067. No abstract is provided on the page."
+  },
+  "turn_count": 4,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_snapshot": 1,
+    "browser_get_text": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 22372,
+    "output_tokens": 777,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.078771,
+  "duration_s": 23.856937250006013,
+  "error": null
+}

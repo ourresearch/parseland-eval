@@ -1,0 +1,22 @@
+{
+  "no": 46,
+  "doi": "10.1007/springerreference_36112",
+  "link": "https://doi.org/10.1007/springerreference_36112",
+  "extraction": {},
+  "turn_count": 8,
+  "tool_calls": {
+    "browser_open": 5,
+    "browser_snapshot": 1,
+    "browser_get_html": 1,
+    "browser_get_text": 1
+  },
+  "usage": {
+    "input_tokens": 40936,
+    "output_tokens": 713,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.133503,
+  "duration_s": 90.73744629207067,
+  "error": "input_token_budget_exceeded (turn 8)"
+}

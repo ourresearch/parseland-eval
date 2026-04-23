@@ -1,0 +1,38 @@
+{
+  "no": 3,
+  "doi": "10.1515/9783110938074-toc",
+  "link": "https://doi.org/10.1515/9783110938074-toc",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Frans Claes"
+      },
+      {
+        "name": "Peter Bakema"
+      }
+    ],
+    "abstract": null,
+    "pdf_url": "https://www.degruyterbrill.com/document/doi/10.1515/9783110938074-toc/pdf",
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "This is the \"CONTENTS\" (table of contents) chapter from the book \"A Bibliography of Dutch Dictionaries\", published by De Gruyter (2022-02-07). Pages VII–XII. ISBN: 9783110938074. No abstract present as this is a TOC entry."
+  },
+  "turn_count": 3,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_snapshot": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 10724,
+    "output_tokens": 561,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.040587,
+  "duration_s": 13.583048124914058,
+  "error": null
+}

@@ -1,0 +1,31 @@
+{
+  "no": 34,
+  "doi": "10.1002/epd2.20263",
+  "link": "https://doi.org/10.1002/epd2.20263",
+  "extraction": {
+    "authors": [],
+    "abstract": null,
+    "pdf_url": null,
+    "has_bot_check": true,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "The DOI resolves to https://onlinelibrary.wiley.com/doi/10.1002/epd2.20263 but the page is blocked by a Cloudflare security challenge (\"Just a moment... / Performing security verification\"). No metadata could be extracted."
+  },
+  "turn_count": 3,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_snapshot": 1,
+    "browser_get_html": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 10758,
+    "output_tokens": 441,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.038889,
+  "duration_s": 9.85218354105018,
+  "error": null
+}

@@ -1,0 +1,11 @@
+{
+  "doi": "10.7765/9781526147547.00008",
+  "resolved_url": null,
+  "head_html": "",
+  "body_text": "",
+  "errors": [
+    "open failed rc=1: ✗ Auto-launch failed: No running Chrome instance found. Launch Chrome with --remote-debugging-port or use --cdp.",
+    "get html head rc=1",
+    "get text body rc=1"
+  ]
+}

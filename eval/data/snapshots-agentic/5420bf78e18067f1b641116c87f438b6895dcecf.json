@@ -1,0 +1,36 @@
+{
+  "no": 40,
+  "doi": "10.3917/cpsy.066.0179",
+  "link": "https://doi.org/10.3917/cpsy.066.0179",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Simone Korff-Sausse",
+        "affiliations": []
+      }
+    ],
+    "abstract": null,
+    "pdf_url": null,
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": true,
+    "notes": "French-language book review article. Title: \"Philippe Rahmy, Béton armé, La Table Ronde 2013. ISBN : 978-2-7103-7073-4\". Published in Champ psy, 2014/2, n° 66, pages 179–183. No abstract is present (book review format). Online publication date: 20/03/2015. PDF access appears to require subscription."
+  },
+  "turn_count": 4,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_get_text": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 21497,
+    "output_tokens": 630,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.073941,
+  "duration_s": 18.51843537495006,
+  "error": null
+}

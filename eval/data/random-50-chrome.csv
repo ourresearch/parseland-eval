@@ -1,0 +1,2 @@
+No,DOI,Link,Authors,Abstract,PDF URL,Status,Notes,Has Bot Check,Resolves To PDF,broken_doi,no english
+1,10.7765/9781526147547.00008,https://doi.org/10.7765/9781526147547.00008,,,,FALSE,empty page: open failed rc=1: ✗ Auto-launch failed: No running Chrome instance found. Launch Chrome with --remote-debugging-port or use --cdp.; get html head rc=1; get text body rc=1,,,,

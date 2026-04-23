@@ -1,0 +1,23 @@
+{
+  "rows": [
+    {
+      "no": 1,
+      "doi": "10.7765/9781526147547.00008",
+      "link": "https://doi.org/10.7765/9781526147547.00008",
+      "extraction": {},
+      "resolved_url": null,
+      "snapshot_path": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/eval/data/snapshots-chrome/8918edb577ef8e37b8cf67560f3f510f588bea18.json",
+      "model": "claude-sonnet-4-6",
+      "usage": {},
+      "cost_usd": 0.0,
+      "duration_s": 0.6497434999328107,
+      "error": "empty page: open failed rc=1: ✗ Auto-launch failed: No running Chrome instance found. Launch Chrome with --remote-debugging-port or use --cdp.; get html head rc=1; get text body rc=1"
+    }
+  ],
+  "totals": {
+    "rows": 1,
+    "errors": 1,
+    "cost_usd": 0.0,
+    "wall_seconds": 0.65
+  }
+}

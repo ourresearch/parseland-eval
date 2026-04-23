@@ -1,0 +1,22 @@
+{
+  "no": 10,
+  "doi": "10.1016/j.biosystemseng.2015.12.018",
+  "link": "https://doi.org/10.1016/j.biosystemseng.2015.12.018",
+  "extraction": {},
+  "turn_count": 5,
+  "tool_calls": {
+    "browser_open": 2,
+    "browser_get_html": 1,
+    "browser_get_text": 1,
+    "browser_snapshot": 1
+  },
+  "usage": {
+    "input_tokens": 62930,
+    "output_tokens": 437,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.195345,
+  "duration_s": 14.921758250100538,
+  "error": "input_token_budget_exceeded (turn 5)"
+}

@@ -1,0 +1,40 @@
+{
+  "no": 7,
+  "doi": "10.5305/amerjintelaw.104.4.0597",
+  "link": "https://doi.org/10.5305/amerjintelaw.104.4.0597",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Mahnoush H. Arsanjani",
+        "affiliations": []
+      },
+      {
+        "name": "W. Michael Reisman",
+        "affiliations": []
+      }
+    ],
+    "abstract": null,
+    "pdf_url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/4260DF469810028D968BF99F6321886B/S0002930000195387a.pdf/div-class-title-interpreting-treaties-for-the-benefit-of-third-parties-the-salvors-doctrine-and-the-use-of-legislative-history-in-investment-treaties-div.pdf",
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "Abstract is not available as text; the publisher provides only a first-page image preview. Article is an Editorial Comment published in American Journal of International Law, Volume 104, Issue 4, October 2010, pp. 597–604. DOI: 10.5305/amerjintelaw.104.4.0597."
+  },
+  "turn_count": 4,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_get_text": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 17374,
+    "output_tokens": 714,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.062832,
+  "duration_s": 19.696373000042513,
+  "error": null
+}

@@ -1,0 +1,67 @@
+{
+  "no": 25,
+  "doi": "10.47385/cmedunifoa.339.5.2018",
+  "link": "https://doi.org/10.47385/cmedunifoa.339.5.2018",
+  "extraction": {
+    "authors": [
+      {
+        "name": "I. D. Torres",
+        "affiliations": [
+          "Centro Universitário de Volta Redonda, Volta Redonda, RJ - UniFOA"
+        ]
+      },
+      {
+        "name": "M. C. P. Silva",
+        "affiliations": [
+          "Centro Universitário de Volta Redonda, Volta Redonda, RJ - UniFOA"
+        ]
+      },
+      {
+        "name": "B. T. G. Amorim",
+        "affiliations": [
+          "Centro Universitário de Volta Redonda, Volta Redonda, RJ - UniFOA"
+        ]
+      },
+      {
+        "name": "M. A. Nascimento",
+        "affiliations": [
+          "Centro Universitário de Volta Redonda, Volta Redonda, RJ - UniFOA"
+        ]
+      },
+      {
+        "name": "P. S. R. Oyadomari",
+        "affiliations": [
+          "Centro Universitário de Volta Redonda, Volta Redonda, RJ - UniFOA"
+        ]
+      },
+      {
+        "name": "S. C. M. Garcia",
+        "affiliations": [
+          "Centro Universitário de Volta Redonda, Volta Redonda, RJ - UniFOA"
+        ]
+      }
+    ],
+    "abstract": "O projeto de extensão \"Trabalho de Acadêmico para Acadêmico\" (TAPA), no módulo V, tem como objetivo principal fazer com que os alunos da instituição do curso de Medicina do UniFOA do referido módulo, vivenciem a prática clínica com aproximação cada vez maior ao real por meio de metodologias ativas. Tem-se como princípio, evitar que o acadêmico se sinta limitado em um referencial durante sua formação e   auxiliar os discentes a se adaptarem ao novo semestre. Tal adaptação é feita pelos próprios integrantes do projeto, pois são disponibilizadas orientações, informações e conhecimentos a respeito da forma como os conteúdos serão abordados. Com esse intuito, evidencia-se a simulação da prova prática do UniFOA, APH, para que os alunos inclusos no quinto semestre possam demonstrar suas performances. A simulação permite que o acadêmico tenha contato com os temas que foram abordados no semestre e com isso, teste seu conhecimento. Os alunos foram limitados em uma sala apropriada e chamados para as bancadas as quais estruturam a referida avaliação e isso representa o mesmo mecanismo aplicado nas provas práticas. Cada bancada continha um caso clínico diferente, com queixas apropriadas, onde se esperava que o acadêmico elaborasse o raciocínio clínico necessário para chegar a um diagnóstico e conduta pertinente. A primeira bancada abordou a doença Malária. Além do diagnóstico e conduta, foi solicitado também a interpretação de exames, no caso, um esfregaço sanguíneo e o preenchimento da Ficha de Notificação, já que é uma doença de notificação compulsória. A segunda bancada tratou-se de um caso de Tricomoníase. Nessa bancada foi cobrado o diagnóstico a partir da foto de um exame especular, a interpretação de uma citologia a fresco e conduta. A terceira e última bancada foi abordado um caso de Neurocriptococose, infecção oportunista em pacientes com baixa imunidade, principalmente os HIV positivos (MINISTÉRIO DA SAÚDE, 2012). Também foi pedido o diagnóstico e a análise de tomografia computadorizada a qual elucidava o caso. Além disso, os acadêmicos deveriam anunciar para o paciente a notícia de que o teste rápido para HIV era positivo, com o intuito de desenvolver demonstrar os critérios apreendidos na comunicação de má notícia. Vale ressaltar que todos os casos apresentados nas bancadas tem relação com o quinto módulo do UniFOA, já que abrange doenças infectocontagiosas.",
+    "pdf_url": "https://conferencias.unifoa.edu.br/congresso-medvr/article/download/339/319",
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": true,
+    "notes": "Article is in Portuguese. Title: \"TAPA: Simulação da Avaliação Prática em Habilidades do UniFOA\". Published in Congresso Médico Acadêmico UniFOA, Volume 5, 2018. DOI in metadata (10.47385/cmedunifoa.339.2018) differs slightly from the requested DOI (10.47385/cmedunifoa.339.5.2018)."
+  },
+  "turn_count": 3,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 9332,
+    "output_tokens": 1451,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.049761,
+  "duration_s": 18.63379591703415,
+  "error": null
+}

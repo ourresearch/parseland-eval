@@ -1,0 +1,87 @@
+{
+  "no": 50,
+  "doi": "10.3390/jfb14030123",
+  "link": "https://doi.org/10.3390/jfb14030123",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Ralf-Joachim Kohal",
+        "affiliations": [
+          "Department of Prosthetic Dentistry, Center for Dental Medicine, Medical Center—University of Freiburg, Faculty of Medicine, University of Freiburg, Hugstetter Str. 55, 79106 Freiburg, Germany"
+        ]
+      },
+      {
+        "name": "Anja Trinkner",
+        "affiliations": [
+          "Department of Prosthetic Dentistry, Center for Dental Medicine, Medical Center—University of Freiburg, Faculty of Medicine, University of Freiburg, Hugstetter Str. 55, 79106 Freiburg, Germany"
+        ]
+      },
+      {
+        "name": "Felix Burkhardt",
+        "affiliations": [
+          "Department of Prosthetic Dentistry, Center for Dental Medicine, Medical Center—University of Freiburg, Faculty of Medicine, University of Freiburg, Hugstetter Str. 55, 79106 Freiburg, Germany"
+        ]
+      },
+      {
+        "name": "Sebastian Berthold Maximilian Patzelt",
+        "affiliations": [
+          "Department of Prosthetic Dentistry, Center for Dental Medicine, Medical Center—University of Freiburg, Faculty of Medicine, University of Freiburg, Hugstetter Str. 55, 79106 Freiburg, Germany"
+        ]
+      },
+      {
+        "name": "Kirstin Vach",
+        "affiliations": [
+          "Institute of Medical Biometry and Statistics, Medical Center—University of Freiburg, Faculty of Medicine, University of Freiburg, Stefan-Meier-Str. 26, 79104 Freiburg, Germany"
+        ]
+      },
+      {
+        "name": "Monika Kušter",
+        "affiliations": [
+          "Department for Nanostructured Materials, Jožef Stefan Institute, Jamova 39, 1000 Ljubljana, Slovenia"
+        ]
+      },
+      {
+        "name": "Anže Abram",
+        "affiliations": [
+          "Department for Nanostructured Materials, Jožef Stefan Institute, Jamova 39, 1000 Ljubljana, Slovenia"
+        ]
+      },
+      {
+        "name": "Andraž Kocjan",
+        "affiliations": [
+          "Department for Nanostructured Materials, Jožef Stefan Institute, Jamova 39, 1000 Ljubljana, Slovenia"
+        ]
+      },
+      {
+        "name": "Julian Nold",
+        "affiliations": [
+          "Department of Prosthetic Dentistry, Center for Dental Medicine, Medical Center—University of Freiburg, Faculty of Medicine, University of Freiburg, Hugstetter Str. 55, 79106 Freiburg, Germany"
+        ]
+      }
+    ],
+    "abstract": "The aim of this in vitro study was to evaluate the long-term stability of one-piece diameter reduced zirconia oral implants under the influence of loading and artificial aging in a chewing simulator as well as the fracture load in a static loading test. Thirty-two one-piece zirconia implants with a diameter of 3.6 mm were embedded according to the ISO 14801:2016 standard. The implants were divided into four groups of eight implants. The implants of group DLHT were dynamically loaded (DL) in a chewing simulator for 107 cycles with a load of 98 N and simultaneously hydrothermally aged (HT) using a hot water bath at 85 °C. Group DL was only subjected to dynamic loading and group HT was exclusively subjected to hydrothermal aging. Group 0 acted as a control group: no dynamical loading, no hydrothermal ageing. After exposure to the chewing simulator, the implants were statically loaded to fracture in a universal testing machine. To evaluate group differences in the fracture load and bending moments, a one-way ANOVA with Bonferroni correction for multiple testing was performed. The level of significance was set to p < 0.05. In the static loading test, group DLHT showed a mean fracture load of 511 N, group DL of 569 N, group HT of 588 N and control group 0 of 516 N. The average bending moments had the following values: DLHT: 283.5 Ncm; DL: 313.7 Ncm; HT: 324.4 Ncm; 0: 284.5 Ncm. No significant differences could be found between the groups. Hydrothermal aging and/or dynamic loading had no significant effect on the stability of the one-piece diameter reduced zirconia implants (p > 0.05). Within the limits of this investigation, it can be concluded that dynamic loading, hydrothermal aging and the combination of loading and aging did not negatively influence the fracture load of the implant system. The artificial chewing results and the fracture load values indicate that the investigated implant system seems to be able to resist physiological chewing forces also over a long service period.",
+    "pdf_url": "https://www.mdpi.com/2079-4983/14/3/123/pdf",
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "Published in Journal of Functional Biomaterials 2023, 14(3), 123. Open Access article. Julian Nold is the corresponding author."
+  },
+  "turn_count": 5,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_get_text": 1,
+    "browser_snapshot": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 33300,
+    "output_tokens": 1809,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.127035,
+  "duration_s": 39.15268783294596,
+  "error": null
+}

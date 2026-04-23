@@ -1,0 +1,43 @@
+{
+  "no": 8,
+  "doi": "10.5965/1808312906082011023",
+  "link": "https://doi.org/10.5965/1808312906082011023",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Anderson Luiz Do Carmo",
+        "affiliations": [
+          "Universidade do Estado de Santa Catarina"
+        ]
+      },
+      {
+        "name": "Stephan Arnulf Baumgartel",
+        "affiliations": [
+          "Universidade do Estado de Santa Catarina"
+        ]
+      }
+    ],
+    "abstract": "O artigo aqui apresentado trata das relações intertextuais estabelecidas no espetáculo Como risco em papel, financiado pela 13º Festival Cultura Inglesa e coreografado e dançado por Marcela Reichelt em 2009, bem como de suas principais inspirações: o filme O livro de cabeceira, do cineasta galês Peter Greenaway e o conceito de corpolivro estabelecido no filme e adotado como base para a construção de um corpo cênico. A relação entre a construção do corpo que temos/somos, a construção de um corpo para a cena e da transformação da superfície de um papel ao receber tinta são discutidas para problematizar a cena do espetáculo e as relações entre a tela do cinema, o palco ocupado pela dança e o processo de formação de subjetividades.",
+    "pdf_url": "https://www.revistas.udesc.br/index.php/dapesquisa/article/download/13989/9070",
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": true,
+    "notes": "Article published in Portuguese in the journal DAPesquisa, Vol. 6, No. 8, 2011, pp. 023–032. DOI: 10.5965/1808312906082011023. The article discusses intertextual relations in the dance solo \"Como risco em papel\" by Marcela Reichelt and its connections to Peter Greenaway's film \"The Pillow Book\" and the concept of \"corpolivro\" (body-book)."
+  },
+  "turn_count": 3,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 9425,
+    "output_tokens": 906,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.041865,
+  "duration_s": 24.236390457954258,
+  "error": null
+}

@@ -1,0 +1,38 @@
+{
+  "no": 15,
+  "doi": "10.1017/s027250370006691x",
+  "link": "https://doi.org/10.1017/s027250370006691x",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Michele A. Flournoy"
+      },
+      {
+        "name": "Harvey E. Oyer III"
+      }
+    ],
+    "abstract": null,
+    "pdf_url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/459A60135F6F3AC37DD6B5EBD4CAC2DA/S027250370006691Xa.pdf/div-class-title-remarks-by-michele-a-flournoy-div.pdf",
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "Article published in Proceedings of the ASIL Annual Meeting, Volume 93, 1999, p. 64. No abstract is available for this content; the page shows only a preview image of the first page. The PDF link is present in citation metadata but full access requires purchase or institutional login."
+  },
+  "turn_count": 3,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_snapshot": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 12927,
+    "output_tokens": 731,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.049746,
+  "duration_s": 26.536513624945655,
+  "error": null
+}

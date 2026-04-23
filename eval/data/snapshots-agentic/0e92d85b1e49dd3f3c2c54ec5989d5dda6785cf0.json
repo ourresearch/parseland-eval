@@ -1,0 +1,22 @@
+{
+  "no": 14,
+  "doi": "10.1016/s0307-904x(98)10011-2",
+  "link": "https://doi.org/10.1016/s0307-904x(98)10011-2",
+  "extraction": {},
+  "turn_count": 5,
+  "tool_calls": {
+    "browser_open": 2,
+    "browser_get_html": 1,
+    "browser_get_text": 1,
+    "browser_snapshot": 1
+  },
+  "usage": {
+    "input_tokens": 62931,
+    "output_tokens": 443,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.195438,
+  "duration_s": 14.647961958078668,
+  "error": "input_token_budget_exceeded (turn 5)"
+}

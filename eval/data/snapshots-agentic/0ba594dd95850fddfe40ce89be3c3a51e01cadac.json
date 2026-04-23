@@ -1,0 +1,36 @@
+{
+  "no": 6,
+  "doi": "10.1016/0378-1127(92)90010-7",
+  "link": "https://doi.org/10.1016/0378-1127(92)90010-7",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Mark R. Roberts",
+        "affiliations": []
+      }
+    ],
+    "abstract": "A 1-ha permanent plot dominated by Populus grandidentata Michx. in northern lower Michigan was analyzed to determine past stand development trends and interactions between overstory (trees, 5 cm diameter or greater) and understory (saplings, 1 cm or over and less than 5 cm diameter) populations. The overstory was vertically stratified with P. grandidentata in the canopy and Acer rubrum L., Acer saccharum Marsh., and Fagus grandifolia Ehrh. in the subcanopy. Most of the subcanopy trees were multiple stems. The understory was composed of saplings of several shade-tolerant and midtolerant hardwood species. Most of the saplings were single stems. Stand age and diameter structures indicated that the young stand was composed of root suckers of aspen along with vegetative sprouts and seedlings of the northern hardwood species following disturbance 68 years ago. Continuous recruitment of seedlings and sprouts of the hardwood species has occurred throughout the 68 year period. An increase in recruitment of seedlings of A. rubrum, Fraxinus americana L., Ostrya virginiana (Mill.) K. Koch., Amelanchier spp., and Acer pensylvanicum L. began 35 years ago and has continued to the present. Spatial pattern analysis using random quadrats and the nearest-neighbor method indicated that saplings of midtolerant species are strongly segregated away from shade-tolerant trees but only weakly segregated away from intolerant trees (aspens). These results suggest that the aspen overstory has had little effect on the development of the understory, except for the recent wave of recruitment which may be partially related to aspen senescence. The shade-tolerant northern hardwood species, which occur in a discontinuous subcanopy, inhibit sapling recruitment. Light appears to be the limiting factor that controls the temporal and spatial patterns of succession in this mixed stand. Current trends indicate that an understory of midtolerant species will become dominant in areas without a hardwood subcanopy. In areas under the dense subcanopy, a sparse understory of shade-tolerant species will continue to slowly develop. As the aspen overstory senesces, this mosaic of understory species will be left to dominate the stand.",
+    "pdf_url": null,
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "Article published in Forest Ecology and Management, Volume 54, Issues 1–4, November 1992, Pages 157–174. Full text requires institutional access or purchase; no PDF URL available on the page."
+  },
+  "turn_count": 4,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_get_text": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 18690,
+    "output_tokens": 1030,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.07152,
+  "duration_s": 20.45374045788776,
+  "error": null
+}

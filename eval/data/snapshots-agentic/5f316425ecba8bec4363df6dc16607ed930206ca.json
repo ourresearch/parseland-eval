@@ -1,0 +1,23 @@
+{
+  "no": 26,
+  "doi": "10.5943/mycosphere/3/4/1",
+  "link": "https://doi.org/10.5943/mycosphere/3/4/1",
+  "extraction": {},
+  "turn_count": 14,
+  "tool_calls": {
+    "browser_open": 4,
+    "browser_snapshot": 4,
+    "browser_get_html": 2,
+    "browser_get_text": 3,
+    "browser_click": 1
+  },
+  "usage": {
+    "input_tokens": 41918,
+    "output_tokens": 847,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.138459,
+  "duration_s": 26.463276082999073,
+  "error": "input_token_budget_exceeded (turn 14)"
+}

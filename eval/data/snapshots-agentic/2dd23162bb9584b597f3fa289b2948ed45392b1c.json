@@ -1,0 +1,31 @@
+{
+  "no": 19,
+  "doi": "10.1093/oed/9535412846",
+  "link": "https://doi.org/10.1093/oed/9535412846",
+  "extraction": {
+    "authors": [],
+    "abstract": null,
+    "pdf_url": null,
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": true,
+    "no_english": false,
+    "notes": "The DOI 10.1093/oed/9535412846 resolves to the OED entry for \"starwort, n.\" (https://www.oed.com/dictionary/starwort_n), but the page's own embedded DOI is 10.1093/OED/8552203597 — suggesting the requested DOI may be invalid or mismatched. This is an Oxford English Dictionary dictionary entry (revised 2016), not a scholarly article. There are no authors, no abstract, and no PDF. Full content is behind a subscription paywall."
+  },
+  "turn_count": 3,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_snapshot": 1,
+    "browser_get_html": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 12166,
+    "output_tokens": 681,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.046713,
+  "duration_s": 17.515270916977897,
+  "error": null
+}

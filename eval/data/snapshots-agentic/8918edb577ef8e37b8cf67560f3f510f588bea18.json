@@ -1,0 +1,23 @@
+{
+  "no": 1,
+  "doi": "10.7765/9781526147547.00008",
+  "link": "https://doi.org/10.7765/9781526147547.00008",
+  "extraction": {},
+  "turn_count": 10,
+  "tool_calls": {
+    "browser_open": 2,
+    "browser_snapshot": 4,
+    "browser_get_html": 3,
+    "browser_click": 2,
+    "browser_get_text": 1
+  },
+  "usage": {
+    "input_tokens": 43381,
+    "output_tokens": 1033,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.145638,
+  "duration_s": 30.04743120796047,
+  "error": "input_token_budget_exceeded (turn 10)"
+}

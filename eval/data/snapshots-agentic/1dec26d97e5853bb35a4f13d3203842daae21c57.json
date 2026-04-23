@@ -1,0 +1,37 @@
+{
+  "no": 22,
+  "doi": "10.3790/978-3-428-53114-1",
+  "link": "https://doi.org/10.3790/978-3-428-53114-1",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Brünkmans, Christian"
+      }
+    ],
+    "abstract": "Die Bewältigung von Insolvenzen internationaler Konzerne gewinnt zunehmend an Bedeutung. Nach der deutschen Insolvenzordnung und der Europäischen Verordnung über Insolvenzverfahren sind jedoch nicht der Konzern, sondern lediglich die einzelnen Konzerngesellschaften insolvenzfähig.\\n\\nChristian Brünkmans arbeitet im Rahmen einer ökonomischen Analyse heraus, dass bei zentral integrierten Konzernen die bestmögliche Masseverwertung und Gläubigerbefriedigung nur durch die Koordinierung der Insolvenzverfahren der einzelnen Konzerngesellschaften möglich ist. Er kommt zum Ergebnis, dass Insolvenzgerichte, Insolvenzverwalter und Gläubigerorgane der Konzerngesellschaften u. U. zur Mitwirkung an konzernweiten Masseverwertungsstrategien verpflichtet sind. Zur Förderung einer koordinierten Verfahrensbewältigung werden die Einsetzung eines personenidentischen Konzerninsolvenzverwalters, vertragliche Koordinationsmechanismen, die Eigenverwaltung und das Insolvenzplanverfahren vorgestellt. Schließlich analysiert der Autor die \"Eurofood\"-Entscheidung des EuGH und legt dar, unter welchen Voraussetzungen sich ein einheitlicher Insolvenzgerichtsstand für internationale Konzerne begründen lässt.",
+    "pdf_url": null,
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": true,
+    "notes": "This is a German-language book (monograph) published by Duncker & Humblot. Title: \"Die Koordinierung von Insolvenzverfahren konzernverbundener Unternehmen nach deutschem und europäischem Insolvenzrecht\". Series: Beiträge zum Europäischen Wirtschaftsrecht, Vol. 55. Year: 2009. ISBN: 978-3-428-53114-1 (eBook), 978-3-428-13114-3 (print). 426 pages. PDF requires login/purchase — no freely accessible PDF URL available."
+  },
+  "turn_count": 5,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_snapshot": 1,
+    "browser_click": 1,
+    "browser_get_text": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 37592,
+    "output_tokens": 1108,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.129396,
+  "duration_s": 25.157601417042315,
+  "error": null
+}

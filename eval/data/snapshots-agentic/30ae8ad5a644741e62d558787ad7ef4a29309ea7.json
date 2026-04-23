@@ -1,0 +1,50 @@
+{
+  "no": 2,
+  "doi": "10.5958/j.2249-6270.3.4.047",
+  "link": "https://doi.org/10.5958/j.2249-6270.3.4.047",
+  "extraction": {
+    "authors": [
+      {
+        "name": "A.B. Srilatha",
+        "affiliations": [
+          "Department of Home Science, S.V. University, Tirupati"
+        ]
+      },
+      {
+        "name": "A.B. Subhashini",
+        "affiliations": [
+          "Department of Anthropology, S.V. University, Tirupati"
+        ]
+      },
+      {
+        "name": "D. Baby",
+        "affiliations": [
+          "Department of Home Science, S.V. University, Tirupati"
+        ]
+      }
+    ],
+    "abstract": "The present investigation is to assess the nutritional status of adolescent girls around 13 to 18 years age from 3 different mandals of Ramachandrapuram, Renigunta and Chandragiri, constituted the sample of the study. Total sample size is 200 derived in two age groups of 100 in each group. First is 13 to 15 years age girls and the second is 16 to 18 years age girls. Nutritional status assessed by both the groups compared with their Body Mass Index (BMI), Mid Upper Arm Circumference (MUAC) compared with ICMR and NCHS standards are low in 13 to 15 years group age. Dietary intakes are very low imbalanced in 13 to 15 years group, 16–18 years are better (60%) as compared to Recommended Dietary Allowance (RDA). There is a significant difference between the energy intake and expenditure in both the age group of girls. There is a negative energy balance in both the age groups. Energy is needed for both the age groups for performing household and farm activities to safeguard their peak growth. There is a chronic energy deficiency observed in the present study. Hence, there is a need for suitable intervention and nutrition education and nutritional counselling to prevent under nutrition in future.",
+    "pdf_url": "https://indianjournals.com/api/article-view/ijser-3-4-005",
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "Published in International Journal of Social and Economic Research, Vol. 3, Issue 4, 2013, pp. 388–391. Online published 3 February 2014. DOI resolves to IndianJournals.com article page. PDF URL from citation_pdf_url meta tag (likely API endpoint, may require authentication)."
+  },
+  "turn_count": 3,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_snapshot": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 9627,
+    "output_tokens": 900,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.042381,
+  "duration_s": 23.017575375037268,
+  "error": null
+}

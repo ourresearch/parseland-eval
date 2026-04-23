@@ -1,0 +1,22 @@
+{
+  "no": 37,
+  "doi": "10.1021/jp204894m",
+  "link": "https://doi.org/10.1021/jp204894m",
+  "extraction": {},
+  "turn_count": 5,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_get_html": 1,
+    "browser_get_text": 2,
+    "browser_snapshot": 1
+  },
+  "usage": {
+    "input_tokens": 43133,
+    "output_tokens": 1109,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.146034,
+  "duration_s": 25.926019207923673,
+  "error": "input_token_budget_exceeded (turn 5)"
+}

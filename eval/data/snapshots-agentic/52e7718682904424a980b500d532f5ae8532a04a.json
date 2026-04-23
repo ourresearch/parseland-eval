@@ -1,0 +1,45 @@
+{
+  "no": 31,
+  "doi": "10.54309/ijict.2022.9.1.001",
+  "link": "https://doi.org/10.54309/ijict.2022.9.1.001",
+  "extraction": {
+    "authors": [
+      {
+        "name": "Nuralin M.D.",
+        "affiliations": [
+          "International Information Technology University"
+        ]
+      },
+      {
+        "name": "Y.A. Daineko",
+        "affiliations": [
+          "International Information Technology University"
+        ]
+      }
+    ],
+    "abstract": "The article presents the development and research of recognition of the interaction of the human hand with objects. The developed model receives frames from an RGB camera and is performed in three stages: (a) hand tracking, (b) object tracking, and (c) action recognition. The steering wheel is used as the object under study.",
+    "pdf_url": "https://journal.iitu.edu.kz/index.php/ijict/article/download/281/429",
+    "has_bot_check": false,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "DOI resolves to the PDF viewer page; the article details page is at https://journal.iitu.edu.kz/index.php/ijict/article/view/281. Abstract is in English (also available in Kazakh and Russian). Published in IJICT Vol. 3, No. 1 (2022), pp. 8–13."
+  },
+  "turn_count": 6,
+  "tool_calls": {
+    "browser_open": 2,
+    "browser_get_html": 2,
+    "browser_get_text": 2,
+    "browser_snapshot": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 25197,
+    "output_tokens": 1083,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.091836,
+  "duration_s": 31.175775249954313,
+  "error": null
+}

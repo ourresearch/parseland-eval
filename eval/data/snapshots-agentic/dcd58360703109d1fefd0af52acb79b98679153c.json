@@ -1,0 +1,30 @@
+{
+  "no": 18,
+  "doi": "10.5744/florida/9780813062471.003.0004",
+  "link": "https://doi.org/10.5744/florida/9780813062471.003.0004",
+  "extraction": {
+    "authors": [],
+    "abstract": null,
+    "pdf_url": null,
+    "has_bot_check": true,
+    "resolves_to_pdf": false,
+    "broken_doi": false,
+    "no_english": false,
+    "notes": "The DOI resolves to https://academic.oup.com/florida-scholarship-online/book/16122/chapter/171139901 but the page is blocked by a Cloudflare security challenge (bot check). No metadata could be extracted."
+  },
+  "turn_count": 3,
+  "tool_calls": {
+    "browser_open": 1,
+    "browser_snapshot": 1,
+    "record_extraction": 1
+  },
+  "usage": {
+    "input_tokens": 6017,
+    "output_tokens": 404,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "cost_usd": 0.024111,
+  "duration_s": 10.113321666955017,
+  "error": null
+}
