@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Scorecard } from "./components/Scorecard";
+import { PublisherBreakdown } from "./components/PublisherBreakdown";
 import { PublisherHeatmap } from "./components/PublisherHeatmap";
 import { FailureModeBar } from "./components/FailureModeBar";
 import { DiffTable } from "./components/DiffTable";
@@ -76,7 +77,18 @@ export default function App() {
         <div className="section-head">
           <span className="num">01 ·</span>
           <h2>Where we're losing</h2>
-          <span className="dek">F1 per publisher domain · darker red → worse</span>
+          <span className="dek">
+            P / R per publisher · top-10 pinned by scale · darker red → worse
+          </span>
+        </div>
+        <PublisherBreakdown rows={currentRun.rows} />
+      </section>
+
+      <section>
+        <div className="section-head">
+          <span className="num">01a ·</span>
+          <h2>Publisher domain drill-down</h2>
+          <span className="dek">Raw per-domain view from the run — useful for outlier hunting</span>
         </div>
         <PublisherHeatmap data={currentRun.summary.per_publisher} />
       </section>
