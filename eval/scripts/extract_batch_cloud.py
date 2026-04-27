@@ -72,16 +72,21 @@ DEFAULT_OUTPUT_DIR = EVAL_DIR / "data"
 CHECKPOINT_DIR_NAME = ".checkpoint"
 
 API_BASE = "https://api.browser-use.com/api/v3"
-DEFAULT_MODEL = "claude-sonnet-4.6"
+# claude-opus-4.7 is accepted by Cloud (verified by smoke 2026-04-27 — Cloud
+# auto-aliased 4.6 → 4.7 in the response). User priority is accuracy; Opus
+# is the best browser-use Cloud supports today.
+DEFAULT_MODEL = "claude-opus-4.7"
 BATCH_SIZE = 100
 DEFAULT_RETRY_CAP = 3
 RETRY_BACKOFF_SEC = (10.0, 60.0, 300.0)
 DEFAULT_POLL_INTERVAL = 5.0
 DEFAULT_TASK_TIMEOUT_SEC = 30 * 60  # 30 min hard cap per session
 
-# v3 terminal session statuses (https://docs.browser-use.com/cloud/agent/n8n)
-TERMINAL_OK = {"idle"}
-TERMINAL_FAIL = {"stopped", "error", "timed_out"}
+# v3 terminal session statuses. Empirically: `idle` = kept-alive done,
+# `stopped` = task complete + sandbox destroyed (ALSO success — has full
+# `output`). Only `error` and `timed_out` are real failures.
+TERMINAL_OK = {"idle", "stopped"}
+TERMINAL_FAIL = {"error", "timed_out"}
 
 GOLD_COLUMNS = [
     "No", "DOI", "Link", "Authors", "Abstract", "PDF URL",
@@ -391,10 +396,16 @@ def extraction_from_task(task_data: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def task_cost_usd(task_data: dict[str, Any]) -> float | None:
-    for k in ("cost_usd", "costUsd", "cost"):
+    """v3 returns `totalCostUsd` as a stringified decimal. Fall back to
+    legacy keys for forward compatibility."""
+    for k in ("totalCostUsd", "total_cost_usd", "cost_usd", "costUsd", "cost"):
         v = task_data.get(k)
-        if isinstance(v, (int, float)):
+        if v is None:
+            continue
+        try:
             return float(v)
+        except (TypeError, ValueError):
+            continue
     return None
 
 
@@ -458,7 +469,7 @@ async def run_doi(
     return TaskResult(
         no=no, doi=doi, link=link,
         extraction=None,
-        task_id=last_task_id,
+        task_id=last_session_id,
         duration_s=round(loop.time() - start, 2),
         retries=retry_cap,
         error=last_error or "unknown_failure",
@@ -567,7 +578,9 @@ async def run_batch(
 
     write_csv_atomic(final_path, rows_out)
 
-    failures = sum(1 for r in rows_out if r.get("Status") == "FALSE" or r.get("Notes"))
+    # Notes is allowed on successful rows (e.g. "abstract not shown") — don't
+    # treat its presence as a failure. Failure = Status==FALSE.
+    failures = sum(1 for r in rows_out if r.get("Status") == "FALSE")
     return {
         "batch": batch_no,
         "rows": len(rows_out),
