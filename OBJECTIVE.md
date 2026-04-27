@@ -54,7 +54,7 @@ The human goldie at `eval/goldie/human-goldie-v2-audited.csv` must be reviewed P
 2. **Atomic** — per-batch CSV is `.tmp` + rename, no partial files visible to the user reviewer.
 3. **Idempotent** — DOI-keyed; re-runs produce identical output.
 4. **Transparent failures** — `ai-goldie-N.failures.jsonl` is the source of truth for blank rows.
-5. **Bot-check resilient** — Cloud's hosted real Chrome plus residential-proxy ($5/GB) fallback only on `has_bot_check=true`.
+5. **Bot-check resilient** — Cloud's hosted real Chrome with **built-in residential proxies in 195+ countries (default `proxy_country_code=us`)** + automatic CAPTCHA / Cloudflare Turnstile / hCaptcha solving. JS fingerprint, timezone, locale, and behavioral layer (mouse / scroll / typing cadence) are auto-matched to the exit IP. **Zyte / external proxy providers explicitly NOT used** — Cloud's stack is integrated and would be redundant + double-billed. For specific publishers that still gate, override with country-code per-batch (e.g., `--proxy-country de` for German publishers).
 6. **Schema-enforced** — Pydantic via Cloud `structuredOutput`; malformed responses fail fast and route to retry queue.
 7. **Cost-capped** — `max_agent_steps=18` per task, retry cap N=3, optional `--max-cost-usd`.
 

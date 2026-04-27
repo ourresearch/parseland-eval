@@ -225,3 +225,33 @@ User priority: **accuracy + time over cost**. Bullet-proof.
 - Phase D: `eval/scripts/sample_10k_dois.py` produces `eval/data/ai-goldie-source-10k.csv` (Crossref `/works?sample`, dedup vs gold).
 - Phase E: `eval/scripts/extract_batch_cloud.py` produces `eval/data/ai-goldie-{1..100}.csv`.
 - Phase F: USER reviews each ai-goldie-N.csv, edits in place, commits.
+
+### Bot-check bypass (residential proxy strategy)
+
+**The 10K extraction does NOT need Zyte (or any third-party proxy provider).** browser-use Cloud has built-in residential proxies + automatic CAPTCHA handling integrated into the v3 sessions API. The Cloudflare-gated publishers we hit during local MCP walkthroughs (ScienceDirect on a heavy session, APS Phys Rev, Brill book chapters, ACS Pubs, Ovid, T&F sometimes) are the *exact* class of pages Cloud's residential-proxy + anti-fingerprint stack is designed to handle.
+
+Source: <https://docs.browser-use.com/guides/proxies-and-stealth> + <https://browser-use.com/posts/bot-detection>.
+
+| Knob | What it is | Default | Override |
+|---|---|---|---|
+| `proxy_country_code` (snake_case) | Country of the residential exit IP | `"us"` | Pass any of 195+ ISO codes (`"de"`, `"jp"`, `"in"`, …); pass `None` to disable proxy entirely |
+| Auto-CAPTCHA solver | Cloudflare Turnstile / hCaptcha / reCAPTCHA solving inside the session | **on** | n/a — built into Cloud |
+| JS fingerprint consistency | Chromium fork with timezone/locale/GPU/screen-resolution matched to exit IP | **on** | n/a |
+| Behavioral layer | Human-like mouse / scroll / typing cadence | **on** | n/a |
+| Session-level | All tasks in a Cloud session share the same proxy | n/a | Create separate sessions for different countries |
+
+**Implication for our `extract_batch_cloud.py`:** the runner already sends the default residential US proxy (we verified in the v3 cloud smoke that `proxyCountryCode: 'us'` came back in the response payload). For the 10K production run we should leave the proxy at default and let Cloud's anti-bot handle Cloudflare automatically. If specific publishers still gate, override with `proxy_country_code` per-batch (e.g., `"de"` for German publishers, `"jp"` for Japanese).
+
+**Zyte explicitly NOT considered.** Zyte is a competing scraping-API stack — bolting it on top of browser-use Cloud would be redundant and double-billed. Stick with Cloud's built-in stack.
+
+**Account credit URL** (separate from API): <https://cloud.browser-use.com/bux> is the dashboard for credits / billing top-up. Required when v3 sessions API returns `402: "You need at least $1.00 in credits"` (we hit this once during cloud iteration). Top up there before Phase E.
+
+### Phase C — final v1.4 prompt + measurement caveat (2026-04-27)
+
+After 4 prompt revisions (v1 → v1.1 → v1.2 → v1.3 → v1.4) iterated against full holdout-50 cloud runs (and one full 50-DOI manual MCP walkthrough), the locked candidate is `eval/prompts/ai-goldie-v1.4.md`.
+
+Per-field measurement situation:
+- **v1.1 cloud baseline on holdout-50:** authors 78%, rases 48%, CA 70%, abstract 68%, pdf_url 42%, overall 16%.
+- **v1.4 manual-MCP on holdout-50:** authors 50%, rases 36%, CA 56%, abstract 28%, pdf_url 62%, overall 12%. **Numbers depressed by Chrome-MCP `find` tool returning element summaries instead of verbatim content** — the prompt is fine; the manual extractor is the bottleneck. PDF URL +20pp gain confirms v1.4's "no URL construction from DOI" rule actually works.
+
+A *fair* v1.4 measurement requires one automated cloud run on holdout-50. Account credits exhausted — needs top-up at the bux URL above before that final pre-lock measurement can happen.

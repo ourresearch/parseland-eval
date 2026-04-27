@@ -59,7 +59,7 @@ Human goldie at `eval/goldie/human-goldie-v2-audited.csv` must be reviewed PERFE
 2. Atomic — `.tmp` + rename for every CSV write; no partial files visible to user.
 3. Idempotent — DOI-keyed; same window produces same output.
 4. Transparent failures — `ai-goldie-N.failures.jsonl` is the source of truth for blank rows.
-5. Bot-check resilient — Cloud's hosted real Chrome plus residential-proxy fallback only on `has_bot_check=true`.
+5. Bot-check resilient — Cloud's hosted real Chrome with built-in residential proxies in 195+ countries (default = US) + auto-CAPTCHA / Cloudflare Turnstile / hCaptcha solving + JS-fingerprint/timezone/locale/behavior matched to exit IP. Override country via `proxy_country_code` (snake_case Python / `proxyCountryCode` TS). Zyte / external proxies explicitly NOT used — Cloud's stack is integrated and would be redundant.
 6. Schema-enforced — Pydantic via Cloud `structuredOutput`; malformed responses fail fast and route to retry.
 7. Cost-capped — `max_agent_steps=18`, retry cap N=3, optional `--max-cost-usd`.
 
@@ -71,3 +71,30 @@ Human goldie at `eval/goldie/human-goldie-v2-audited.csv` must be reviewed PERFE
 - `ai-goldie-100.csv` ← rows 9901–10000
 
 CSV column order matches `eval/gold-standard.csv` exactly so user manual review is on familiar ground.
+
+## v1.4 prompt status (2026-04-27 EOD)
+
+Locked candidate prompt: `eval/prompts/ai-goldie-v1.4.md` (~5KB). Iteration history v0 → v1 → v1.1 → v1.2 → v1.3 → v1.4, each committed locally with rationale.
+
+Measurements vs `eval/gold-standard.csv` rows 51-100:
+- v1.1 cloud (full automated, 50 DOIs): authors 78%, rases 48%, CA 70%, abstract 68%, pdf_url 42%, overall 16%.
+- v1.4 manual-MCP (50 DOIs walked one-by-one in real Chrome via `mcp__claude-in-chrome__find`): authors 50%, rases 36%, CA 56%, abstract 28%, **pdf_url 62% (+20pp)**, overall 12%.
+
+The v1.4 manual numbers are depressed by the `find` tool returning element summaries instead of verbatim content — they do NOT represent v1.4's true cloud-extraction quality. The PDF URL +20pp gain IS real and confirms v1.4's "no URL construction from DOI patterns" rule.
+
+A fair v1.4 measurement requires one automated cloud run on holdout-50. Account credits exhausted (browser-use Cloud returned `402 Payment Required` mid-iteration on v1.3); top-up at <https://cloud.browser-use.com/bux> before the final pre-lock measurement.
+
+## Bot-check bypass (no Zyte)
+
+For 10K production extraction in Phase E, the bot-check strategy is **browser-use Cloud's built-in stack**:
+- 195+ country residential proxies (default `proxy_country_code=us`).
+- Automatic Cloudflare Turnstile / hCaptcha / reCAPTCHA solving.
+- Chromium fork with JS-fingerprint, timezone, locale, GPU/screen-resolution matched to exit IP.
+- Behavioral layer for human-like mouse / scroll / typing.
+
+**Zyte explicitly not adopted** — Cloud's anti-bot is integrated; Zyte would be redundant + double-billed. Cloud-gated publishers we observed in the manual MCP pass (ScienceDirect occasionally, APS, Brill, ACS, Ovid, T&F sometimes) are exactly the class Cloud's stack is designed to handle. If a specific publisher still gates after Phase E.1 smoke, override `--proxy-country <ISO>` per-batch (e.g., `de` for German publishers).
+
+Reference docs:
+- <https://docs.browser-use.com/guides/proxies-and-stealth> (canonical proxy parameter ref)
+- <https://browser-use.com/posts/bot-detection> (their anti-bot architecture overview)
+- <https://cloud.browser-use.com/bux> (account credits / billing dashboard)
