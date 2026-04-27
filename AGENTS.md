@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 Conventions for contributors — human or AI — working in this repo.
 
@@ -92,8 +92,8 @@ Adds a separate sprint on top of the existing eval harness to grow gold from 100
 | Script | Purpose |
 |---|---|
 | `sample_50_random_dois.py` | Pulls 50 random DOIs from Crossref `/works?sample=50`, de-duped against manual gold |
-| `extract_with_agent_browser.py` | **Pass A** — Python subprocess drives `agent-browser` (headed Chromium), single Claude call per DOI with tool-use schema |
-| `extract_with_agent_claude.py` | **Pass B** — Claude-driven agent loop over `agent-browser` tools (7 browser tools + `record_extraction`, 15-turn cap, 40K-input-token budget) |
+| `extract_with_agent_browser.py` | **Pass A** — Python subprocess drives `agent-browser` (headed Chromium), single Codex call per DOI with tool-use schema |
+| `extract_with_agent_claude.py` | **Pass B** — Codex-driven agent loop over `agent-browser` tools (7 browser tools + `record_extraction`, 15-turn cap, 40K-input-token budget) |
 | `extract_with_real_chrome.py` | Pass C fallback — `agent-browser --auto-connect` attaching to user's running Chrome |
 | `extract_with_browser_use.py` | **Pass C** — `browser-use` library + real Chrome over CDP (Profile 2), pre-built agent loop |
 | `compare_passive_vs_agentic.py` | Field-by-field diff between extracted CSVs |
@@ -113,9 +113,9 @@ Adds a separate sprint on top of the existing eval harness to grow gold from 100
 
 Use `load_dotenv(..., override=True)` in *every* pilot script. Without `override=True`, a stale shell-exported `ANTHROPIC_API_KEY` silently shadows the clean value in `eval/.env` and produces `APIConnectionError` / `LocalProtocolError: Illegal header value` that looks like an SSL bug but isn't. Burned ~45 min on this 2026-04-21.
 
-### Claude-in-Chrome (`/chrome`) — client-side only
+### Codex-in-Chrome (`/chrome`) — client-side only
 
-The `/chrome` slash command activates the Anthropic Chrome extension in the Claude Code *client UI*. It does **not** inject browser-control tools into the API session of an assistant driving work programmatically. Assistants cannot invoke `/chrome` via the Skill tool — the runtime explicitly rejects it ("chrome is a UI command, not a skill"). For programmatic real-Chrome automation, use `agent-browser --auto-connect` or `browser-use` (both connect via CDP to a Chrome launched with `--remote-debugging-port=9222`).
+The `/chrome` slash command activates the Anthropic Chrome extension in the Codex *client UI*. It does **not** inject browser-control tools into the API session of an assistant driving work programmatically. Assistants cannot invoke `/chrome` via the Skill tool — the runtime explicitly rejects it ("chrome is a UI command, not a skill"). For programmatic real-Chrome automation, use `agent-browser --auto-connect` or `browser-use` (both connect via CDP to a Chrome launched with `--remote-debugging-port=9222`).
 
 ### Launching real Chrome for Pass C
 
@@ -130,7 +130,7 @@ open -a "Google Chrome" --args \
 
 ### Pilot findings (2026-04-21)
 
-| Metric | Pass A (passive, headed) | Pass B (Claude+agent-browser) | Pass C (browser-use+real Chrome) |
+| Metric | Pass A (passive, headed) | Pass B (Codex+agent-browser) | Pass C (browser-use+real Chrome) |
 |---|---|---|---|
 | rows OK | 50/50 | 28/50 (22 token-budget failures) | pending |
 | cost | **$1.10** | $5.09 | pending |
@@ -156,72 +156,3 @@ Three paths evaluated:
 - **Browserbase / browser-use Cloud** — 50+ concurrent, blows budget at sustained scale ($72/day)
 
 Recommendation: **Mac Mini for one-shot 10K build**. Keep Xvfb as scalable fallback. Full writeup in `OXJOB.md`.
-
-### AI Goldie prompt-validation plan (2026-04-27)
-
-Current objective: tune an AI Goldie extraction prompt on the first 50 human rows, validate on rows 51-100, and only scale to additional 100-DOI batches after greater than 95% agreement.
-
-Local split:
-- `eval/goldie/train-50.csv` is rows 1-50 and is the prompt-tuning set.
-- `eval/goldie/holdout-50.csv` is rows 51-100 and is sealed validation. Do not repeatedly tune against it.
-- `eval/Gold-Standard.csv` currently has 100 nonblank rows plus one trailing blank row.
-
-Raw CSV schema details that matter for prompt accuracy:
-- `Authors` is JSON encoded.
-- Author objects use `name`, `rasses`, and `corresponding_author`.
-- Several missing abstracts, authors, and PDF URLs are encoded as `N/A`; diff/export logic must normalize or preserve that intentionally.
-
-Preferred technical path after current docs check:
-- Use Browser Use structured output for JSON extraction, then convert to raw gold CSV.
-- For local pilots, use browser-use with real Chrome over CDP.
-- For scale, benchmark Browser Use Cloud v3 because it has structured output, sessions, profiles, model selection, and task metadata.
-- Test `claude-sonnet-4.6` first because Browser Use currently recommends it; benchmark `gpt-5.4-mini` as the cost/latency challenger and keep it only if it clears the 95% target.
-- Use separate browser sessions or browser instances per concurrent worker.
-- Keep deterministic HTML metadata extraction as a cheap preflight before invoking a browser agent.
-- Do not use Claude `/chrome` as the programmatic backend; use Browser Use or explicit CDP automation.
-
-Batch naming target:
-- `ai-goldie-1.csv` contains DOI rows 1-100.
-- `ai-goldie-2.csv` contains DOI rows 101-200.
-- `ai-goldie-3.csv` contains DOI rows 201-300.
-- Continue until 10,000 DOI rows are covered, with human audit after each 100-row candidate batch.
-
-Companion notes:
-- `MEMORY.md` records the persistent working memory for this objective.
-- `OBJECTIVE.md` states the success criteria.
-- `PLAN.md` contains the execution plan and current command skeletons.
-
-### Locked decisions (Session 2, 2026-04-27)
-
-User priority: **accuracy + time over cost**. Bullet-proof.
-
-**Stack, two-tier:**
-- Holdout-50 validation: local browser-use library + 4 parallel headed Chromes via CDP, BYOK Anthropic. Reuses `eval/scripts/run_ai_goldie.py`.
-- 10K production: **browser-use Cloud Tasks API, Business tier ($299/mo, 200 concurrent)**. Full 10K in ~38 min wall, ~$1,310 all-in (LLM ~$1k + sessions ~$8 + plan $299). Chosen over Dev (5h wall, $29) and Scaleup ($999, diminishing return).
-- Models: claude-sonnet-4-6 (`claude-sonnet-4-5` in browser-use's type registry) by default. Opus 4.7 only if Sonnet underperforms — marginal accuracy rarely worth 2.5× cost at 10K scale.
-- `/chrome` is rejected (interactive UI only, no batch, no structured output, no resume, vision-based). Anthropic Computer Use shares the vision-based weakness; browser-use's DOM accessibility tree wins for structured extraction.
-
-**Hard prerequisites before any AI run:**
-- Human goldie must be audited PERFECT, especially CA (corresponding-author) coverage — CDL paid OpenAlex $50k for it. Dedicated CA second sweep over all 100 rows after the first audit pass.
-- The audited human goldie is the *only* validation truth; pre-audit numbers are not reported.
-
-**Hybrid cadence for the 10K production run:**
-1. Phase E.1 — extract batch 1 only (DOIs 1-100) → user reviews → gate.
-2. Phase E.2 — extract batches 2-100 in parallel only after batch-1 review is clean.
-
-**Bullet-proof guarantees in `extract_batch_cloud.py`:**
-1. Resumable — SHA-256-keyed checkpoint at `eval/data/.checkpoint/ai-goldie-N.partial.jsonl`. Re-runs skip DOIs already landed.
-2. Atomic — per-batch CSV writes are `.tmp` + rename.
-3. Idempotent — DOI-keyed; re-runs of same window produce same output.
-4. Transparent failures — `ai-goldie-N.failures.jsonl` is the source of truth for blank rows.
-5. Bot-check resilient — Cloud's hosted real Chrome + residential-proxy ($5/GB) fallback only on `has_bot_check=true`.
-6. Schema-enforced — Pydantic via Cloud `structuredOutput`; malformed responses fail fast.
-7. Cost-capped — `max_agent_steps=18`, retry cap N=3, optional `--max-cost-usd`.
-
-**Phase ordering (sealed):**
-- Phase A: human audit (USER, ~6-8 hr).
-- Phase B: write `eval/prompts/ai-goldie-v1.md` from train-50 patterns. Schema in `run_ai_goldie.py` is already updated to v1.
-- Phase C: validate v1 on holdout-50, iterate v1.1, v1.2, … until ≥95% per-field. Insoluble residuals → `eval/goldie/insoluble-cases.md` → ship to Casey.
-- Phase D: `eval/scripts/sample_10k_dois.py` produces `eval/data/ai-goldie-source-10k.csv` (Crossref `/works?sample`, dedup vs gold).
-- Phase E: `eval/scripts/extract_batch_cloud.py` produces `eval/data/ai-goldie-{1..100}.csv`.
-- Phase F: USER reviews each ai-goldie-N.csv, edits in place, commits.
