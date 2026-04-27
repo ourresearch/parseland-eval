@@ -4,7 +4,7 @@ Defaults to train-50.csv. Hard-refuses to run on holdout (prompt iteration leaka
 
 Stack:
   - browser-use library + real Chrome over CDP (the Pass C codepath)
-  - v0 prompt + record_extraction tool schema lifted into a Pydantic model
+  - versioned prompt + record_extraction-style Pydantic model
   - sequential by default; --concurrency N to parallelize via asyncio (best-effort, browser-use manages tabs)
   - BYOK Anthropic via eval/.env
 
@@ -20,7 +20,7 @@ Launch Chrome first:
 
 Run:
     /path/to/eval/.venv/bin/python eval/scripts/run_ai_goldie.py \\
-        --prompt eval/prompts/ai-goldie-v0.md \\
+        --prompt eval/prompts/ai-goldie-v1.md \\
         --input  eval/goldie/train-50.csv \\
         --limit  5                            # smoke first
 """
@@ -44,7 +44,7 @@ from pydantic import BaseModel, Field
 
 EVAL_DIR = Path(__file__).resolve().parents[1]
 REPO_DIR = EVAL_DIR.parent
-DEFAULT_PROMPT = EVAL_DIR / "prompts" / "ai-goldie-v0.md"
+DEFAULT_PROMPT = EVAL_DIR / "prompts" / "ai-goldie-v1.md"
 DEFAULT_INPUT = EVAL_DIR / "goldie" / "train-50.csv"
 DEFAULT_OUTPUT_DIR = REPO_DIR / "runs"
 DEFAULT_MODEL = "claude-sonnet-4-5"
@@ -58,11 +58,13 @@ log = logging.getLogger("ai-goldie")
 
 class AuthorOut(BaseModel):
     name: str
+    rasses: str = ""
+    corresponding_author: bool = False
     affiliations: list[str] = Field(default_factory=list)
 
 
 class ExtractionOut(BaseModel):
-    """Mirror of the v0 record_extraction input_schema. Verbatim from prompt v0."""
+    """Structured output for AI Goldie extraction."""
     authors: list[AuthorOut]
     abstract: str | None = None
     pdf_url: str | None = None
@@ -176,6 +178,7 @@ async def extract_one(
 def to_gold_record(r: RunRow) -> dict[str, Any]:
     e = r.extraction or {}
     authors = e.get("authors") or []
+    authors = [_normalize_author(a) for a in authors if isinstance(a, dict)]
     return {
         "No": r.no,
         "DOI": r.doi,
@@ -189,6 +192,32 @@ def to_gold_record(r: RunRow) -> dict[str, Any]:
         "Resolves To PDF": bool(e.get("resolves_to_pdf")) if e else None,
         "broken_doi": bool(e.get("broken_doi")) if e else False,
         "no english": bool(e.get("no_english")) if e else False,
+    }
+
+
+def _normalize_author(author: dict[str, Any]) -> dict[str, Any]:
+    """Return raw gold-style author shape from v0/v1 AI author output."""
+    name = str(author.get("name") or "").strip()
+    rasses = author.get("rasses")
+    if isinstance(rasses, list):
+        rasses = " | ".join(str(s or "").strip() for s in rasses if str(s or "").strip())
+    elif rasses is None:
+        affiliations = author.get("affiliations") or []
+        if isinstance(affiliations, list):
+            rasses = " | ".join(str(s or "").strip() for s in affiliations if str(s or "").strip())
+        else:
+            rasses = str(affiliations or "").strip()
+    else:
+        rasses = str(rasses).strip()
+
+    corresponding = author.get("corresponding_author")
+    if corresponding is None:
+        corresponding = author.get("is_corresponding")
+
+    return {
+        "name": name,
+        "rasses": rasses,
+        "corresponding_author": bool(corresponding),
     }
 
 

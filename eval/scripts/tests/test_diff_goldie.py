@@ -12,6 +12,7 @@ from diff_goldie import (  # noqa: E402
     authors_match,
     canonicalize_url,
     corresponding_match,
+    normalize_absent,
     normalize_name,
     pdf_url_match,
     rases_match,
@@ -23,6 +24,13 @@ from diff_goldie import (  # noqa: E402
 def test_normalize_name_collapses_punct_and_case():
     assert normalize_name("Smith, J.") == "smith j"
     assert normalize_name("O'Brien-Jones") == "o brien jones"
+
+
+def test_normalize_absent_handles_goldie_sentinels():
+    assert normalize_absent("N/A") == ""
+    assert normalize_absent(" na ") == ""
+    assert normalize_absent(None) == ""
+    assert normalize_absent("real value") == "real value"
 
 
 # ---- authors_match (3 cases) ----------------------------------------------
@@ -121,6 +129,7 @@ def test_abstract_disagree_below_threshold():
 def test_abstract_both_empty_is_match():
     assert abstract_match("", "") is True
     assert abstract_match(None, None) is True
+    assert abstract_match("N/A", "") is True
 
 
 def test_abstract_one_empty_is_miss():
@@ -153,11 +162,17 @@ def test_pdf_url_disagree_on_different_paths():
 def test_pdf_url_both_empty_is_match():
     assert pdf_url_match("", "") is True
     assert pdf_url_match(None, None) is True
+    assert pdf_url_match("N/A", "") is True
 
 
 def test_pdf_url_one_empty_is_miss():
     assert pdf_url_match("https://example.com/paper.pdf", "") is False
+    assert pdf_url_match("https://example.com/paper.pdf", "N/A") is False
 
 
 def test_canonicalize_url_drops_fragment_and_lowers_host():
     assert canonicalize_url("HTTPS://Example.COM/Foo/#section") == "https://example.com/Foo"
+
+
+def test_canonicalize_url_treats_na_as_absent():
+    assert canonicalize_url("N/A") == ""

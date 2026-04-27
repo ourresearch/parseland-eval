@@ -50,6 +50,7 @@ ABSTRACT_THRESHOLD = 0.95
 
 _PUNCT_RE = re.compile(r"[.,'\"\-]")
 _WS_RE = re.compile(r"\s+")
+_ABSENT_SENTINELS = {"", "n/a", "na", "none", "null"}
 
 
 # ---- normalization ---------------------------------------------------------
@@ -61,10 +62,18 @@ def normalize_name(s: str) -> str:
     return s
 
 
+def normalize_absent(s: str | None) -> str:
+    if s is None:
+        return ""
+    value = str(s).strip()
+    return "" if value.lower() in _ABSENT_SENTINELS else value
+
+
 def canonicalize_url(u: str | None) -> str:
+    u = normalize_absent(u)
     if not u:
         return ""
-    parts = urlsplit(u.strip())
+    parts = urlsplit(u)
     scheme = parts.scheme.lower()
     netloc = parts.netloc.lower()
     path = parts.path.rstrip("/")
@@ -134,8 +143,8 @@ def corresponding_match(human_authors: list[dict], ai_authors: list[dict]) -> bo
 
 
 def abstract_match(human: str | None, ai: str | None, threshold: float = ABSTRACT_THRESHOLD) -> bool:
-    h = (human or "").strip()
-    a = (ai or "").strip()
+    h = normalize_absent(human)
+    a = normalize_absent(ai)
     if not h and not a:
         return True
     if not h or not a:
