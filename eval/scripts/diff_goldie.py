@@ -188,6 +188,18 @@ def _load_human(path: Path) -> dict[str, dict]:
 
 
 def _load_ai(path: Path) -> dict[str, dict]:
+    """Accept JSON (gold-standard.json shape — list of records) OR CSV
+    (gold-standard.csv shape — Authors as JSON-encoded string)."""
+    suffix = path.suffix.lower()
+    if suffix == ".csv":
+        return _load_ai_csv(path)
+    if suffix == ".json":
+        return _load_ai_json(path)
+    head = path.read_text()[:200].lstrip()
+    return _load_ai_json(path) if head.startswith(("[", "{")) else _load_ai_csv(path)
+
+
+def _load_ai_json(path: Path) -> dict[str, dict]:
     raw = json.loads(path.read_text())
     if not isinstance(raw, list):
         raise SystemExit(f"AI JSON at {path} must be a list of records")
@@ -205,6 +217,30 @@ def _load_ai(path: Path) -> dict[str, dict]:
             "abstract": r.get("Abstract") or r.get("abstract") or "",
             "pdf_url": r.get("PDF URL") or r.get("pdf_url") or "",
         }
+    return out
+
+
+def _load_ai_csv(path: Path) -> dict[str, dict]:
+    """Read a gold-standard-shaped CSV (Authors is a JSON-encoded string)."""
+    out: dict[str, dict] = {}
+    with path.open(newline="") as f:
+        for r in csv.DictReader(f):
+            doi = (r.get("DOI") or "").strip()
+            if not doi:
+                continue
+            authors_raw = r.get("Authors") or ""
+            try:
+                authors = json.loads(authors_raw) if authors_raw.strip() else []
+            except json.JSONDecodeError:
+                authors = []
+            if not isinstance(authors, list):
+                authors = []
+            out[doi] = {
+                "doi": doi,
+                "authors": authors,
+                "abstract": r.get("Abstract") or "",
+                "pdf_url": r.get("PDF URL") or "",
+            }
     return out
 
 
