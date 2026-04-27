@@ -1,11 +1,22 @@
-"""Production-scale AI Goldie extraction via browser-use Cloud Tasks API.
+"""Production-scale AI Goldie extraction via browser-use Cloud v3 sessions API.
 
 Reads `ai-goldie-source-10k.csv` in 100-DOI windows. For each window:
-  - POSTs each DOI to `https://api.browser-use.com/api/v2/tasks` with the
-    locked AI Goldie prompt + DOI URL as the `task` and the v1 record_extraction
-    JSON Schema as `structuredOutput`.
-  - Polls task status until terminal.
+  - POSTs each DOI to `https://api.browser-use.com/api/v3/sessions` with:
+      task                      = per-DOI directive (extract scholarly metadata)
+      system_prompt_extension   = the locked v1 prompt body (lifted from .md)
+      start_url                 = `https://doi.org/{DOI}` (saves a navigation step)
+      output_schema             = v1 record_extraction JSON Schema (Pydantic-derived)
+      llm                       = `claude-sonnet-4.6` (default; per browser-use rec)
+      judge                     = True (quality verifier)
+      vision                    = False (text-only DOM, faster + cheaper)
+  - Polls `GET /api/v3/sessions/{id}` until terminal status:
+      `idle` | `stopped` | `error` | `timed_out`
+  - Reads parsed structured object from `output` and converts to a gold-standard row.
   - Writes `eval/data/ai-goldie-N.csv` in raw gold-standard column order.
+
+Note: v3's hosted Chrome runs **with US residential proxy by default** — no proxy
+fallback flag needed. To force a different country, pass `proxy_country_code`
+(e.g. "de"). To disable proxy entirely, pass `proxy_country_code: None`.
 
 Bullet-proof contract (per OBJECTIVE.md):
   1. Resumable     — `eval/data/.checkpoint/ai-goldie-N.partial.jsonl` records every
@@ -14,9 +25,10 @@ Bullet-proof contract (per OBJECTIVE.md):
   3. Idempotent    — DOI-keyed; same window produces same output.
   4. Transparent   — `eval/data/ai-goldie-N.failures.jsonl` is the source of truth
                      for blank rows. Filled rows + failures lines == 100 per batch.
-  5. Bot-resilient — on `has_bot_check=true`, retry once with `--proxy residential`.
-  6. Schema-locked — `structuredOutput` enforced server-side by browser-use Cloud.
-  7. Cost-capped   — `max_agent_steps=18`, retry cap N=3, optional `--max-cost-usd`.
+  5. Bot-resilient — residential proxy default; `has_bot_check=true` rows get one
+                     retry (since proxy may rotate IP between attempts).
+  6. Schema-locked — `output_schema` enforced server-side; v3 returns parsed object.
+  7. Cost-capped   — retry cap N=3, optional `--max-cost-usd`.
 
 Usage:
   Smoke (Phase E.1) — extract batch 1 only, then user reviews:
@@ -59,14 +71,17 @@ DEFAULT_SOURCE = EVAL_DIR / "data" / "ai-goldie-source-10k.csv"
 DEFAULT_OUTPUT_DIR = EVAL_DIR / "data"
 CHECKPOINT_DIR_NAME = ".checkpoint"
 
-API_BASE = "https://api.browser-use.com/api/v2"
-DEFAULT_MODEL = "claude-sonnet-4-5"
+API_BASE = "https://api.browser-use.com/api/v3"
+DEFAULT_MODEL = "claude-sonnet-4.6"
 BATCH_SIZE = 100
-DEFAULT_MAX_AGENT_STEPS = 18
 DEFAULT_RETRY_CAP = 3
 RETRY_BACKOFF_SEC = (10.0, 60.0, 300.0)
 DEFAULT_POLL_INTERVAL = 5.0
-DEFAULT_TASK_TIMEOUT_SEC = 30 * 60  # 30 min hard cap per task
+DEFAULT_TASK_TIMEOUT_SEC = 30 * 60  # 30 min hard cap per session
+
+# v3 terminal session statuses (https://docs.browser-use.com/cloud/agent/n8n)
+TERMINAL_OK = {"idle"}
+TERMINAL_FAIL = {"stopped", "error", "timed_out"}
 
 GOLD_COLUMNS = [
     "No", "DOI", "Link", "Authors", "Abstract", "PDF URL",
@@ -121,13 +136,15 @@ def load_prompt(path: Path) -> tuple[str, str]:
     return version, m.group("body").strip()
 
 
-def build_task(system_prompt_body: str, doi: str, link: str) -> str:
+def build_task(doi: str, link: str) -> str:
+    """Per-DOI directive. The full extraction rules live in `system_prompt_extension`
+    (lifted from the locked .md prompt). The browser is already pointed at `link`
+    via `start_url`, so the task itself stays short and focused."""
     return (
-        f"{system_prompt_body}\n\n"
-        f"---\n\n"
-        f"DOI: {doi}\n"
-        f"URL: {link}\n\n"
-        "Navigate to the URL and emit the structured extraction when you have enough data."
+        f"Extract scholarly metadata for DOI {doi} from this landing page "
+        f"({link}). Follow the rules in the system prompt and emit the structured "
+        f"extraction matching the provided output_schema. Stop as soon as you "
+        f"have enough data — do not browse indefinitely."
     )
 
 
@@ -251,29 +268,45 @@ def write_csv_atomic(path: Path, rows: list[dict[str, Any]]) -> None:
 # ---- browser-use Cloud client ----------------------------------------------
 
 class CloudClient:
-    """Minimal async client for browser-use Cloud Tasks v2.
+    """Minimal async client for browser-use Cloud v3 sessions API.
 
-    Notes:
-      - Field naming: the OpenAPI schema uses camelCase (`structuredOutput`,
-        `llm`, `maxAgentSteps`). If the deployed API rejects a field, the
-        error body is logged and propagated for the caller to handle.
-      - Polling: 5s default, with a 30 min hard cap per task.
+    Endpoints:
+      POST /api/v3/sessions   — create + run task in one call
+      GET  /api/v3/sessions/{id} — poll for terminal status
+
+    Body (snake_case, per https://docs.browser-use.com/cloud/llms-full.txt):
+      task                     str  required
+      llm                      str  e.g. "claude-sonnet-4.6"
+      output_schema            dict JSON Schema (Pydantic-derived)
+      start_url                str  prelands the browser
+      system_prompt_extension  str  appended to the agent's system prompt
+      vision                   bool default False (text-only DOM is faster + cheaper)
+      judge                    bool quality verifier
+      proxy_country_code       str  (or None) — default is US residential
+
+    Terminal statuses: idle (success) | stopped | error | timed_out (failures).
     """
 
     def __init__(
         self,
         api_key: str,
         model: str = DEFAULT_MODEL,
-        max_agent_steps: int = DEFAULT_MAX_AGENT_STEPS,
         poll_interval: float = DEFAULT_POLL_INTERVAL,
         task_timeout_sec: float = DEFAULT_TASK_TIMEOUT_SEC,
         timeout_sec: float = 60.0,
+        use_judge: bool = True,
+        proxy_country_code: str | None = "default",
     ) -> None:
+        """`proxy_country_code`: 'default' (sentinel) leaves it unset so v3's US
+        residential default applies. A real string ('de', 'us', etc.) overrides.
+        Pass `None` to disable proxy entirely.
+        """
         self._api_key = api_key
         self._model = model
-        self._max_agent_steps = max_agent_steps
         self._poll_interval = poll_interval
         self._task_timeout_sec = task_timeout_sec
+        self._use_judge = use_judge
+        self._proxy_country_code = proxy_country_code
         self._client = httpx.AsyncClient(
             base_url=API_BASE,
             headers={
@@ -286,51 +319,57 @@ class CloudClient:
     async def aclose(self) -> None:
         await self._client.aclose()
 
-    async def create_task(
+    async def create_session(
         self,
         task_text: str,
-        structured_output_schema_json: str,
-        proxy_residential: bool = False,
+        output_schema: dict[str, Any],
+        start_url: str,
+        system_prompt_extension: str,
     ) -> str:
         body: dict[str, Any] = {
             "task": task_text,
-            "structuredOutput": structured_output_schema_json,
             "llm": self._model,
-            "maxAgentSteps": self._max_agent_steps,
-            "saveBrowserData": False,
+            "output_schema": output_schema,
+            "start_url": start_url,
+            "system_prompt_extension": system_prompt_extension,
+            "vision": False,
+            "judge": self._use_judge,
         }
-        if proxy_residential:
-            body["proxyType"] = "residential"
-        resp = await self._client.post("/tasks", json=body)
+        # Only include proxy_country_code if explicitly set (not the sentinel).
+        if self._proxy_country_code != "default":
+            body["proxy_country_code"] = self._proxy_country_code
+        resp = await self._client.post("/sessions", json=body)
         if resp.status_code >= 400:
-            raise RuntimeError(f"create_task http {resp.status_code}: {resp.text[:500]}")
+            raise RuntimeError(f"create_session http {resp.status_code}: {resp.text[:500]}")
         data = resp.json()
-        task_id = data.get("id") or data.get("task_id") or data.get("taskId")
-        if not task_id:
-            raise RuntimeError(f"create_task returned no id: {data}")
-        return task_id
+        session_id = data.get("id") or data.get("session_id") or data.get("sessionId")
+        if not session_id:
+            raise RuntimeError(f"create_session returned no id: {data}")
+        return session_id
 
-    async def wait_for_task(self, task_id: str) -> dict[str, Any]:
+    async def wait_for_session(self, session_id: str) -> dict[str, Any]:
         loop = asyncio.get_event_loop()
         start = loop.time()
         while True:
             if loop.time() - start > self._task_timeout_sec:
-                raise TimeoutError(f"task {task_id} exceeded {self._task_timeout_sec}s")
-            resp = await self._client.get(f"/tasks/{task_id}")
+                raise TimeoutError(f"session {session_id} exceeded {self._task_timeout_sec}s")
+            resp = await self._client.get(f"/sessions/{session_id}")
             if resp.status_code >= 400:
-                raise RuntimeError(f"get_task http {resp.status_code}: {resp.text[:500]}")
+                raise RuntimeError(f"get_session http {resp.status_code}: {resp.text[:500]}")
             data = resp.json()
             status = (data.get("status") or "").lower()
-            if status in {"finished", "completed", "succeeded", "success"}:
+            if status in TERMINAL_OK:
                 return data
-            if status in {"failed", "error", "cancelled", "canceled", "stopped"}:
-                raise RuntimeError(f"task {task_id} terminal-failed: status={status} body={data}")
+            if status in TERMINAL_FAIL:
+                raise RuntimeError(f"session {session_id} terminal-failed: status={status} body={data}")
             await asyncio.sleep(self._poll_interval)
 
 
 def extraction_from_task(task_data: dict[str, Any]) -> dict[str, Any] | None:
     """Walk common keys until we find the structured output object."""
-    for k in ("output", "structured_output", "structuredOutput", "result", "data"):
+    # v3 returns the parsed structured object at `output`; the others are
+    # defensive fallbacks if the response shape varies.
+    for k in ("output", "structured_output", "result", "data"):
         v = task_data.get(k)
         if v is None:
             continue
@@ -368,41 +407,42 @@ async def run_doi(
     doi: str,
     link: str,
     task_text: str,
-    schema_json: str,
+    output_schema: dict[str, Any],
+    system_prompt_extension: str,
     retry_cap: int,
 ) -> TaskResult:
     loop = asyncio.get_event_loop()
     start = loop.time()
     last_error: str | None = None
-    last_task_id: str | None = None
+    last_session_id: str | None = None
     last_cost: float | None = None
-    proxy_used = False
 
     for attempt in range(retry_cap + 1):
         async with sem:
             try:
-                task_id = await client.create_task(
+                session_id = await client.create_session(
                     task_text=task_text,
-                    structured_output_schema_json=schema_json,
-                    proxy_residential=proxy_used,
+                    output_schema=output_schema,
+                    start_url=link,
+                    system_prompt_extension=system_prompt_extension,
                 )
-                last_task_id = task_id
-                data = await client.wait_for_task(task_id)
+                last_session_id = session_id
+                data = await client.wait_for_session(session_id)
                 last_cost = task_cost_usd(data)
                 extraction = extraction_from_task(data)
                 if extraction is None:
                     last_error = "no_structured_output"
                 else:
-                    # If bot-checked and we haven't tried proxy yet, retry with proxy.
-                    if extraction.get("has_bot_check") and not proxy_used and attempt < retry_cap:
-                        proxy_used = True
-                        last_error = "has_bot_check (retrying with residential proxy)"
+                    # If bot-checked, one quick retry — the residential proxy may
+                    # rotate IP between sessions. After that, leave the row blank.
+                    if extraction.get("has_bot_check") and attempt < retry_cap:
+                        last_error = "has_bot_check (retrying)"
                         await asyncio.sleep(RETRY_BACKOFF_SEC[min(attempt, len(RETRY_BACKOFF_SEC) - 1)])
                         continue
                     return TaskResult(
                         no=no, doi=doi, link=link,
                         extraction=extraction,
-                        task_id=task_id,
+                        task_id=session_id,
                         duration_s=round(loop.time() - start, 2),
                         retries=attempt,
                         error=None,
@@ -450,7 +490,7 @@ async def run_batch(
     batch_no: int,
     rows: list[dict[str, str]],
     system_prompt_body: str,
-    schema_json: str,
+    output_schema: dict[str, Any],
     concurrency: int,
     retry_cap: int,
 ) -> dict[str, Any]:
@@ -469,8 +509,13 @@ async def run_batch(
         no = int(row["No"])
         doi = row["DOI"]
         link = row["Link"] or f"https://doi.org/{doi}"
-        task_text = build_task(system_prompt_body, doi, link)
-        result = await run_doi(client, sem, no, doi, link, task_text, schema_json, retry_cap)
+        task_text = build_task(doi, link)
+        result = await run_doi(
+            client, sem, no, doi, link, task_text,
+            output_schema=output_schema,
+            system_prompt_extension=system_prompt_body,
+            retry_cap=retry_cap,
+        )
         gold_row = to_gold_row(result)
         gold_row["_meta"] = {
             "task_id": result.task_id,
@@ -548,13 +593,12 @@ async def main_async(args) -> int:
 
     version, system_prompt_body = load_prompt(args.prompt)
     log.info("prompt %s (version=%s, %d chars)", args.prompt, version, len(system_prompt_body))
-    schema_json = json.dumps(ExtractionOut.model_json_schema())
+    output_schema = ExtractionOut.model_json_schema()
 
-    client = CloudClient(
-        api_key=api_key,
-        model=args.model,
-        max_agent_steps=args.max_agent_steps,
-    )
+    client_kwargs: dict[str, Any] = {"api_key": api_key, "model": args.model, "use_judge": args.judge}
+    if args.proxy_country is not None:
+        client_kwargs["proxy_country_code"] = args.proxy_country
+    client = CloudClient(**client_kwargs)
     try:
         end_batch = args.start_batch + args.batches - 1
         log.info("running batches %d..%d concurrency=%d model=%s",
@@ -572,7 +616,7 @@ async def main_async(args) -> int:
                 batch_no=batch_no,
                 rows=rows,
                 system_prompt_body=system_prompt_body,
-                schema_json=schema_json,
+                output_schema=output_schema,
                 concurrency=args.concurrency,
                 retry_cap=args.retry_cap,
             )
@@ -612,10 +656,16 @@ def main() -> int:
     ap.add_argument("--start-batch", type=int, default=1)
     ap.add_argument("--batches", type=int, default=1)
     ap.add_argument("--concurrency", type=int, default=200)
-    ap.add_argument("--model", default=DEFAULT_MODEL)
-    ap.add_argument("--max-agent-steps", type=int, default=DEFAULT_MAX_AGENT_STEPS)
+    ap.add_argument("--model", default=DEFAULT_MODEL,
+                    help=f"e.g. claude-sonnet-4.6 (default), claude-opus-4.6, gpt-5.4-mini")
     ap.add_argument("--retry-cap", type=int, default=DEFAULT_RETRY_CAP)
     ap.add_argument("--max-cost-usd", type=float, default=None)
+    ap.add_argument("--no-judge", dest="judge", action="store_false",
+                    help="Disable browser-use's quality judge (judge is on by default)")
+    ap.set_defaults(judge=True)
+    ap.add_argument("--proxy-country", default=None,
+                    help="Override default US residential proxy with a country code (e.g. 'de'). "
+                         "Pass empty string to disable proxy.")
     args = ap.parse_args()
     return asyncio.run(main_async(args))
 
