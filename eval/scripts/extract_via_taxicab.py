@@ -210,6 +210,28 @@ def extract_via_meta_tags(html: str, doi: str, link: str) -> dict[str, Any] | No
 
 # ---- Tier 2: Claude API on cleaned HTML ------------------------------------
 
+def _parse_json_with_repair(raw: str) -> tuple[dict[str, Any] | None, str | None]:
+    """Try to parse Claude's response as JSON, with light repair.
+
+    Returns (data, error_msg). On success error_msg is None.
+    Handles: leading/trailing markdown fences, control chars, the most common
+    Claude-output mistakes. Does NOT do aggressive repair — if the JSON is
+    structurally broken (missing comma, unescaped quote in middle of string),
+    we surface the error and let the caller decide whether to retry the LLM.
+    """
+    text = raw.strip()
+    # Strip ```json ... ``` fences.
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:json)?\n?", "", text)
+        text = re.sub(r"\n?```\s*$", "", text)
+    # Strip control chars that aren't valid in JSON strings.
+    text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
+    try:
+        return json.loads(text), None
+    except json.JSONDecodeError as exc:
+        return None, str(exc)
+
+
 def _strip_for_llm(html: str, budget_chars: int = HTML_BUDGET_CHARS) -> str:
     """Trim scripts/styles, keep <head> + first chunk of <body>."""
     # Drop scripts/styles aggressively; they're noise to the LLM.
@@ -270,21 +292,41 @@ def extract_via_claude(
         return None, {"error": f"anthropic call failed: {exc}"}
 
     raw = resp.content[0].text.strip() if resp.content else ""
-    json_text = raw
-    if json_text.startswith("```"):
-        # Strip ```json ... ``` fences.
-        json_text = re.sub(r"^```(?:json)?\n", "", json_text)
-        json_text = re.sub(r"\n```\s*$", "", json_text)
-
-    try:
-        data = json.loads(json_text)
-    except json.JSONDecodeError as exc:
-        return None, {"error": f"json decode: {exc}", "raw": raw[:400]}
+    data, parse_err = _parse_json_with_repair(raw)
 
     usage = {
         "input_tokens": resp.usage.input_tokens,
         "output_tokens": resp.usage.output_tokens,
     }
+
+    # If first attempt failed, ask Claude to fix the JSON (retry with explicit error context).
+    if data is None:
+        try:
+            retry_resp = client.messages.create(
+                model=model,
+                max_tokens=DEFAULT_LLM_MAX_TOKENS,
+                system=system_prompt,
+                messages=[
+                    {"role": "user", "content": user_msg},
+                    {"role": "assistant", "content": raw},
+                    {"role": "user", "content": (
+                        f"Your previous response was not valid JSON: {parse_err}.\n"
+                        "Reply with ONLY a corrected JSON object — no commentary, no markdown fences. "
+                        "Make sure to escape any embedded double quotes as \\\" and replace newlines/tabs "
+                        "in string fields with single spaces."
+                    )},
+                ],
+            )
+        except Exception as exc:  # noqa: BLE001
+            return None, {"error": f"anthropic retry failed: {exc}", "raw": raw[:400]}
+
+        retry_raw = retry_resp.content[0].text.strip() if retry_resp.content else ""
+        data, parse_err = _parse_json_with_repair(retry_raw)
+        usage["input_tokens"] += retry_resp.usage.input_tokens
+        usage["output_tokens"] += retry_resp.usage.output_tokens
+        usage["json_retry"] = True
+        if data is None:
+            return None, {"error": f"json decode (after retry): {parse_err}", "raw": retry_raw[:400]}
 
     # Coerce to the shape diff_goldie.py expects.
     extraction = {
