@@ -115,18 +115,26 @@ def _name_to_author(authors: list[dict]) -> dict[str, dict]:
     return {normalize_name(a.get("name", "")): a for a in authors if a.get("name")}
 
 
-def rases_match(human_authors: list[dict], ai_authors: list[dict]) -> bool:
+def rases_match(human_authors: list[dict], ai_authors: list[dict], *, relaxed: bool = False) -> bool:
     h_map = _name_to_author(human_authors)
     a_map = _name_to_author(ai_authors)
     shared = h_map.keys() & a_map.keys()
     if not shared:
-        # No shared authors. Treat as match only if both sides have no authors;
-        # otherwise the authors-comparator already flags the disagreement and
-        # we don't double-count here.
         return not (h_map or a_map)
     for name in shared:
-        if _author_rases(h_map[name]) != _author_rases(a_map[name]):
-            return False
+        h = (_author_rases(h_map[name]) or "").strip()
+        a = (_author_rases(a_map[name]) or "").strip()
+        if h == a:
+            continue
+        if relaxed:
+            # Per Casey 2026-04-29: accept substring matches (auditor recorded
+            # full multi-affil; AI extracted a portion). Also tolerate whitespace
+            # and casing drift.
+            h_n = " ".join(h.split()).lower()
+            a_n = " ".join(a.split()).lower()
+            if h_n == a_n or (h_n and a_n and (h_n in a_n or a_n in h_n)):
+                continue
+        return False
     return True
 
 
@@ -246,7 +254,24 @@ def _load_ai_csv(path: Path) -> dict[str, dict]:
 
 # ---- diff loop -------------------------------------------------------------
 
-def diff(human: dict[str, dict], ai: dict[str, dict]) -> tuple[dict, list[dict]]:
+def _pdf_url_match_relaxed(h: str, a: str, doi: str) -> bool:
+    """Same-host + (DOI or PII fragment) → match. Per Casey 2026-04-29: same publisher PDFs are valid."""
+    if pdf_url_match(h, a):
+        return True
+    h_c = canonicalize_url(h); a_c = canonicalize_url(a)
+    if not h_c or not a_c:
+        return False
+    h_host = urlsplit(h_c).netloc; a_host = urlsplit(a_c).netloc
+    if h_host != a_host:
+        return False
+    # Same host — accept if both URLs contain the DOI tail or any shared substring of the path
+    doi_tail = doi.split("/")[-1].lower() if doi else ""
+    if doi_tail and doi_tail in h_c.lower() and doi_tail in a_c.lower():
+        return True
+    return False
+
+
+def diff(human: dict[str, dict], ai: dict[str, dict], *, relaxed: bool = False) -> tuple[dict, list[dict]]:
     fields = ["authors", "rases", "corresponding", "abstract", "pdf_url"]
     counts = {f: 0 for f in fields}
     overall_match = 0
@@ -258,10 +283,10 @@ def diff(human: dict[str, dict], ai: dict[str, dict]) -> tuple[dict, list[dict]]
         a = ai[doi]
         per_field = {
             "authors": authors_match(h["authors"], a["authors"]),
-            "rases": rases_match(h["authors"], a["authors"]),
+            "rases": rases_match(h["authors"], a["authors"], relaxed=relaxed),
             "corresponding": corresponding_match(h["authors"], a["authors"]),
             "abstract": abstract_match(h["abstract"], a["abstract"]),
-            "pdf_url": pdf_url_match(h["pdf_url"], a["pdf_url"]),
+            "pdf_url": _pdf_url_match_relaxed(h["pdf_url"], a["pdf_url"], doi) if relaxed else pdf_url_match(h["pdf_url"], a["pdf_url"]),
         }
         for f, ok in per_field.items():
             if ok:
@@ -320,11 +345,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--ai", type=Path, required=True)
     parser.add_argument("--output-md", type=Path, required=True)
     parser.add_argument("--output-summary", type=Path, required=True)
+    parser.add_argument("--relaxed", action="store_true",
+                        help="Apply Casey-2026-04-29 comparator relaxations: rases substring, pdf_url same-host+DOI.")
     args = parser.parse_args(argv)
 
     human = _load_human(args.human)
     ai = _load_ai(args.ai)
-    summary, disagreements = diff(human, ai)
+    summary, disagreements = diff(human, ai, relaxed=args.relaxed)
 
     args.output_md.parent.mkdir(parents=True, exist_ok=True)
     args.output_summary.parent.mkdir(parents=True, exist_ok=True)
