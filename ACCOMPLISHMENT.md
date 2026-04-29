@@ -12,6 +12,60 @@ Daily log of completed work. Format follows the OXJOB `LEARNING.md` standard
 
 ---
 
+## 2026-04-29 (afternoon addendum) · Taxicab + Claude pivot lands 88% authors
+
+After Casey's "fair catch" feedback at noon — re-ranked priorities (rases > pdf_url > CA > abstract > authors), confirmed comparator relaxations are in scope, and re-asked about Taxicab/raw-HTML — pivoted hard. Two breakthroughs:
+
+### Breakthrough 1: Taxicab has cached HTML for ALL 11 bot-blocked DOIs
+
+Verified Taxicab `/taxicab/doi/<doi>` returns `download_url` + S3 path for the 5 most-blocked publishers (APS, Oxford Academic, ScienceDirect-legacy, Érudit Anubis, Malaysian OJS reCAPTCHA). Harvest happened *before* today's bot-checks — the HTML is sitting in S3. Bypasses the structural ceiling on the harvest side without Zyte.
+
+### Breakthrough 2: Taxicab+Claude beats Cloud v1.4 on every field
+
+New runner: `eval/scripts/extract_via_taxicab.py`. Pulls cached HTML, two-tier extraction (citation_* meta tags → Claude Sonnet 4.6 fallback), Pydantic schema, JSON-decode retry on parse failure. New prompt: `eval/prompts/ai-goldie-v1.5.md` (v1.4 + v1.1's "all authors" anchor + new long-form-affiliation rule + JSON output discipline).
+
+**Four-way head-to-head on holdout-50:**
+
+| Approach                         | Authors | Rases | CA  | Abstract | PDF URL | Overall | Wall  | Cost   |
+|----------------------------------|---------|-------|-----|----------|---------|---------|-------|--------|
+| v1.1 cloud (best-yet baseline)   | 78      | 48    | 70  | 68       | 42      | 16      | ~22m  | ~$15   |
+| v1.4 cloud (yesterday EOD)       | 68      | 40    | 60  | 64       | 50      | 16      | 22m   | $15.50 |
+| v1.4 Taxicab+Claude              | 82      | 44    | 72  | 74       | 56      | 18      | 30s   | $3.90  |
+| **v1.5 Taxicab+Claude+JSON-retry** | **88**  | 46    | **80** | **78**   | 52      | **20**  | **30s** | **$4.46** |
+
+vs Casey's 85% bar (priority order rases > pdf > ca > abstract > authors):
+- rases     46 → −39 pp ❌  (structural — see below)
+- pdf_url   52 → −33 pp ❌  (mostly comparator candidates)
+- ca        80 →  −5 pp 🟡  close
+- abstract  78 →  −7 pp 🟡  close
+- **authors 88 →  +3 pp ✅  ABOVE**
+
+**Speed and cost:** 44× faster wall time, 4× cheaper than browser-use Cloud. Sonnet 4.6 (vendor-recommended) instead of Opus 4.7. JSON-decode failures: 4/50 → 1/50 (the 1 left is `10.36838/v4i6.14`, the un-harvested DOI — known issue per CLAUDE.md).
+
+**Disagreement triage on the remaining gaps:**
+
+*Rases (#1 priority, 46% — structural):* 27 row mismatches mined per-author:
+- 23 AI-empty (Claude couldn't find any affiliation — pages without citation_author_institution meta tag and no parseable byline). Real ceiling.
+- 13 short-vs-long substring (AI extracts "Department X, Bozeman MT 59717"; Human has "Department X, Bozeman MT 59717; Small Grain Institute, …South Africa"). Comparator-relaxable.
+- 2 whitespace-only.
+- Substring relaxation lifts rases ~+12 pp → ~58%. Still 27 pp short of 85%.
+
+*pdf_url (#2 priority, 52% — mixed):* 22 row mismatches. 18 are real different-publisher diffs, 3 are same-publisher near-misses (bioRxiv versioned vs date-stamped, Brill generic vs specific, RCSI viewer vs download). Same-publisher relaxation lifts ~+6 pp → ~58%.
+
+*Honest read for tomorrow EOD checkpoint*:
+- authors / ca / abstract → all ≥85% reachable with v1.6 prompt-tightening (CA footnote-detection edge cases; abstract threshold).
+- pdf_url → mid-50s with comparator relaxation. Real ceiling.
+- rases → ~58% with comparator relaxation. Real ceiling at 23 publishers without long-form on the page.
+
+**Open with Casey** (drafted in `#project-parseland`):
+1. Are substring-style comparator relaxations OK? Specifically rases as match when AI's string is contained in Human's (or vice versa); pdf_url as match when AI and Human URLs share host + same DOI/PII.
+2. Lock vLOCK + ship "3 of 5 fields ≥ 85% + defensible ceiling on the structural 2"? Or pivot path?
+
+Commits: `d45b51d` (Taxicab pipeline + v1.4 measurement), `1ca1b59` (v1.5 + JSON retry).
+Run files: `runs/holdout-v1.4-taxicab/`, `runs/holdout-v1.4-taxicab-claude/`, `runs/holdout-v1.5-taxicab/`.
+
+---
+
 ## 2026-04-29 · Phase C v1.4 fair holdout cloud measurement
 
 ### EOD status — Casey + Jason
