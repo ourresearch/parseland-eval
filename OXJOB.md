@@ -1,3 +1,49 @@
+# OxJob update — parseland gold-standard
+
+Draft for pasting into the oxjob (LEARNING.md / reply to Jason in Slack). Session sections are appended in reverse-chronological order so the latest is first.
+
+---
+
+## 2026-04-29 session — Phase C iteration on holdout-50
+
+### TL;DR
+
+- Four prompt revisions iterated against the sealed holdout-50 (`eval/goldie/holdout-50.csv`): v1.1, v1.2, v1.3 via browser-use Cloud; v1.4 via manual Chrome MCP walkthrough. Results below — none clear the 95% gate, so Phase D/E remain blocked.
+- v1.3 regressed sharply because the new "bail on uncertain page" rule fired too aggressively — half the DOIs came back with empty author/affiliation/CA arrays.
+- v1.4 reverts the over-eager bail rule and adds an explicit "no URL construction from DOI patterns" instruction. Manual MCP measurement is depressed by the `mcp__claude-in-chrome__find` tool returning element summaries instead of verbatim text — the prompt is fine, the manual extractor is the bottleneck. The +20pp PDF URL gain (42% → 62%) is real and confirms the URL rule works.
+- A fair v1.4 measurement requires one automated browser-use Cloud run on holdout-50. Account credits exhausted mid-iteration on v1.3 → top up at <https://cloud.browser-use.com/bux> before the final pre-lock measurement.
+- Strategic decision: bot-check bypass uses **browser-use Cloud's built-in residential-proxy + auto-CAPTCHA stack only**. Zyte explicitly NOT adopted — Cloud's anti-bot is integrated, Zyte would be redundant + double-billed.
+
+### Holdout-50 results
+
+| Prompt | Source | Authors | Affs | CA | Abstract | PDF URL | Overall |
+|---|---|---|---|---|---|---|---|
+| v1.1 | cloud (full) | 78% | 48% | 70% | 68% | 42% | 16% |
+| v1.2 | cloud (full) | 68% | 42% | 54% | 62% | 42% | 16% |
+| v1.3 | cloud (full) | 18% | 18% | 18% | 28% | 56% | 10% |
+| v1.4 | manual MCP* | 50% | 36% | 56% | 28% | 62% | 12% |
+| **Gate** | — | **≥95** | **≥95** | **≥95** | **≥95** | **≥95** | **≥95** |
+
+*Manual MCP numbers are depressed by `find` returning element summaries; not directly comparable to the cloud rows above. Final v1.4 cloud measurement pending credit top-up.
+
+Artifacts in `eval/goldie/`:
+- `summary-v1.{1,2,3}-holdout.json` — per-field hit rate + per-DOI miss list.
+- `disagreements-v1.{1,2,3}-holdout.md` — diffed rows for prompt-iteration triage.
+
+### Decisions locked this session
+
+- **Phase D/E gated** behind a fair v1.4 cloud measurement. No 10K extraction until at least one field-mix passes ≥95%, ideally all six.
+- **Residential-proxy strategy:** browser-use Cloud's built-in stack only (195+ countries, default `proxy_country_code=us`, auto-CAPTCHA, JS-fingerprint matched to exit IP). Per-batch override available via `--proxy-country <ISO>` for publisher-specific gates.
+- **Gold standard reorganization:** `eval/Gold-Standard.csv` (100 nonblank rows) split into `eval/goldie/train-50.csv` (rows 1–50, prompt-tuning) and `eval/goldie/holdout-50.csv` (rows 51–100, sealed validation). The legacy `eval/gold-standard.{csv,json,holdout.json,seed.json}` files are being retired in favor of this split. A separate `eval/human-goldie.csv` (2322 rows) is downstream gold-standard expansion and is **not** the validation truth — that remains the audited 100-row split.
+
+### Open questions
+
+- Does v1.4 cloud actually clear ≥95% on any field? Need credit top-up + one run to know.
+- If v1.4 cloud still misses on authors/CA, what's the prompt change for v1.5 — explicit JSON-LD parsing? Per-publisher domain skills? Or accept the misses and gate at ≥90%?
+- For publishers that gate even with Cloud's built-in residential proxy (ScienceDirect heavy sessions, APS Phys Rev, Brill book chapters, ACS Pubs, Ovid, T&F sometimes), is per-batch country override sufficient, or do we need a publisher-specific domain skill?
+
+---
+
 # OxJob update — parseland gold-standard, 2026-04-21 session
 
 Draft for pasting into the oxjob (LEARNING.md / reply to Jason in Slack).

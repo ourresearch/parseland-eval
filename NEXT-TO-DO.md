@@ -2,56 +2,62 @@
 
 Live worklist for OxJob #122. Organized by priority. Edit as items close.
 
-## Immediate (today / tomorrow)
+## Immediate (blocks Phase D/E)
 
-- [ ] **Run Pass C end-to-end** — browser-use + user's real Chrome Profile 2 + CDP
-  - Prereq: user quits Chrome fully, relaunches with `open -a "Google Chrome" --args --remote-debugging-port=9222 --profile-directory="Profile 2"`
-  - Smoke on 1 DOI → full 50 → `random-50-chrome.csv` + `.meta.json`
-  - Capture cost, wall time, per-field hit rates, step count per DOI
-- [ ] **3-way compare + GPT review**
-  - `compare_passive_vs_agentic.py` with all three passes
-  - `gpt_review.py` over all three CSVs (needs `OPENAI_API_KEY` in `eval/.env`)
-  - `pilot_report.py` → appends to oxjob `LEARNING.md`
-- [ ] **Commit Pass C + review artefacts to `parseland-eval`**
-- [ ] **Append 3-way verdict to oxjob LEARNING.md + push to `ourresearch/oxjobs`**
+- [ ] **Top up browser-use Cloud credits** — <https://cloud.browser-use.com/bux>. Iteration burned out balance mid-v1.3; final fair v1.4 cloud measurement on holdout-50 cannot run until credits are restored.
+- [ ] **Fair v1.4 cloud measurement on holdout-50** — one automated browser-use Cloud run with `eval/prompts/ai-goldie-v1.4.md`, scored against `eval/goldie/holdout-50.csv`. Outputs `eval/goldie/summary-v1.4-holdout.json` + `disagreements-v1.4-holdout.md`. This is the only number that gates Phase D.
+- [ ] **Decide v1.5 vs lock-and-ship** — if v1.4 cloud clears ≥95% on all six fields, lock and proceed to Phase D. If not, write v1.5 patches against the v1.4 disagreements (NOT against holdout — pull learning into a fresh tuning subset to preserve holdout sealing).
 
-## Open questions surfaced by Jason (2026-04-21 Slack)
+## Phase C status (2026-04-29)
 
-- [ ] **How to parallelize headful Chrome** — Jason's core blocker. Options documented in `OXJOB.md`:
-  - **Local**: dedicated Mac Mini (2-4 concurrent headful instances, 2-3 days wall time for 10K at ~1 min/DOI)
-  - **Xvfb on Linux cloud VM**: headful UA fingerprint without a display — best concurrency/cost ratio, needs engineering
-  - **Browserbase / browser-use Cloud**: pay-per-hour hosted headful — budget-breaking at sustained scale ($0.06/hr × 50 × 24h ≈ $72/day)
-  - Decide before 500-DOI gate.
-- [ ] **Zyte — keep or drop?** Jason's intuition is right: residential proxy from a cloud VM helps; from home IP it's marginal. Keep planned as backup for publishers that specifically block our Mac Mini's IP range; don't use by default.
-- [ ] **Anthropic API multi-machine risk** — at 10K total calls we're well within Tier 2 rate limits. No burst / sustained pattern needed. **Negligible risk of abuse flagging** at this volume. Document once we confirm.
-- [ ] **Cloud vs Mac Mini hardware decision** — Mac Mini $600 wins over DGX Spark $4000 (workload is IO-bound, not GPU-bound). Confirm with Jason whether to procure.
-- [ ] **WeWork approval** — user asked Jason on 2026-04-21 (pending response).
+Holdout-50 cloud iteration measured but no prompt yet clears the 95% gate:
+
+| Prompt | Authors | Affs | CA | Abstract | PDF URL | Overall |
+|---|---|---|---|---|---|---|
+| v1.1 | 78% | 48% | 70% | 68% | 42% | 16% |
+| v1.2 | 68% | 42% | 54% | 62% | 42% | 16% |
+| v1.3 | 18% | 18% | 18% | 28% | 56% | 10% |
+| v1.4* | 50% | 36% | 56% | 28% | 62% | 12% |
+
+*v1.4 numbers are from manual Chrome MCP walkthrough, depressed by `find` returning element summaries. The PDF URL +20pp gain over v1.3 is real (URL-construction-from-DOI rule works). Cloud measurement still pending.
+
+Iteration takeaways:
+- v1.3's "bail on uncertain page" rule fires too aggressively (empty arrays for ~half the DOIs). v1.4 reverts.
+- v1.4 adds an explicit "do NOT construct PDF URL from DOI patterns" rule — confirmed via the +20pp gain.
+- Authors / affiliations / CA all stuck in the 50–80% band across v1.1–v1.4. Likely needs structured JSON-LD parsing or per-publisher selectors, not generic prompt patches.
+
+## Phase D/E (gated, do not start until v1.4 cloud passes)
+
+- [ ] **Phase D — Sample 10K DOIs** — `eval/scripts/sample_10k_dois.py` produces `eval/data/ai-goldie-source-10k.csv`. Crossref `/works?sample`, dedup vs current goldie split.
+- [ ] **Phase E.1 — Extract batch 1 only** — `eval/scripts/extract_batch_cloud.py --batch 1` → `eval/data/ai-goldie-1.csv`. User reviews before any further batch runs.
+- [ ] **Phase E.2 — Extract batches 2–100 in parallel** — only after batch-1 review is clean. Business tier ($299/mo, 200 concurrent) → ~38 min wall, ~$1.3K all-in.
+- [ ] **Phase F — Per-batch user audit** — user reviews each `ai-goldie-N.csv`, edits in place, commits.
+
+## Open infrastructure questions
+
+- [ ] **Per-publisher gate strategy** — for publishers that bot-check even with Cloud's built-in residential proxy (ScienceDirect heavy sessions, APS Phys Rev, Brill book chapters, ACS Pubs, Ovid, T&F sometimes), is `--proxy-country <ISO>` override sufficient or do we need per-publisher domain skills?
+- [ ] **Account-credit guard rail** — `extract_batch_cloud.py` should hard-stop and emit a clear error before draining the account if balance falls below a configured floor (e.g., $50). Currently fails noisily mid-batch.
 
 ## Quick fixes / hygiene
 
-- [ ] Rotate `ANTHROPIC_API_KEY` (it was shared via screenshot earlier in the session — small exposure risk).
-- [ ] Pin a `parseland-eval/CLAUDE.md` in this repo (done ✅ 2026-04-21).
-- [ ] Consider creating a dedicated `parseland-eval/.env.example` with required keys listed + chmod 600 note.
-- [ ] Resolve pyproject conflict: browser-use pulled `openai 2.16.0` which violates pinned `openai~=1.50`. Either widen pin to `openai>=1.50` or use separate venvs per pass.
-- [ ] `claude-sonnet-4-5` vs `claude-sonnet-4-6` gap in Pass C — browser-use's `ChatAnthropic` Literal needs updating (either upstream PR or local monkey-patch).
-
-## Mid-term (week-level)
-
-- [ ] **Implement fetcher strategy refactor** (Plan Phase 1) — `fetch.py` to `BaseFetcher` ABC with `HttpFetcher`, `AgentBrowserFetcher`, `ZyteFetcher`, `BrowserUseFetcher`, `WebSearchFetcher`.
-- [ ] **Multi-threading** (Plan Phase 3) — reference pattern from OxJob 43.1 (corresponding-authors) — user still to share Notion link.
-- [ ] **Cost budget guard rail** — abort before exceeding `--cost-limit` default $2000.
-- [ ] **500-DOI scale test** — only after the winning Pass is validated and the parallelization story is settled.
+- [ ] **Retire legacy gold-standard files** — `eval/gold-standard.{csv,json,holdout.json,seed.json}` are deleted in working tree but not yet committed. Confirm no scripts still reference them (`scripts/`, `parseland_eval/` both have refs per the most recent git status), update those refs to the goldie/ split, then commit the deletion as a single migration commit.
+- [ ] **`human-goldie.csv` (2322 rows) — clarify role** — separate from the 100-row audited split that gates Phase C. Document whether this is downstream Phase D output or an independent expansion track.
+- [ ] **Pin browser-use's `ChatAnthropic` Sonnet 4.6 enum** — fix or local monkey-patch so we run on the same model end-to-end.
+- [ ] **Resolve pyproject conflict** — browser-use pulls `openai 2.16.0` vs pinned `openai~=1.50`. Either widen pin or use separate venvs per pass.
 
 ## Decisions already locked
 
-- Vercel `agent-browser` over Puppeteer for programmatic headed/headless.
-- OpenAI GPT-4o Structured Outputs for review (not Codex).
-- Crossref `/works?sample` (no type filter) for fresh DOI sampling.
-- $1–2k total budget envelope across Anthropic + OpenAI + (optional) Zyte.
-- Phased rollout ends at 500 DOIs; going bigger is a separate meeting.
+- **10K production stack:** browser-use Cloud Tasks API, Business tier ($299/mo, 200 concurrent).
+- **Holdout validation stack:** local browser-use library + 4 parallel headed Chromes via CDP, BYOK Anthropic.
+- **Bot-check bypass:** browser-use Cloud's built-in stack — 195+ country residential proxies + auto-CAPTCHA + JS-fingerprint matched to exit IP. Zyte explicitly **not** adopted.
+- **Models:** claude-sonnet-4-6 default; Opus 4.7 only if Sonnet underperforms. `/chrome` and Codex CLI both rejected for batch use.
+- **Crossref `/works?sample`** for DOI sampling (no type filter).
+- **Phased rollout:** Phase E.1 batch-1 review gates Phase E.2 parallel run.
+- **Hard prerequisite:** audited 100-row goldie split (`eval/goldie/train-50.csv` + `holdout-50.csv`) is the only validation truth; pre-audit measurements are throwaway.
 
 ## Out of scope (parked)
 
-- Parallel browser-use Cloud tenancy (cost blows budget).
-- Databricks-based scraping pipeline (overkill at 10K DOIs — Jason confirmed Databricks is for "when we do things at that level of parallelization").
-- DGX Spark procurement (GPU useless for this IO-bound workload).
+- Zyte residential proxies — redundant with Cloud's built-in stack.
+- Databricks scraping pipeline — overkill at 10K.
+- DGX Spark procurement — GPU useless for IO-bound workload.
+- Repeated tuning against `holdout-50.csv` — leaks the seal; insoluble cases go to `eval/goldie/insoluble-cases.md` instead.
