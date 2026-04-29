@@ -8,7 +8,7 @@ Daily log of completed work. Format follows the OXJOB `LEARNING.md` standard
 1. **Append today's section** to the top of this file.
 2. **Mirror to oxjob**: append the same section to `~/Documents/OpenAlex/oxjobs/working/parseland-gold-standard/LEARNING.md`.
 3. **Mirror to Notion**: append the EOD callout to <https://www.notion.so/Shubhankar-341fa317eb678028b3cce5cb63181777> (the Shubhankar / Meetings parent page).
-4. **Slack EOD** to Casey (CTO) and Jason (CEO): 3–5 bullets answering — what stats, what's going well, what needs improving, what's next.
+4. **Slack EOD** to `#project-parseland` (channel `C0AU0BLM50V` on `impactstory.slack.com`) — cc `<@U07HJQKJ42C>` Casey Meyer (CTO) and `<@UEVFABBBP>` Jason (CEO). 3–5 bullets answering — what stats, what's going well, what needs improving, what's next. Use `slack_send_message_draft` so the user reviews then sends.
 
 ---
 
