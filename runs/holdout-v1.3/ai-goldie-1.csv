@@ -1,0 +1,165 @@
+No,DOI,Link,Authors,Abstract,PDF URL,Status,Notes,Has Bot Check,Resolves To PDF,broken_doi,no english
+51,10.7256/2454-0730.2019.1.20595,https://doi.org/10.7256/2454-0730.2019.1.20595,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+52,10.1016/0963-8695(91)90937-x,https://doi.org/10.1016/0963-8695(91)90937-x,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+53,10.1109/icelmach.2018.8507065,https://doi.org/10.1109/icelmach.2018.8507065,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+54,10.36838/v4i6.14,https://doi.org/10.36838/v4i6.14,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+55,10.3791/30429,https://doi.org/10.3791/30429,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+56,10.1016/0016-5085(95)22767-9,https://doi.org/10.1016/0016-5085(95)22767-9,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+57,10.1097/00000441-183517330-00010,https://doi.org/10.1097/00000441-183517330-00010,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+58,10.18041/0124-0021/dialogos.52.2020.8807,https://doi.org/10.18041/0124-0021/dialogos.52.2020.8807,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+59,10.7202/1091893ar,https://doi.org/10.7202/1091893ar,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+60,10.1080/01956051.2025.2517586,https://doi.org/10.1080/01956051.2025.2517586,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+61,10.1007/s10705-024-10386-1,https://doi.org/10.1007/s10705-024-10386-1,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+62,10.58837/chula.jamjuree.21.3.7,https://doi.org/10.58837/chula.jamjuree.21.3.7,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+63,10.1111/j.1365-2222.2005.02173.x,https://doi.org/10.1111/j.1365-2222.2005.02173.x,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+64,10.1103/physrevb.44.3757,https://doi.org/10.1103/physrevb.44.3757,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+65,10.18061/dsq.v41i1.7844,https://doi.org/10.18061/dsq.v41i1.7844,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+66,10.1161/01.str.32.6.1291,https://doi.org/10.1161/01.str.32.6.1291,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+67,10.1093/jaoac/32.2.156,https://doi.org/10.1093/jaoac/32.2.156,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+68,10.1093/jaoac/60.2.289,https://doi.org/10.1093/jaoac/60.2.289,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+69,10.1007/978-94-017-2981-9_4,https://doi.org/10.1007/978-94-017-2981-9_4,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+70,10.1007/bf02945421,https://doi.org/10.1007/bf02945421,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+71,10.1093/jee/97.2.646,https://doi.org/10.1093/jee/97.2.646,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+72,10.1017/s1365100515000139,https://doi.org/10.1017/s1365100515000139,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+73,10.1108/978-1-64802-637-920251008,https://doi.org/10.1108/978-1-64802-637-920251008,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+74,10.1093/oed/5131921241,https://doi.org/10.1093/oed/5131921241,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+75,10.1136/gut.18.2.128,https://doi.org/10.1136/gut.18.2.128,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+76,10.31857/s2587556623070105,https://doi.org/10.31857/s2587556623070105,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+77,10.1007/s10967-018-6384-1,https://doi.org/10.1007/s10967-018-6384-1,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+78,10.1007/978-3-662-68645-4_10,https://doi.org/10.1007/978-3-662-68645-4_10,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+79,10.1016/j.epsl.2025.119420,https://doi.org/10.1016/j.epsl.2025.119420,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+80,10.1109/jrproc.1955.277953,https://doi.org/10.1109/jrproc.1955.277953,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+81,10.1371/journal.pone.0192138.t002,https://doi.org/10.1371/journal.pone.0192138.t002,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+82,10.4274/turkderm.galenos.2022.81370,https://doi.org/10.4274/turkderm.galenos.2022.81370,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+83,10.1055/s-0033-1340558,https://doi.org/10.1055/s-0033-1340558,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+84,10.3389/fendo.2023.1147554.s002,https://doi.org/10.3389/fendo.2023.1147554.s002,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+85,10.17989/encsr569oav,https://doi.org/10.17989/encsr569oav,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+86,10.1136/jech.38.4.306,https://doi.org/10.1136/jech.38.4.306,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+87,10.1016/j.surfcoat.2023.129748,https://doi.org/10.1016/j.surfcoat.2023.129748,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+88,10.1101/532200,https://doi.org/10.1101/532200,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+89,10.5935/1518-0557.2011.14.4.02,https://doi.org/10.5935/1518-0557.2011.14.4.02,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+90,10.47405/mjssh.v6i11.1167,https://doi.org/10.47405/mjssh.v6i11.1167,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+91,10.25259/nmji_377_2024,https://doi.org/10.25259/nmji_377_2024,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+92,10.1093/oed/4932880791,https://doi.org/10.1093/oed/4932880791,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+93,10.24952/masharif.v9i1.3848,https://doi.org/10.24952/masharif.v9i1.3848,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+94,10.1109/spmb59478.2023.10372728,https://doi.org/10.1109/spmb59478.2023.10372728,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+95,10.1007/978-1-4842-9178-8_3,https://doi.org/10.1007/978-1-4842-9178-8_3,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+96,10.1007/s10577-005-1005-6,https://doi.org/10.1007/s10577-005-1005-6,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+97,10.1121/1.413202,https://doi.org/10.1121/1.413202,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+98,10.1006/cviu.2002.0969,https://doi.org/10.1006/cviu.2002.0969,,,,FALSE,"RuntimeError: create_session http 504: <html>
+<head><title>504 Gateway Time-out</title></head>
+<body>
+<center><h1>504 Gateway Time-out</h1></center>
+</body>
+</html>
+",,,,
+99,10.1163/9789004273610_010,https://doi.org/10.1163/9789004273610_010,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,
+100,10.1016/0021-9673(93)80418-8,https://doi.org/10.1016/0021-9673(93)80418-8,,,,FALSE,"RuntimeError: create_session http 402: {""detail"":""You need at least $1.00 in credits. Current balance: $0.59""}",,,,

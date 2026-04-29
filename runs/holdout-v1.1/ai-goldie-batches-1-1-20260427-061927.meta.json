@@ -1,0 +1,20 @@
+{
+  "version": "v1.1",
+  "prompt": "eval/prompts/ai-goldie-v1.1.md",
+  "source": "eval/goldie/holdout-50.csv",
+  "model": "claude-opus-4.7",
+  "start_batch": 1,
+  "end_batch": 1,
+  "concurrency": 25,
+  "summaries": [
+    {
+      "batch": 1,
+      "rows": 50,
+      "failures": 11,
+      "csv": "runs/holdout-v1.1/ai-goldie-1.csv",
+      "partial": "runs/holdout-v1.1/.checkpoint/ai-goldie-1.partial.jsonl",
+      "failures_log": "runs/holdout-v1.1/ai-goldie-1.failures.jsonl"
+    }
+  ],
+  "timestamp": "20260427-061927"
+}

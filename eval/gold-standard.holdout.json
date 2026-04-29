@@ -4,44 +4,28 @@
     "DOI": "10.7256/2454-0730.2019.1.20595",
     "Link": "https://doi.org/10.7256/2454-0730.2019.1.20595",
     "Abstract": "The subject of this research is the theoretical grounds of serviceology as a science on the development of economics and management in service industry. The object of this research is the service industry as a structural element of the modern global economy. The goal of the article lies in development of serviceology as scientific foundation for the advancement of service industry in the modern economy of Russia. For achieving the set goal, the authors examine the content and specificity of service industry, and the impact of scientific-technological and socio-economic progress upon it; develop the four-level model of service; explore the possible approaches towards improving the quality of services and competence of management in service industry in the context of scientific-technological progress and intensive development of information technologies. The scientific novelty consists in formulation of the positions of serviceology as scientific foundation of service industry; formation of theoretical grounds of the development of economics and management in service industry in the conditions of globalization of services market, advancement of service and information communication technologies; suggestion of the four-level model of service that can be applied for analyzing the competitiveness of services.",
-    "PDF URL": "",
+    "PDF URL": "https://cyberleninka.ru/article/n/servisologiya-kak-nauchnaya-osnova-razvitiya-sfery-servisa.pdf",
     "Status": "FALSE",
-    "Notes": "",
+    "Notes": "This link was in Russian, so I have translated and pasted the information so should I just not?",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
-    "Authors": "[\n  {\n    \"name\": \"Glushchenko Valeriy Vladimirovich\",\n    \"rasses\": \"Professor, Project Activity Center, Moscow Polytechnic University, 107564, Russia, Moscow, Obraztsova St., 9, office 1\",\n    \"corresponding_author\": false\n  },\n  {\n    \"name\": \"Glushchenko Irina Ivanovna\",\n    \"rasses\": \"Professor, Department of Accounting and Statistics, Russian State Social University, 129226, Russia, Moscow, Wilhelm Pieck St., 4, bld. 1\",\n    \"corresponding_author\": false\n  },\n  {\n    \"name\": \"Kozyrev Valentin Aleksandrovich\",\n    \"rasses\": \"Professor, Department of Management and Human Resource Management, Moscow State University of Railway Engineering, 127994, Russia, Moscow, Obraztsova St., 9, bld. 9, office 1\",\n    \"corresponding_author\": false\n  },\n]"
+    "Authors": "[\n  {\n  \"name\": \"Glushchenko Valeriy Vladimirovich\",\n  \"rasses\": \"Professor, Project Activity Center, Moscow Polytechnic University, 107564, Russia, Moscow, Obraztsova St., 9, office 1\",\n  \"corresponding_author\": false\n  },\n  {\n  \"name\": \"Glushchenko Irina Ivanovna\",\n  \"rasses\": \"Professor, Department of Accounting and Statistics, Russian State Social University, 129226, Russia, Moscow, Wilhelm Pieck St., 4, bld. 1\",\n  \"corresponding_author\": false\n  },\n  {\n  \"name\": \"Kozyrev Valentin Aleksandrovich\",\n  \"rasses\": \"Professor, Department of Management and Human Resource Management, Moscow State University of Railway Engineering, 127994, Russia, Moscow, Obraztsova St., 9, bld. 9, office 1\",\n  \"corresponding_author\": false\n  },\n]"
   },
   {
     "No": "52",
     "DOI": "10.1016/0963-8695(91)90937-x",
     "Link": "https://doi.org/10.1016/0963-8695(91)90937-x",
     "Abstract": "N/A",
-    "PDF URL": "",
+    "PDF URL": "N/A",
     "Status": "TRUE",
     "Notes": "Author is picked from name of the article",
     "Has Bot Check": "FALSE",
     "Resolves To PDF": "FALSE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
-    "Authors": [
-      {
-        "name": "T. Sato",
-        "rasses": "",
-        "corresponding_author": false
-      },
-      {
-        "name": "Y. Odai",
-        "rasses": "",
-        "corresponding_author": false
-      },
-      {
-        "name": "O. Ikeda",
-        "rasses": "",
-        "corresponding_author": false
-      }
-    ]
+    "Authors": "N/A"
   },
   {
     "No": "53",
@@ -50,68 +34,26 @@
     "Abstract": "This paper presents a study on a novel design of a Wound- Field Flux -Switching Linear Machine. Inspired by the rotating Wound-Field Switched Flux machine 18/10 topology, the concept has never been explotied in the case of a linear motor. Different armature winding configurations (double-layer and simple-layer configurations) are studied and compared with regards to open-circuit flux-linkage, force and force ripple. A non-linear Magnetic Equivalent Circuit model founded on Mesh Based Reluctance Network is developed with the purpose of addressing pre-design studies. The mesh based generated reluctance network model gives the possibility to make rapid changes in model proprieties and winding configurations. This semi-analytical model is validated using 2D Finite Element Analysis.",
     "PDF URL": "N/A",
     "Status": "TRUE",
-    "Notes": "Different button was cliked to get information about the authors; Access to the PDF was via the login through institution",
+    "Notes": "Different button was cliked to get information about the authors; Access to the PDF was via the login through institution; No information on the correspding author",
     "Has Bot Check": "FALSE",
     "Resolves To PDF": "FALSE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
-    "Authors": [
-      {
-        "name": "Salim Asfirane",
-        "rasses": "SATIE-CNRS/Ecole Normale Supérieure de Cachan, Cachan, France",
-        "corresponding_author": false
-      },
-      {
-        "name": "André Nasr",
-        "rasses": "SATIE-CNRS and Conservatoire National des Arts et Métiers (CNAM), Paris, France",
-        "corresponding_author": false
-      },
-      {
-        "name": "Sami Hlioui",
-        "rasses": "SATIE-CNRS and Conservatoire National des Arts et Métiers (CNAM), Paris, France",
-        "corresponding_author": false
-      },
-      {
-        "name": "Mohamed Gabsi",
-        "rasses": "SATIE-CNRS/Ecole Normale Supérieure de Cachan, Cachan, France",
-        "corresponding_author": false
-      },
-      {
-        "name": "Olivier de La Barriére",
-        "rasses": "SATIE-CNRS/Ecole Normale Supérieure de Cachan, Cachan, France",
-        "corresponding_author": false
-      },
-      {
-        "name": "Yacine Amara",
-        "rasses": "GREAH, Le Havre, France",
-        "corresponding_author": false
-      },
-      {
-        "name": "Georges Barakat",
-        "rasses": "GREAH, Le Havre, France",
-        "corresponding_author": false
-      }
-    ]
+    "Authors": "\"[\n  {\n    \"\"name\"\": \"\"Salim Asfirane\"\",\n    \"\"rasses\"\": \"\"SATIE-CNRS/Ecole Normale Supérieure de Cachan, Cachan, France\"\",\n    \"\"corresponding_author\"\": false\n  },\n  {\n    \"\"name\"\": \"\"André Nasr\"\",\n    \"\"rasses\"\": \"\"SATIE-CNRS and Conservatoire National des Arts et Métiers (CNAM), Paris, France\"\",\n    \"\"corresponding_author\"\": false\n  },\n  {\n    \"\"name\"\": \"\"Sami Hlioui\"\",\n    \"\"rasses\"\": \"\"SATIE-CNRS and Conservatoire National des Arts et Métiers (CNAM), Paris, France\"\",\n    \"\"corresponding_author\"\": false\n  },\n  {\n    \"\"name\"\": \"\"Mohamed Gabsi\"\",\n    \"\"rasses\"\": \"\"SATIE-CNRS/Ecole Normale Supérieure de Cachan, Cachan, France\"\",\n    \"\"corresponding_author\"\": false\n  },\n  {\n    \"\"name\"\": \"\"Olivier de La Barriére\"\",\n    \"\"rasses\"\": \"\"SATIE-CNRS/Ecole Normale Supérieure de Cachan, Cachan, France\"\",\n    \"\"corresponding_author\"\": false\n  },\n  {\n    \"\"name\"\": \"\"Yacine Amara\"\",\n    \"\"rasses\"\": \"\"GREAH, Le Havre, France\"\",\n    \"\"corresponding_author\"\": false\n  },\n  {\n    \"\"name\"\": \"\"Georges Barakat\"\",\n    \"\"rasses\"\": \"\"GREAH, Le Havre, France\"\",\n    \"\"corresponding_author\"\": false\n  }\n]\""
   },
   {
     "No": "54",
     "DOI": "10.36838/v4i6.14",
     "Link": "https://doi.org/10.36838/v4i6.14",
-    "Abstract": "ABSTRACT: Glycans, carbohydrates on cell membranes, are often overexpressed in cancer cells. Sialic acid, a sugar found at\nthe terminal branch of glycans, plays a vital role in carbohydrate-protein interactions, intercellular communication, and bacterial or\nviral infections. However, hypersialylation of glycans has been linked to hallmarks of cancer such as tumor growth, angiogenesis,\nmetastasis, and resistance to immune cells. Upregulation of sialylation promotes evasion of immune surveillance and survival of\nmalignant cells. Given this role of sialic acid, inhibiting the sialylation of glycans could provide quantum leaps in treating cancer.\nOver-sialylation is significant to cancer mechanisms (growth, metastasis, and immune evasion); therefore, a high therapeutic\nvalue could be found in preventing sialic acid’s role in cancer. This paper reviews how sialic acid plays a key role in assisting the\ngrowth and survival of cancer cells, despite human immune cells' attacks; it also summarizes findings that encourage removing\nhypersialiated glycans as a strategy against multiple cancerous cell types.\nKEYWORDS: Biomedical and Health Sciences; Genetic and Molecular Biology of Disease; Cancer Progression; Resistance;\nSialic Acid; Siglec.",
+    "Abstract": "N/A",
     "PDF URL": "https://terra-docs.s3.us-east-2.amazonaws.com/IJHSR/Articles/volume4-issue6/2022_46_p80_Nguyen.pdf",
     "Status": "FALSE",
     "Notes": "Information was directly retrived from the PDF",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
-    "Authors": [
-      {
-        "name": "Phuc (James) Nguyen",
-        "rasses": "La Quinta High School, 10372 W McFadden Ave, Westminster, California 92683, USA",
-        "corresponding_author": true
-      }
-    ]
+    "Authors": "N/A"
   },
   {
     "No": "55",
@@ -131,7 +73,7 @@
     "No": "56",
     "DOI": "10.1016/0016-5085(95)22767-9",
     "Link": "https://doi.org/10.1016/0016-5085(95)22767-9",
-    "Abstract": "There are anecdotal reports that endoscopists may suffer from a variety of musculoskeletal problems. 165 consultant physicians and 160 consultant rheumatologists were sent a postal questionnaire requesting information on neck pain, X ray documented cervical spondylosis (if known), lateral epicondylitis, thumb extension tenosynovitis, osteoarthritis of the carpo-metacarpal joint of the thumb and non-disc related low back pain. Endoscopists were asked to quantify approximate career numbers of upper gastrointestinal endoscopies, colonoscopies and ERCPs, whether or not the weight of the instrument was routinely increased by the use of a teaching attachment and the proportion of work using video vs. fibrecoptic instruments.\n\nThere were 156/165 (95%) evaluable replies from the endoscopists (mean age 46.4 y, range 32-66), and 150/160 (94%) from the rheumatologists (mean age 44.6 y, range 30-65). Among the endoscopists 101 (65%) reported one or more problems compared with 118 (79%) rheumatologists. For endoscopists reporting a problem there was no correlation with their age, type of instrument used nor addition of a teaching arm. Nevertheless, endoscopists performing the greatest number of procedures were significantly more likely to report a problem. For example the reported tunnel epicondylosis performed by 23 endoscopists carrying lateral epicondylitis (tennis elbow) was 2830 compared with 2167 colonoscopies in 49 endoscopists with no problem (p<0.01).\n\nThere is no overall increased risk of musculoskeletal problems in physician endoscopists compared with rheumatologists. However those endoscopists reporting a problem performed a greater number of procedures than those without problems.",
+    "Abstract": "N/A",
     "PDF URL": "https://www.gastrojournal.org/article/0016-5085(95)22767-9/pdf",
     "Status": "FALSE",
     "Notes": "Its directly a page and there are 4 different abstracts",
@@ -139,23 +81,7 @@
     "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
-    "Authors": [
-      {
-        "name": "A.S. Mee",
-        "rasses": "Department of Gastroenterology, Battle Hospital, Heading, UK",
-        "corresponding_author": false
-      },
-      {
-        "name": "J Stratford",
-        "rasses": "Department of Gastroenterology, Battle Hospital, Heading, UK",
-        "corresponding_author": false
-      },
-      {
-        "name": "J David",
-        "rasses": "Department of Rheumatology, Battle Hospital, Heading, UK",
-        "corresponding_author": false
-      }
-    ]
+    "Authors": "N/A"
   },
   {
     "No": "57",
@@ -175,37 +101,26 @@
     "No": "58",
     "DOI": "10.18041/0124-0021/dialogos.52.2020.8807",
     "Link": "https://doi.org/10.18041/0124-0021/dialogos.52.2020.8807",
-    "Abstract": "El derecho humano al agua y la protección de los páramos",
-    "PDF URL": "https://revistas.unilibre.edu.co/index.php/dialogos/article/view/8807/7785",
+    "Abstract": "",
+    "PDF URL": "",
     "Status": "FALSE",
-    "Notes": "picked additional author from the PDF",
+    "Notes": "The link never opened on the internet",
     "Has Bot Check": "FALSE",
     "Resolves To PDF": "FALSE",
-    "broken_doi": "FALSE",
+    "broken_doi": "TRUE",
     "no english": "FALSE",
-    "Authors": [
-      {
-        "name": "Oscar Andrés López Cortés",
-        "rasses": "Universidad Libre",
-        "corresponding_author": false
-      },
-      {
-        "name": "Luis Manuel Castro Novoa",
-        "rasses": "",
-        "corresponding_author": false
-      }
-    ]
+    "Authors": null
   },
   {
     "No": "59",
     "DOI": "10.7202/1091893ar",
     "Link": "https://doi.org/10.7202/1091893ar",
     "Abstract": "Depuis l’avènement du tournant migratoire (« mobility turn ») au début du 21e siècle, les recherches autour de la mobilité, souvent liées à la mondialisation, se multiplient dans diverses disciplines des sciences humaines et sociales. De plus en plus, les mobilités, considérées dans leurs dimensions géographiques, sociales et culturelles, sont présentées comme étant facteurs de transformation non seulement pour les individus mais aussi pour les territoires d’accueil. Pour autant, peu d’attention a été portée jusqu’à maintenant à la mobilité des jeunes, qui se déplacent souvent dans le cadre de projets familiaux. Ce manque d’intérêt est dommageable car rechercher les spécificités de ces mobilités nous permettrait de mieux comprendre les dynamiques et trajectoires de ces nouveaux citoyens. Cet article s’intéresse à la mobilité d’une jeune immigrante francophone en Alberta au travers de ses trajectoires d’intégration scolaire, sociale et culturelle. En articulant les notions de « motilité » de Kaufmann et Widmer et d’« individuation » de Simondon, nous tentons de comprendre comment celles-ci s’influencent et ouvrent des potentiels dans le parcours des jeunes immigrants de minorité visible au Canada. Pour Victorine, les trajectoires de mobilité et d’individuation s’alimentent réciproquement, permettant l’ouverture de potentiels sociaux, scolaires et professionnels ainsi qu’une émancipation vis à vis de sa famille. Nous apportons des éléments de comparaison avec une autre participante afin de contextualiser son parcours.",
-    "PDF URL": "N/A",
+    "PDF URL": "https://www.erudit.org/en/journals/alterstice/2022-v11-n1-alterstice07243/1091893ar.pdf",
     "Status": "FALSE",
     "Notes": "No PDF was found",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": [
@@ -231,9 +146,9 @@
     "DOI": "10.1080/01956051.2025.2517586",
     "Link": "https://doi.org/10.1080/01956051.2025.2517586",
     "Abstract": "While Julie Dash’s landmark 1991 film, Daughters of the Dust, has received extensive attention as the first by an African American woman director to receive a wide-scale theatrical release in the US, much less has been written about her sequel, the 1997 novel of the same name. That novel, set twenty years after the actions of the film and following some of the same characters, is another expression of Dash’s efforts to celebrate Gullah-Geechee culture and to highlight its unique position in African American history. Although not an adaptation, the novel does provide an interesting case study for how the same narrative threads and themes can be tackled across different media and sheds further light on the themes expressed in the film. Through an in-depth reading of both film and novel, we argue that Daughters of the Dust “rephrases” African American experience, casting it in a new light. In doing so, Dash masterfully adapts her story for the different medium, emphasizing the cinematic power of the written word, and offering up a call and response structure between the two texts that mimics African storytelling techniques.",
-    "PDF URL": "https://www.tandfonline.com/doi/epdf/10.1080/01956051.2025.2517586?needAccess=true",
+    "PDF URL": "N/A",
     "Status": "TRUE",
-    "Notes": "",
+    "Notes": "Fixed correspondence as true",
     "Has Bot Check": "FALSE",
     "Resolves To PDF": "FALSE",
     "broken_doi": "FALSE",
@@ -247,7 +162,7 @@
       {
         "name": "Matthew Leggatt",
         "rasses": "University of Winchester, UK",
-        "corresponding_author": false
+        "corresponding_author": true
       }
     ]
   },
@@ -260,7 +175,7 @@
     "Status": "FALSE",
     "Notes": "The PDF link is a downlodable",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": [
@@ -305,12 +220,12 @@
     "Status": "FALSE",
     "Notes": "The PDF link is viewable",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": [
       {
-        "name": "กาญจนา นาคสกุล",
+        "name": "กาญจนานาคสกุล",
         "rasses": "",
         "corresponding_author": false
       }
@@ -321,7 +236,7 @@
     "DOI": "10.1111/j.1365-2222.2005.02173.x",
     "Link": "https://doi.org/10.1111/j.1365-2222.2005.02173.x",
     "Abstract": "N/A",
-    "PDF URL": "https://onlinelibrary.wiley.com/doi/epdf/10.1111/j.1365-2222.2005.02173.x",
+    "PDF URL": "N/A",
     "Status": "FALSE",
     "Notes": "Its a journal",
     "Has Bot Check": "TRUE",
@@ -346,7 +261,7 @@
     "DOI": "10.1103/physrevb.44.3757",
     "Link": "https://doi.org/10.1103/physrevb.44.3757",
     "Abstract": "NbSi2 polycrystalline films, coevaporated and thermally annealed, were subjected to chemical and structural characterization, and then studied by reflectance from 0.06 to 6 eV and ellipsometry from 1.4 to 5 eV. The dielectric functions, obtained from Kramers-Kronig analysis and directly from ellipsometry, are also presented. Low-frequency free-carrier response is discussed in terms of the Drude model; the high-frequency interband structures are interpreted on the basis of the calculated density of states and photoemission results. A comparison is made with the optical properties of isoelectronic VSi2 and TaSi2 polycrystalline films.",
-    "PDF URL": "http://journals.aps.org/prb/pdf/10.1103/PhysRevB.44.3757",
+    "PDF URL": "N/A",
     "Status": "FALSE",
     "Notes": "Need access by login via institution",
     "Has Bot Check": "TRUE",
@@ -406,11 +321,11 @@
     "DOI": "10.1161/01.str.32.6.1291",
     "Link": "https://doi.org/10.1161/01.str.32.6.1291",
     "Abstract": "Background and Purpose—We sought to perform a large, prospective, multicenter, blinded study comparing power transcranial color duplex sonography (power TCDS) with intra-arterial digital subtraction angiography (IADSA) in the detection of intracranial aneurysms.\nMethods—Contemporaneous TCDS and IADSA examinations were performed in 171 subjects with suspected intracranial aneurysm. Via the temporal bone window, a 2-dimensional hand-held noncontrast transcranial duplex ultrasound imaging system was used operating in power and spectral modes. Sonographers were blinded to clinical history and results of brain CT and IADSA.\nResults—We found that 157 subjects (92%) had an adequate bone window. Sensitivity per patient was 0.78 (95% CI, 0.66 to 0.87) and 0.46 (95% CI, 0.36 to 0.56) for any anterior circulation aneurysms. Sensitivity was 0.35 (95% CI, 0.24 to 0.46) for aneurysms ≤5 mm and 0.81 (95% CI, 0.62 to 0.94) for aneurysms >5 mm. Accuracy was lower for aneurysms on the cavernous and terminal internal carotid arteries, including posterior communicating artery origin (0.71; 95% CI, 0.63 to 0.79), than for those on the anterior (0.82; 95% CI, 0.74 to 0.89) or the middle cerebral arteries (0.79; 95% CI, 0.71 to 0.86).\nConclusions—Power TCDS is a promising, inexpensive, noninvasive test for anterior circulation intracranial aneurysms but is less sensitive per aneurysm than alternatives such as CT angiography or MR angiography. Sensitivity is poor for aneurysms ≤5 mm in diameter. The internal carotid artery is the most difficult segment to interpret.",
-    "PDF URL": "https://www.ahajournals.org/doi/epub/10.1161/01.STR.32.6.1291",
+    "PDF URL": "https://www.ahajournals.org/doi/pdf/10.1161/01.STR.32.6.1291",
     "Status": "FALSE",
-    "Notes": "",
+    "Notes": "I cannot find corresponding author note.",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": [
@@ -562,9 +477,9 @@
     "Abstract": "N/A",
     "PDF URL": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/1AF578AB15F546A3A8CC0BDC3CA60DA5/S1365100515000139a.pdf/mdy-volume-19-issue-3-cover-and-back-matter.pdf",
     "Status": "FALSE",
-    "Notes": "Its a journal by Cambridge",
+    "Notes": "Its a journal by Cambridge, there are links for viewable PDF as well as the downloadable PDF",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": []
@@ -628,11 +543,11 @@
     "DOI": "10.1136/gut.18.2.128",
     "Link": "https://doi.org/10.1136/gut.18.2.128",
     "Abstract": "To evaluate the usefulness of provocation tests in the diagnosis of the Zollinger-Ellison (ZE) syndrome stimulation tests with calcium, 15 mg/kg. 3 h, and secretin GIH, 1 U/kg.30 s, were performed in 15 patients with histologically proven or suspected ZE syndrome. Nine of these 15 patients were without previous gastric surgery and in them meal stimulated serum gastrin levels were measured as well. These tests were also performed in normal subjects and in patients with duodenal ulcer, antrectomy, total gastrectomy, and achlorhydria. All tests were considered to be positive if a more than 50% increase in serum gastrin was found. The results indicate that secretin stimulation is the provocation test of first choice in the diagnosis of this syndrome. This test is most valuable for the following reasons: (1) there were few (two out of 15) false-negative test results in ZE patients; (2) there were no false-positive tests in 69 patients without gastrinoma; (3) it was easy and quick to perform; and (4) there were no adverse reactions. The two ZE patients with negative secretin stimulation tests had negative calcium provocation tests as well, in spite of histologically proven gastrinoma. In 11 patients with suspected or proven ZE syndrome and basal serum gastrin levels of less than 1000 pg/ml a rather good correlation (r = 0-841; P less than 0-01) was found between the percental increase in serum gastrin after stimulation by calcium and secretin. Meal stimulated serum gastrin levels are helpful only in patients without previous gastric surgery.",
-    "PDF URL": "https://gut.bmj.com/highwire/foxycart/add/137476",
+    "PDF URL": "https://gut.bmj.com/content/18/2/128.full.pdf",
     "Status": "FALSE",
     "Notes": "Need to pay to access",
     "Has Bot Check": "TRUE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": [
@@ -653,7 +568,7 @@
     "DOI": "10.31857/s2587556623070105",
     "Link": "https://doi.org/10.31857/s2587556623070105",
     "Abstract": "The article discusses the features of the functional transformation of the municipalities of the mountainous part of Perm krai (Gornoe Prikamie). To analyze the changes, indicators were calculated that characterize the capital provision of the territory, its change, as well as the structure of fixed assets in 2010 and 2020. Four groups of municipalities were distinguished by the level of development of the material base. The Gubakha and Aleksandrovsk municipal districts have the highest indicators achieved by a combination of factors. The second group included Gornozavodsk and Chusovoy urban districts. They are characterized by contradictory transformations due to the insufficient ability of the old functions to ensure the progressive development of these municipalities. The third group was formed by Lysva and Krasnovishersk urban districts with an average level of development of the material base. Separate positive changes are taking place here in the absence of a clear vector of socioeconomic development. In the fourth group, which includes classic depressive territories (urban districts of Gremyachinsk, Kizel and Cherdyn), the economic problems are associated with the cessation of the functioning of key industries of the Soviet period. An important feature of the functional transformation of municipalities within the mountainous part of Perm krai (Gornoe Prikamie) during this period is the preservation of the leading influence of the manufacturing industries, which primarily determine the degree of development and the commercial component of the non-productive sector. For each group, the main conceptual directions for correcting the current trends in socioeconomic development are proposed: from diversifying the functional structure based on corporate potential and indirect mechanisms of state support to the active use of targeted programming based on budgetary sources of financing.",
-    "PDF URL": "https://journals.rcsi.science/2587-5566/article/view/231695/209671 ; https://journals.rcsi.science/2587-5566/article/download/231695/209671",
+    "PDF URL": "https://journals.rcsi.science/2587-5566/article/download/231695/209671",
     "Status": "FALSE",
     "Notes": "There are two PDFs link one is viewable on the webapp and other is downlodable",
     "Has Bot Check": "FALSE",
@@ -783,9 +698,9 @@
     "DOI": "10.1109/jrproc.1955.277953",
     "Link": "https://doi.org/10.1109/jrproc.1955.277953",
     "Abstract": "Experiments of the past decade give stronger fields well beyond the horizon than are calculated by the 4/3 airless earth approximation. Post-war work on the theory of the WKB approximation for wave propagation in slowly varying inhomogeneous media, and the peculiar results for eigenvalues of the bilinear refractive index proffle offer valuable clues in the search for an oversight in conventional propagation theory. If the absolute value as well as the gradient of the refractive index at the earth's surface be specified, with a refractive index profile which tapers to vacuum at some arbitrarily large height, then allowed modes of the wave equation permit the field to be calculated within, just beyond, and well beyond the horizon, in agreement with many vhf and microwave experiments. Modes thus calculated are supported by ordinary coherent molecular scattering in normal air dielectric layer. At times, superrefraction and macroscopic turbulence are additional mechanisms for propagation deep into the shadow of the earth bulge.",
-    "PDF URL": "",
+    "PDF URL": "N/A",
     "Status": "FALSE",
-    "Notes": "",
+    "Notes": "The PDF link / icon takes to the acces via the institution login",
     "Has Bot Check": "FALSE",
     "Resolves To PDF": "FALSE",
     "broken_doi": "FALSE",
@@ -805,10 +720,10 @@
   },
   {
     "No": "81",
-    "DOI": "10.1371/journal.pone.0192138.t002",
-    "Link": "https://doi.org/10.1371/journal.pone.0192138.t002",
+    "DOI": "10.1371/journal.pone.0192138",
+    "Link": "https://doi.org/10.1371/journal.pone.0192138",
     "Abstract": "We present a numerical investigation of tapered arteries that addresses the transient simulation of non-Newtonian bio-magnetic fluid dynamics (BFD) of blood through a stenosis artery in the presence of a transverse magnetic field. The current model is consistent with ferro-hydrodynamic (FHD) and magneto-hydrodynamic (MHD) principles. In the present work, blood in small arteries is analyzed using the Carreau-Yasuda model. The arterial wall is assumed to be fixed with cosine geometry for the stenosis. A parametric study was conducted to reveal the effects of the stenosis intensity and the Hartman number on a wide range of flow parameters, such as the flow velocity, temperature, and wall shear stress. Current findings are in a good agreement with recent findings in previous research studies. The results show that wall temperature control can keep the blood in its ideal blood temperature range (below 40°C) and that a severe pressure drop occurs for blockages of more than 60 percent. Additionally, with an increase in the Ha number, a velocity drop in the blood vessel is experienced.",
-    "PDF URL": "https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0192138&type=printable",
+    "PDF URL": "N/A",
     "Status": "TRUE",
     "Notes": "",
     "Has Bot Check": "FALSE",
@@ -852,7 +767,7 @@
     "Status": "FALSE",
     "Notes": "",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": [
@@ -878,7 +793,7 @@
     "DOI": "10.1055/s-0033-1340558",
     "Link": "https://doi.org/10.1055/s-0033-1340558",
     "Abstract": "N/A",
-    "PDF URL": "https://profile.thieme.de/HTML/sso/THIEME/login.htm?rdeLocaleAttr=en&hook_url=https://www.thieme-connect.de/products/ejournals/pdf/10.1055/s-0033-1340558.pdf",
+    "PDF URL": "N/A",
     "Status": "FALSE",
     "Notes": "Needs access to the Thieme",
     "Has Bot Check": "FALSE",
@@ -903,9 +818,9 @@
     "DOI": "10.3389/fendo.2023.1147554.s002",
     "Link": "https://doi.org/10.3389/fendo.2023.1147554.s002",
     "Abstract": "In vertebrates, gonadotropin-releasing hormone (GnRH)-secreting neurons control fertility by regulating gonadotrophs in the anterior pituitary. While it is known that acetylcholine (ACh) influences GnRH secretion, whether the effect is direct or indirect, and the specific ACh receptor (AChR) subtype(s) involved remain unclear. Here, we determined 1) whether ACh can modulate GnRH cellular activity and 2) a source of ACh afferents contacting GnRH neurons. Calcium imaging was used to assay GnRH neuronal activity. With GABAergic and glutamatergic transmission blocked, subtype-specific AChR agonists and antagonists were applied to identify direct regulation of GnRH neurons. ACh and nicotine caused a rise in calcium that declined gradually back to baseline after 5-6 min. This response was mimicked by an alpha3-specific agonist. In contrast, muscarine inhibited GnRH calcium oscillations, and blocking M2 and M4 together prevented this inhibition. Labeling for choline acetyltransferase (ChAT) and GnRH revealed ChAT fibers contacting GnRH neurons, primarily in the medial septum (MS), and in greater number in females than males. ChAT positive cells in the MS are known to express p75NGFRs. Labeling for p75NGFR, ChAT and GnRH indicated that ChAT fibers contacting GnRH cells originate from cholinergic cells within these same rostral areas. Together, these results indicate that cholinergic cells in septal areas can directly regulate GnRH neurons.",
-    "PDF URL": "https://public-pages-files-2025.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2023.1147554/pdf",
+    "PDF URL": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2023.1147554/pdf",
     "Status": "FALSE",
-    "Notes": "",
+    "Notes": "There are different signs, how do I find its meaning? The PDF link is downloadable. The * is corresponding author but nowhere mentioned hence the CP is blank.  When you go to the Frontier journal, and see dagger it means equal contribution and the * means corresponding author.",
     "Has Bot Check": "FALSE",
     "Resolves To PDF": "FALSE",
     "broken_doi": "FALSE",
@@ -929,7 +844,7 @@
       {
         "name": "Susan Wray",
         "rasses": "National Institute of Neurological Disorders and Stroke (NIH), Bethesda, United States",
-        "corresponding_author": false
+        "corresponding_author": true
       }
     ]
   },
@@ -952,9 +867,9 @@
     "DOI": "10.1136/jech.38.4.306",
     "Link": "https://doi.org/10.1136/jech.38.4.306",
     "Abstract": "Fifty women aged 75 years or older who were living alone were visited to determine their self perception of dependency. There was a wide variety in reported capacity for self care but two patterns are isolated: those who were active initiators with a self perception of independence and passive responders with a perception of dependence. Service providers should take cognisance of the woman's self perception in the effective delivery of services.",
-    "PDF URL": "",
+    "PDF URL": "https://jech.bmj.com/content/38/4/306.full.pdf",
     "Status": "FALSE",
-    "Notes": "",
+    "Notes": "There is a PDF link, and that link itself redirects to the buying link",
     "Has Bot Check": "FALSE",
     "Resolves To PDF": "FALSE",
     "broken_doi": "FALSE",
@@ -972,7 +887,7 @@
     "DOI": "10.1016/j.surfcoat.2023.129748",
     "Link": "https://doi.org/10.1016/j.surfcoat.2023.129748",
     "Abstract": "The ZrO2–7 wt% Y2O3 (7YSZ) is the most commonly used ceramic layer in the thermal barrier coating (TBC) system due to its low thermal conductivity. However, the thermal stress-induced coating failure would damage its performance and limit its application. In the present study, a burner rig is employed to attain the operating temperature field and conduct the thermal gradient cycling tests of the coating. Moreover, the failure modes of the YSZ coating with different thicknesses (100, 200, and 400 μm) are investigated. The results show that the coating with 200 μm thickness has the most extended cyclic lifetime (>340 cycles), while 100 μm and 400 μm thick coatings have cyclic lifetimes of 240 and 80 cycles, respectively. The coating microstructure evolution, thermal growth oxides (TGO) thickness, and coating sintering behaviors are considered to explain the phenomenon. Furthermore, a TGO growth/sintering competitive failure model is proposed to describe the failure behaviors and elucidate the failure mechanisms of the coating with different thicknesses. The coatings with different thicknesses have different temperature distributions in the same external conditions. It results in different TGO growth rates and different degrees of coating sintering. The balance of TGO growth and coating sintering makes the 200 μm thick coating the most extended cyclic lifetime.",
-    "PDF URL": "https://www.sciencedirect.com/getaccess/pii/S0257897223005236/purchase",
+    "PDF URL": "N/A",
     "Status": "FALSE",
     "Notes": "Needs to buy the PDF",
     "Has Bot Check": "FALSE",
@@ -1002,22 +917,22 @@
       },
       {
         "name": "Heng Zhang",
-        "rasses": "Beihang University, Beijing, China",
+        "rasses": "School of Material Science and Engineering, Beihang University, No. 37 Xueyuan Road, Beijing 100191, China",
         "corresponding_author": false
       },
       {
         "name": "Yanling Pei",
-        "rasses": "Beihang University, Beijing, China",
+        "rasses": "School of Material Science and Engineering, Beihang University, No. 37 Xueyuan Road, Beijing 100191, China",
         "corresponding_author": false
       },
       {
         "name": "Shusuo Li",
-        "rasses": "Beihang University, Beijing, China",
+        "rasses": "Institute of Aero Engine Research, Beihang University, No. 37 Xueyuan Road, Beijing 100191, China",
         "corresponding_author": false
       },
       {
         "name": "Shengkai Gong",
-        "rasses": "Beihang University, Beijing, China",
+        "rasses": "School of Material Science and Engineering, Beihang University, No. 37 Xueyuan Road, Beijing 100191, China",
         "corresponding_author": false
       }
     ]
@@ -1067,7 +982,7 @@
     "DOI": "10.5935/1518-0557.2011.14.4.02",
     "Link": "https://doi.org/10.5935/1518-0557.2011.14.4.02",
     "Abstract": "N/A",
-    "PDF URL": "https://doi.org/10.5935/1518-0557.2011.14.4.02",
+    "PDF URL": "N/A",
     "Status": "FALSE",
     "Notes": "",
     "Has Bot Check": "FALSE",
@@ -1081,11 +996,11 @@
     "DOI": "10.47405/mjssh.v6i11.1167",
     "Link": "https://doi.org/10.47405/mjssh.v6i11.1167",
     "Abstract": "Prior research on creativity has grasped the attention of researchers to devote more focus on the interaction that arises between the individual and the surrounding milieu. Thus, this study aimed to propose the moderating role of improvisation on the relationship between mindfulness and employee creativity. The propositions posted in this study was developed based on the relationships established within previous empirical studies among these variables. Such proposition of improvisation as a moderator on the relationship between mindfulness and employee creativity might heavily contribute to the theory by addressing the issue of mixed and inconclusive results in the mindfulness-creativity literature, and will provide a comprehensive understanding of how improvisation might help in unleashing the creative potentials of employees.",
-    "PDF URL": "https://www.msocialsciences.com/index.php/mjssh/article/view/1167/844",
+    "PDF URL": "https://www.msocialsciences.com/index.php/mjssh/article/download/1167/844",
     "Status": "TRUE",
     "Notes": "Viewable web",
     "Has Bot Check": "TRUE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": [
@@ -1115,7 +1030,7 @@
     "Status": "FALSE",
     "Notes": "The PDF link is downlodable",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": [
@@ -1155,7 +1070,7 @@
     "DOI": "10.24952/masharif.v9i1.3848",
     "Link": "https://doi.org/10.24952/masharif.v9i1.3848",
     "Abstract": "Tujuan dari penelitian ini untuk mengetahui pengaruh Capital Adequacy Ratio, Non Performing Finance, Net Profit Margin, Return On Assets, dan Finance to Deposit Ratio terhadap Pertumbuhan Laba pada bank umum syariah yang terdaftar di otoritas jasa keuangan periode 2015-2018. Populasi penelitian ini meliputi seluruh bank umum syariah yang terdaftar di otoritas jasa keuangan periode 2015-2018. Teknik pengambilan sampel menggunakan teknik purposive sampling. Berdasarkan kriteria yang telah ditetapkan diperoleh 9 perusahaan. Jenis data yang digunakan adalah data sekunder yang diperoleh dari situs Otoritas Jasa keuangan dan masing-masing website bank umum syariah. Metode analisis yang digunakan adalah analisis regresi logisik data panel. Hasil penelitian menunjukkan bahwa Capital yang diproksikan dengan CAR, Management yang diproksikan dengan NPM, dan Earnings yang diproksikan dengan ROA berpengaruh positif terhadap Pertumbuhan Laba, sedangkan Asset Quality yang diproksikan dengan NPF dan Liquidity yang diproksikan dengan FDR tidak berpengaruh terhadap Pertumbuhan Laba.",
-    "PDF URL": "",
+    "PDF URL": "https://jurnal.uinsyahada.ac.id/index.php/Al-masharif/article/download/3848/2612",
     "Status": "FALSE",
     "Notes": "",
     "Has Bot Check": "FALSE",
@@ -1250,9 +1165,9 @@
     "DOI": "10.1121/1.413202",
     "Link": "https://doi.org/10.1121/1.413202",
     "Abstract": "The interaction of shear wave polarization and the fiber directions in a composite laminate makes shear waves a sensitive probe for evaluating ply orientation and sequence in a layup. The transmitted shear wave signal, with the transmitting and receiving transducers perpendicular to each other, can easily distinguish a [0/+45/90/−45]6 from a [0/+45/90/−45]3S, and detect an error in the form of a single misoriented ply: the 12th ply in [0/90/+45/−45]3S mistakenly placed at +45° instead of at −45°. Shear waves can therefore detect subtle but realistic layup anomalies in composite laminates. In this work, a model is developed for the propagation of shear waves through a laminate with arbitary ply orientation and sequence. Experimental results and model predictions are compared, and the model is used for identifying layup anomalies that are detectable with shear waves. Potential applications of this new method in nondestructive evaluation of composite laminates will be discussed. [Work supported by NSF I/U Center for NDE.]",
-    "PDF URL": "https://watermark02.silverchair.com/jas.v98.i5.2866_4.online.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAABfUwggXxBgkqhkiG9w0BBwagggXiMIIF3gIBADCCBdcGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM7FYZw-yHzxohH_8bAgEQgIIFqKvxRE3ufNhlFrQWLYiEWx_WdElAkn1xtHmFat7pcXz3oy9M9ofD3tZL31sKpwEpZd-FBLs7Vw4dWgSa44mR6lXJqwf3W8Mb3rKe7vNXJPJTmgvPisxxyOBX5PKOOJ_vrxn54X2_K_Vj_KU-VWwLC0ZKDy0bZBdfzcxo3dXpJjm0hxkaUqtyzYCWlv8BSwbKRhQtrfFomRvTGVuFDFZXULfycvLTNtALYPoYzchY9vC6WLST410b_3QSYoBCd0JRX-y4KIlVPowTD0EdfNtJcDC3OnJcrl0WS9jAQNz_bqDPvOHADX8IIETRLuGpV5fR1BrG1iLy5N7Gwrp_1nA1mIdTtXMuZq3hS93ZMMbDd-OvBaDe24UQQi42SLxT0fjpXhE0A13PAoTwKQsOi5lE1rh7NX1ISe67g2nhh9MjjJEEKJALxFOKNU_DHdziqDjluEFPL-v7xQ6JM_5dInt2C-TlvsOFe4tTMobg1YXR6HDLTyaSfAnzuf41ropNVJnjqQ2S-gW1z60IEo7kdRRN4bZBqKb3vdojKY7aHVy3QuBi3_H4rBRsWtVa7yDjAE9HUw8IbZAmr1KRji5SIcTb4M5WZAuuaL4aLWrLBTXOfI9lZhfXliXJ88lgWc4a-0btfGUQdMRoDG9pl5s4wenibYYne0cFmjMlgsNnaS4uvhMPzpzwzvUZdKka9FlQ1f4znI2UpjSuTFWoc2i-rCCHyYbjBhrrW1Ob0mvjOhv-eaxttuSvc9VjmIKQB1RxWImumZKGb6GRv0aPjaFS9nkZr_mWfViSsYMHGt2QGrSOE8GVHBVaDs8gCFGV1Yg7Vyl93ImB7jQphKDZ46mjh549bkEqCTmznSdrWBGSXZdsiFY-hANhot5ZDZ4H1LoePP9xK9qR85guSeb3-jUDSvHCJDiaGrH-NoznDncw0HVoRyl-V4CRltiIBI6yynXqRJ8Gy8VNDU13ggkh15UOn7ZRRIjptgOJ_R_eSCQ_G78m6OUoj_iNafejn0qbJtT-DCgvIalZi-96wcU6fPtVTH2OgdhsYvQmENFxzQWyNjsm8vpjmEwVm4dl1kGIM8jVvE-8m9Iu8vF96KDRuavprnUujq-2bDuv6Fc3CKgJ6R9aCtDVO_rdGy3Y_jg_O9Xc8GFShyWSGHGx51-eDwhTq9yOz_gLfd9FN0pFxr2b_NzqPa6AtRoNLa1v0Qff0mLgA_awN5BvXSN4be-oJx207bMvzhf6i6Y-MU-xnePnq0zblvw8WzmV6mAQ6dt-ELmpg8GUe1gjM4WoXy5hzUJ-zrbne86nhHsbbICWxXWrCm43Bo2MeUB2lKIXpvF-g2c2ZDib0d2YN1nUg4iBrLFncuX93lCtaucQEz8Mxli9bRpk2FlBUPt64YHfuCGm2GS8jVgRenjPwxR4po6a_DM53MiLmcHn_gKX1yAzlRz9IC_HyotN0Cc5SVMiB_0pwFWqt2OHw7RNGty65duP_kLTNShHyyP8Lc_HKeOXpGEZD8xGTiXFxBUT5-7RQAwYUdG_dERtq6HysWx8fQ5bqrrTAgkdlu5XQ3CVPL1JboNcVJ5XmOiDYITveRgwUkcV8B-IgsVIPtPdAY8h49O92MGkEJMSnIRb74ghQf5J9deHC2b_LuIYusJh_wkV_q-UNprCO7HVZ4qUzqKy6_cc4RGvzlkCXsmn0ZawK2RL0TSOwtTuqWpprp0s69kj2065rnTuWK5-wt_owTp42P859B2XWcSf5jJ6vZM2a7JBRUo9TTi81S-ImN7buP_ExQCGy21GNNlZNGMkYuC5al3Q0n8umwvEd4JzH_9lN3wBYYYF8JKUgKefzeQVceYIqkg_KdkFc5Y2zKgSUyMXXBM5Vu-quPn7BETZamRGkKh6ipleC13_IYoeZFUjleMRVlN7GNQwxAGuGSBVrA5gnrNw",
+    "PDF URL": "https://watermark02.silverchair.com/jas.v98.i5.2866_4.online.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAABfUwggXxBgkqhkiG9w0BBwagggXiMIIF3gIBADCCBdcGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMW1h6Wa3drRLSjNT8AgEQgIIFqP1Mv5K9cCxFNjFrAUXgVc3ITqw833-imigkePGRP6xAz-QxFXxQHKUWUPYCgolX9P7he_ToFzofk5iNx-AwdVMIiVEUbXIZ3HmX-IfGjfxexjsvagwLTo_uK089tC5ypmeXgpv0Yn6gKtt2DNFnHahFVqfCpgQ9XcuQpc4HxD8clN-qL9vnyQb_uvwLTuQbTibl-8dBmSOLixSi7fwXyxk_6nV9MYGwlLLYZ7e-9DIUxK-ArUw6mBhHfZq2OEBtTpXGRd1c00O6ddJjt4FjLXOiSEuip7EKbLguV34evJ6bXOB5WumyCm6M9Pn1xMHoP5llWJx8yduNnOhGjxYFslX7XiSZypfFZumKXwAPZkLYpjq0iXPKi4ZiqpF46S1g_yuvtYYdp41ikCr1nDIz81ZhkyPRsCMaDCuDAwno4b_vRBgh5AjaNjtIL3zxnI0N5XKl6w_T3pzYVy-amG1lOVuHRB2ITK5xHnxhgtv_K4-sgF0c1XC2IpY8YktMlFqSX5Zld0W5CEycsgVA1DIhL9nTqm0ZxUGHwn86EQNUiBRwqs9CT_CHiJLVKFsz_QV_gBXSTDnYpucTQRrvg-SHwzyuLfMS-Ru76GKPT8Msthbdd3puzFOmXpdgdudCyaTAm1cU03sCbU8ObXSLjOHFK4tMrjR3SBFNjjvY70djtplHLOIS2PeQSVp4RfdgrhehjDC7hZ3U-BsT8f38mBbIPx87Hwf-b15kVpo5JdiEOnney6muh-q-a_anVzDMx47tjsTX2nlIee9D9ao5gGBlxbhjFdCyfMhoZkTwPu-hOI6Zf_HFKfbdIzLWyN4d23a2kA2S0Qki0fIfDwCshG6IGCs9ic6aWnck7fgTvIxNuQNnUobkH9X-fBaL3kRJTxW8wRPqGB9_R1byD8MUXTjH4Zn__zJWQvhmw26z84YMTJfORknB-gXJ63af-zDDk3JBDq72-fJ8zC0uVjYZfJTxTtVwld61YaBfcUfvPcZRTEWTgXDuUB0fRtizMN7cwTCEZNNj1MJ7AmfTVL7wcs9NlyfaS-Vn7wGb1heZcoAc904W79krCNJ_22pxOwhcwlkP4GINdtb3mjECOBEWnlboAZVCC73FQie4qjDv_9B6Jee1gMIaiH52lgL_flvRFaPJnqi7jDJLskRAdowNHKrHQRQsP3ufhCPTA3KcunWzbuqdUSXCWSgq5Juxa508lBfKiOkquQH2I_fl4PiX8Zbq7ZbmG0_2jXgYVd2TS0R-hvRHimddADckS_I0PPGZKjt021swinC5bZI8kMqyncEELkAvHq8xa_QQ5eOA7_WpcG2ntfMNLKpIt5mx9ct8XxTI1csZXVUHIqd_0ooT_AFBINDXJcxEJjr2eO1RpWw1jJhrwZwTZSrU2saIOuEGyvCLPWjw9W0juHbOkiUAnDElZE_ESdUltYuWbnyJsdBtsbKoaDezXuw3eHIaD62u0kHSY9f0ca60CYkTlTyE44WR24mUfAWLf2Qr3XpBRcbh8qB0jaMqtjMJGjLkpUSpXPHsbjfd1kFWHLKcKmubpoq4AhHqQh1His4Ks-yLr2z6w5Si_gHgm69fvlcKmS__GYPxivuOouKLLGAyiBRXaDwvMzHgbuhO9PxZDwIlN-waSAG_Xd-1dKxyZ2KLmLZ6_d4rTKDC-UUoruVx4c3-e9Mc5hbpSzECnS1tHyhSrV1l8UdNxMt5axxFWzA1qxGlUxoReiu0AhxPZdaKILjgTi9-LAZf-tneP5XXZWKw4UAugJ1lry4EsvAAtniwsml4__XFcEmEl43j8oFEqhIkLaHBBmOsJjDhfvcBSWrEPQXqTXfzQDnZTNHsx8Bk38EsJjPAKq7gyoi7RTCQYGt3Euu4m5hofECOiwrs_2X33y4uJfm4QCaVccxgNbmhBo_89w_zANTuU0RbP-jy",
     "Status": "FALSE",
-    "Notes": "Need to pay or acces by login via the institution",
+    "Notes": "No corresponding author",
     "Has Bot Check": "TRUE",
     "Resolves To PDF": "FALSE",
     "broken_doi": "FALSE",
@@ -1277,8 +1192,8 @@
     "Abstract": "In many advanced segmentation problems objects have inhomogeneous boundaries, hindering segmentation under uniform boundary assumption. We present a multifeature image segmentation method, called necklaces, that exploits local inhomogeneities to reduce the complexity of the segmentation problem. Multiple continuous boundary features, deduced from a set of training objects, are statistically analyzed and encoded into a deformable model. On the deformable model salient features are identified on the basis of the local differential geometric characteristics of the features, yielding a classification into point landmarks, curve landmarks, and sheet points. Salient features are exploited within a priority segmentation scheme that tries to find complete boundaries in an unknown image, first by landmarks and then by sheet points. The application of our method to segment vertebrae from CT data shows promising results despite their articulated morphology and despite the presence of interfering structures.",
     "PDF URL": "N/A",
     "Status": "FALSE",
-    "Notes": "Need to pay or acces by login via the institution",
-    "Has Bot Check": "FALSE",
+    "Notes": "Need to pay or acces by login via the institution; No machine redable way of getting corresponding author",
+    "Has Bot Check": "TRUE",
     "Resolves To PDF": "FALSE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
@@ -1305,11 +1220,11 @@
     "DOI": "10.1163/9789004273610_010",
     "Link": "https://doi.org/10.1163/9789004273610_010",
     "Abstract": "N/A",
-    "PDF URL": "N/A",
+    "PDF URL": "https://brill.com/downloadpdf/display/book/9789004273610/B9789004273610_s010.pdf",
     "Status": "FALSE",
     "Notes": "Need to pay or acces by login via the institution",
     "Has Bot Check": "FALSE",
-    "Resolves To PDF": "FALSE",
+    "Resolves To PDF": "TRUE",
     "broken_doi": "FALSE",
     "no english": "FALSE",
     "Authors": [
@@ -1341,7 +1256,7 @@
       {
         "name": "Bo Mattiasson",
         "rasses": "Department of Biotechnology, Chemical Centre, Lund University, P.O. Box 124, S-221 00 Lund, Sweden",
-        "corresponding_author": false
+        "corresponding_author": true
       }
     ]
   }

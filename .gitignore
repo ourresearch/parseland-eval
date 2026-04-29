@@ -24,6 +24,12 @@ dashboard/dist/
 dashboard/public/runs/
 dashboard/.vite/
 
+# Cloud-run resume checkpoints (regeneratable from CSV outputs)
+.checkpoint/
+
+# Claude Code runtime state
+.claude/
+
 # OS / editor
 .DS_Store
 .idea/

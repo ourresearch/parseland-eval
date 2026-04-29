@@ -298,7 +298,7 @@ class CloudClient:
         model: str = DEFAULT_MODEL,
         poll_interval: float = DEFAULT_POLL_INTERVAL,
         task_timeout_sec: float = DEFAULT_TASK_TIMEOUT_SEC,
-        timeout_sec: float = 60.0,
+        timeout_sec: float = 180.0,  # bumped from 60 — large prompts make POST /sessions slow to ack
         use_judge: bool = True,
         proxy_country_code: str | None = "default",
     ) -> None:

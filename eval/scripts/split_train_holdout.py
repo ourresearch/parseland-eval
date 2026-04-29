@@ -1,4 +1,4 @@
-"""Deterministically split human-goldie-v2-audited.csv into train-50 / holdout-50.
+"""Deterministically split human-goldie.csv into train-50 / holdout-50.
 
 Sort key is the integer `No` field ascending. Rows 1-50 → train, 51-100 → holdout.
 This intentionally mirrors the existing `gold-standard.seed.json` / `.holdout.json`
@@ -9,7 +9,7 @@ The holdout is sacred — never run AI Goldie on it during prompt iteration.
 
 Run:
     python eval/scripts/split_train_holdout.py
-    python eval/scripts/split_train_holdout.py --input eval/goldie/human-goldie-v2-audited.csv --out-dir eval/goldie
+    python eval/scripts/split_train_holdout.py --input eval/human-goldie.csv --out-dir eval/goldie
 
 Idempotent — overwrites outputs.
 """
@@ -20,7 +20,7 @@ import csv
 import sys
 from pathlib import Path
 
-DEFAULT_INPUT = Path("eval/goldie/human-goldie-v2-audited.csv")
+DEFAULT_INPUT = Path("eval/human-goldie.csv")
 DEFAULT_OUT_DIR = Path("eval/goldie")
 TRAIN_SIZE = 50
 HOLDOUT_SIZE = 50

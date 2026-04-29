@@ -321,7 +321,7 @@ async def main_async(args) -> int:
     print(f"  ai output : {out_json}")
     print(f"  meta      : {out_meta}")
     print(f"\nDiff next:\n  python eval/scripts/diff_goldie.py \\\n"
-          f"    --human eval/goldie/human-goldie-v1-pre-audit.csv \\\n"
+          f"    --human eval/human-goldie.csv \\\n"
           f"    --ai {out_json.relative_to(REPO_DIR)} \\\n"
           f"    --output-md eval/goldie/disagreements-{stem}.md \\\n"
           f"    --output-summary eval/goldie/summary-{stem}.json")
