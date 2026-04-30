@@ -1,0 +1,20 @@
+{
+  "version": "v1.5",
+  "prompt": "prompts/ai-goldie-v1.5.md",
+  "source": "/tmp/holdout-50-taxicab-urls.csv",
+  "model": "claude-opus-4.7",
+  "start_batch": 1,
+  "end_batch": 1,
+  "concurrency": 50,
+  "summaries": [
+    {
+      "batch": 1,
+      "rows": 50,
+      "failures": 0,
+      "csv": "../runs/holdout-v1.5-bu-taxicab/ai-goldie-1.csv",
+      "partial": "../runs/holdout-v1.5-bu-taxicab/.checkpoint/ai-goldie-1.partial.jsonl",
+      "failures_log": "../runs/holdout-v1.5-bu-taxicab/ai-goldie-1.failures.jsonl"
+    }
+  ],
+  "timestamp": "20260429-165635"
+}

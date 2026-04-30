@@ -4,6 +4,82 @@ Draft for pasting into the oxjob (LEARNING.md / reply to Jason in Slack). Sessio
 
 ---
 
+## 2026-04-29 PM addendum — Taxicab+Claude pivot LOCKS the gold-standard generator
+
+### TL;DR
+
+- **Pivot landed.** New runner `eval/scripts/extract_via_taxicab.py` pulls Taxicab's pre-harvested S3-cached HTML and extracts via direct Anthropic API. Bypasses the 11/50 (22%) bot-check ceiling on the harvest side without Zyte. New prompt `eval/prompts/ai-goldie-v1.5.md` (v1.4 + v1.1's "all authors" anchor + long-form-affiliation rule + JSON output discipline) plus a JSON-decode retry loop.
+- **88% authors on holdout-50 — first version to clear Casey's 85% bar.** Also CA 80%, abstract 78%, both within striking distance. Wall 30s, cost $4.46 — **44× faster, 4× cheaper than browser-use Cloud.**
+- **v1.5 + Sonnet 4.6 + Taxicab+Claude + --relaxed is LOCKED** as the production gold-standard generator. Tested 9 pipeline configurations end-to-end; nothing beats it on the priority field mix.
+- **Beats deployed Parseland on 4 of 5 fields** on the same holdout-50: authors +14, CA +8, abstract +6, pdf_url +8. Parseland wins rases (-6 pp) — structural, fixed by v1.8 schema change.
+- **Phase D greenlit for Thu 4/30**: 10K Crossref DOI extraction. Estimated $890 LLM cost, ~100 min wall at concurrency 10.
+- **13 commits pushed to main**, Heroku auto-deploy triggered for the dashboard.
+
+### Final scoreboard on holdout-50 (Taxicab+Claude pipeline)
+
+|                                | auth | rases | ca | abs | pdf | overall | ≥85 |
+|--------------------------------|------|-------|----|-----|-----|---------|-----|
+| v1.4 cloud (yesterday)         | 68   | 40    | 60 | 64  | 50  | 16      | 0/5 |
+| **v1.5 Sonnet RELAXED ← LOCKED** | **88** | **58** | **80** | **78** | **54** | **20** | **1/5** |
+| v1.5 strict                    | 88   | 46    | 80 | 78  | 52  | 20      | 1/5 |
+| v1.5 Opus 4.7 RELAXED          | 82   | 52    | 72 | 76  | 68  | 24      | 0/5 |
+| v1.6 Taxicab                   | 84   | 44    | 72 | 72  | 48  | 20      | 0/5 |
+| v1.7 RELAXED                   | 86   | 58    | 74 | 74  | 52  | 20      | 1/5 |
+| v1.5 BU+Taxicab v1 RELAXED     | 74   | 58    | 62 | 78  | 36  | 18      | 0/5 |
+| v1.5 BU+Taxicab v2 RELAXED     | 68   | 50    | 60 | 82  | 40  | 18      | 0/5 |
+| Parseland prod RELAXED         | 74   | 64    | 72 | 72  | 46  | 18      | 0/5 |
+| **Gate**                       | ≥85  | ≥85   | ≥85 | ≥85 | ≥85 | —       | —   |
+
+### Experiments run this afternoon (each a separate commit on main)
+
+1. **Taxicab+Claude pipeline (`d45b51d`)** — direct Anthropic API on cached HTML beats browser-use Cloud on every field, 44× faster, 4× cheaper. Two-tier extraction (citation_* meta tags free → Claude fallback). $1.67 baseline; +$2.23 with `--skip-meta-tags` for apples-to-apples Claude comparison.
+2. **v1.5 + JSON-retry (`1ca1b59`)** — three patches against v1.4 disagreement classes (author-list anchor, long-form-affiliation rule, JSON output discipline). +20pp authors, +20pp CA, +14pp abstract in one revision. JSON failures 4/50 → 1/50 (the 1 left is the un-harvested `10.36838/v4i6.14`, known cache miss).
+3. **v1.6 (`8d3c634`)** — added abstract-completeness rules + expanded CA detection (mailto, JSON-LD email, footnote text). **Regressed.** Theory: more instructions → less consistent execution. v1.5 stays locked.
+4. **--relaxed comparator + v1.7 (`043b3b1`)** — Casey's PM directive ("take the affiliation string exactly as is; both PDF links are valid"). Comparator now accepts substring match on rases, same-host+DOI-tail match on pdf_url. Lifts v1.5 rases 46 → 58 and pdf_url 52 → 54. v1.7 (verbatim-rases prompt) tested — no win over v1.5.
+5. **v1.5 + Opus 4.7 (`25e8beb`)** — model swap experiment. Opus trades fields: −6 to −8 pp on authors/CA/rases vs Sonnet, but **+14 pp on PDF URL** (54 → 68) and +4 pp on row-perfect overall (20 → 24). 2× cost ($8.44 vs $4.46). Sonnet stays locked; Opus is a future option if PDF URL becomes the binding gate.
+6. **Production Parseland scored (`958ef8b`)** — first time we'd graded the deployed parser against the same gold-standard. Our locked candidate beats Parseland on 4/5 fields; Parseland wins rases by 6 pp (structural — Parseland returns `authors[].affiliations` as list-of-objects, joined with '; ' at score time; v1.5 returns single string). Fix planned: **v1.8 schema change** rases: str → rases: List[str], joined with '; '. Projected v1.8 scoreboard: 88/66/80/78/54.
+7. **BU Cloud + Taxicab combo v1 (`c8871f3`)** — pointed browser-use Cloud's agentic loop at Taxicab `download_url` instead of doi.org. **Worse than direct Claude on every field**: −14 auth, −18 CA, −18 pdf. 22 min wall vs 30s, $15 vs $4.46.
+8. **BU Cloud + Taxicab combo v2 (`6c2a115`)** — re-ran with vendor-recommended settings (Sonnet 4.6, judge ON, retry-cap 3) to eliminate "wrong settings" question. **Still worse**: −6 auth, −8 rases, −2 CA on top of v1. Definitive: agent loop on cached static HTML adds noise without signal — nothing to click, no JS to render. Browser-use Cloud is the right tool for **live JS-rendered pages**, not pre-fetched static HTML. Direct API on Taxicab cache wins.
+
+### Decisions locked this afternoon
+
+- **Production gold-standard generator: v1.5 Sonnet 4.6 Taxicab+Claude with --relaxed comparator.** All 9 alternatives tested (cloud variants, BU+Taxicab combos, model swaps, prompt iterations) underperformed.
+- **Casey's --relaxed comparator** (substring rases, same-host+DOI pdf_url) is the official scoring contract going forward. No more strict comparator for production grading.
+- **Taxicab cache-first architecture** — direct Anthropic API on Taxicab's S3-cached HTML is the right pipeline for any DOI Taxicab has already harvested. Browser-use Cloud reserved for live JS-rendered pages we can't get from Taxicab.
+- **v1.8 schema fix** queued for tomorrow AM: rases as `List[str]`, joined with '; ' at score-time. Closes the structural −6 pp gap vs Parseland.
+- **Phase D greenlit** for Thu 4/30 at concurrency 10: 10K Crossref sample → `extract_via_taxicab.py --skip-meta-tags` with v1.5/v1.8 prompt + Sonnet 4.6. Output is the new graded benchmark for future Parseland improvements.
+
+### Open with Casey/Jason
+
+- Lock --relaxed comparator publicly (it's already the de-facto scoring contract; do we want a writeup or a one-line callout)?
+- Phase D timing — start Thu AM after v1.8 schema lands, or earlier with v1.5 as-is?
+- Confirm Sonnet 4.6 over Opus for Phase D — Sonnet wins 4/5 fields at half the cost; Opus only wins on PDF URL (+14 pp) which is field #2 in priority order. Worth burning 2× the budget for that single field?
+
+### Cost paid this session
+
+~$50 cumulative across the 9 pipeline configurations tested. Locked candidate runs at $4.46 / 50 DOIs ($0.09 / DOI). Phase D 10K projected at ~$890 + $299 (BU Cloud Business tier — kept for live-page fallback only).
+
+### Run files written this afternoon
+
+- `runs/holdout-v1.4-taxicab/` (initial Taxicab two-tier baseline)
+- `runs/holdout-v1.5-taxicab/` ← **LOCKED candidate**
+- `runs/holdout-v1.5-opus/` (Opus 4.7 trade-off run)
+- `runs/holdout-v1.5-bu-taxicab/`, `runs/holdout-v1.5-bu-taxicab-v2/` (BU+Taxicab combos, both worse)
+- `runs/holdout-v1.6-taxicab/` (regression)
+- `runs/holdout-v1.7-taxicab/` (verbatim-rases experiment)
+- `runs/holdout-parseland/` (production Parseland scored)
+- `eval/goldie/summary-*.json` per config
+- `eval/scripts/extract_via_taxicab.py` (new runner, two-tier with `--skip-meta-tags` flag)
+- `eval/prompts/ai-goldie-v1.{5,6,7}.md`
+
+### Commits pushed to `ourresearch/parseland-eval` main
+
+`d45b51d` Taxicab+Claude pipeline · `1ca1b59` v1.5 + JSON retry · `aaa9e06` ACCOMPLISHMENT.md afternoon · `8d3c634` v1.6 regressed · `043b3b1` --relaxed comparator + v1.7 · `25e8beb` Opus 4.7 swap · `958ef8b` Parseland scored · `c8871f3` BU+Taxicab v1 · `6c2a115` BU+Taxicab v2.
+
+Heroku dashboard auto-deploy from main triggered. All run JSONs land on the live dashboard.
+
+---
+
 ## 2026-04-29 session — Phase C iteration on holdout-50
 
 ### TL;DR
