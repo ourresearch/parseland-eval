@@ -1,5 +1,41 @@
 # Comparator relaxation rules — v1.8 holdout-50
 
+## 2026-05-01 additions (3 new rases relaxations, all 🟡 pending approval)
+
+### 7. rases unicode-NFKD substring match
+After NFKD + dropping combining marks + mapping ø/æ/ß/ł/curly-quotes/dashes to ASCII equivalents, accept substring relationship.
+
+**Worked example**:
+- Gold: `Scuola Superiore Sant'Anna, Pisa, Italy; Ecole Polytechnique Federale de Lausanne` (curly apostrophe U+2019, no accent on Ecole)
+- AI:   `Scuola Superiore Sant'Anna, Pisa, Italy; École Polytechnique Federale de Lausanne` (straight apostrophe, accented É)
+- After NFKD: both normalize to identical lowercase ASCII. **MATCH**.
+
+This is the bioRxiv preprint case (DOI 10.1101/532200) — the auditor lost unicode during copy-paste, AI was more faithful.
+
+### 8. rases digit-skip token subset
+Accept when AI's non-digit tokens are a subset of gold's tokens AND AI is shorter — the dropped tokens are postal codes / building numbers / street addresses.
+
+**Worked examples (caught)**:
+- Gold: `...BARC, Mumbai, 400085, India` / AI: `...BARC, Mumbai, India` → dropped token `400085` is digit-shaped → **MATCH**
+- Gold: `...UAM Campus, Madrid, E-28049, Spain` / AI: `...UAM Campus, Madrid, Spain` → dropped `E-28049` is alphanumeric postal code → **MATCH**
+
+**Counter-example (correctly rejected)**:
+- Gold: `MIT, Cambridge` / AI: `Stanford, Cambridge` → AI has `stanford` token not in gold → **NO MATCH**
+
+### 9. rases token-sort fuzzy fallback (rapidfuzz)
+Final fallback: token_sort_ratio ≥ 88 with length difference < 40% catches publisher-side pluralization variance like `Material Science` vs `Materials Science` on the same school.
+
+**Worked example (caught at threshold 88)**:
+- DOI 10.1016/j.surfcoat.2023.129748 — Beihang University. Gold says "School of Material Science", AI says "School of Materials Science". Same school, publisher's rendering varies between title page and citation block.
+
+**Holdout-50 cumulative impact** of rules 7–9: rases 60 → 70 (+10pp) without any extractor or prompt change.
+
+**Status**: 🟡 all three pending Casey + Jason approval.
+
+---
+
+
+
 Per SKILL.md "Comparator design rules": every `--relaxed` mode rule must be documented here with worked examples before it ships in the scorer. This file tracks the **active rules** and their justification. Casey + Jason approval status noted per rule.
 
 ---

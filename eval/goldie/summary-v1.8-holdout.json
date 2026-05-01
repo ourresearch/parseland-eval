@@ -4,10 +4,10 @@
   "n_ai_only": [],
   "per_field": {
     "authors": 90.0,
-    "rases": 60.0,
+    "rases": 70.0,
     "corresponding": 82.0,
     "abstract": 80.0,
     "pdf_url": 60.0
   },
-  "overall": 28.0
+  "overall": 32.0
 }

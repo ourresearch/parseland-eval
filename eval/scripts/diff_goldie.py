@@ -174,6 +174,69 @@ def _name_to_author(authors: list[dict], *, relaxed: bool = False) -> dict[str, 
     return out
 
 
+_RASES_DIGIT_TOKEN = re.compile(r"\d[\w\-]*")  # postal codes, building numbers
+
+
+def _rases_normalize(s: str) -> str:
+    """Aggressive normalization for relaxed-rases substring checks:
+    NFKD unicode + drop combining marks + map ø/æ/ß/ł + lowercase + collapse
+    whitespace + drop punctuation. Mirrors normalize_name's approach.
+    """
+    import unicodedata
+    s = (s or "").strip().lower()
+    s = unicodedata.normalize("NFKD", s)
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    s = s.translate(str.maketrans({
+        "ø": "o", "æ": "ae", "œ": "oe", "ß": "ss", "ł": "l",
+        # Latin curly punctuation that NFKD doesn't decompose
+        "’": "'", "‘": "'",  # smart quotes
+        "“": '"', "”": '"',
+        "–": "-", "—": "-",  # en/em dash
+    }))
+    return _WS_RE.sub(" ", s).strip()
+
+
+def _rases_token_subset_with_digit_skip(gold: str, ai: str) -> bool:
+    """Accept when AI's non-digit tokens are a subset of gold's tokens AND
+    AI is shorter — i.e. AI captured the institutional/geographic content
+    but dropped postal codes / building numbers / street numbers.
+
+    Examples (caught):
+      gold "Mumbai, 400085, India" / ai "Mumbai, India"
+        → ai_tokens {mumbai, india} ⊆ gold_tokens {mumbai, 400085, india}
+        → AI shorter → MATCH
+
+      gold "...Madrid, E-28049, Spain" / ai "...Madrid, Spain"
+        → ai missing only digit-shaped tokens → MATCH
+
+    Examples (correctly rejected):
+      gold "MIT, Cambridge" / ai "Stanford, Cambridge"
+        → ai has token "stanford" not in gold → NO MATCH
+    """
+    g_tokens = re.findall(r"[a-z0-9]+", gold.lower())
+    a_tokens = re.findall(r"[a-z0-9]+", ai.lower())
+    if not g_tokens or not a_tokens:
+        return False
+    g_set = set(g_tokens)
+    a_set = set(a_tokens)
+    extras = a_set - g_set
+    # No extra non-trivial tokens allowed in AI
+    if extras and any(len(t) >= 2 and not t.isdigit() for t in extras):
+        return False
+    # AI must be meaningfully shorter (at least 5% byte difference) — else
+    # it's something else, not "dropped detail".
+    if len(ai) >= 0.95 * len(gold):
+        return False
+    # The dropped tokens (gold - ai) should include digit-tokens; if all
+    # dropped tokens are pure-letter and len > 3, that's a real omission.
+    dropped = g_set - a_set
+    dropped_digit_count = sum(1 for t in dropped if any(c.isdigit() for c in t))
+    dropped_letter_count = sum(1 for t in dropped if t.isalpha() and len(t) > 3)
+    # Allow if at least one digit-token was dropped (postal code / number)
+    # OR if dropped tokens are mostly short fillers / single chars.
+    return dropped_digit_count >= 1 or dropped_letter_count <= 1
+
+
 def rases_match(human_authors: list[dict], ai_authors: list[dict], *, relaxed: bool = False) -> bool:
     h_map = _name_to_author(human_authors, relaxed=relaxed)
     a_map = _name_to_author(ai_authors, relaxed=relaxed)
@@ -186,13 +249,39 @@ def rases_match(human_authors: list[dict], ai_authors: list[dict], *, relaxed: b
         if h == a:
             continue
         if relaxed:
-            # Per Casey 2026-04-29: accept substring matches (auditor recorded
-            # full multi-affil; AI extracted a portion). Also tolerate whitespace
-            # and casing drift.
+            # Casey 2026-04-29: accept substring matches (auditor recorded
+            # full multi-affil; AI extracted a portion). Also tolerate
+            # whitespace and casing drift.
             h_n = " ".join(h.split()).lower()
             a_n = " ".join(a.split()).lower()
             if h_n == a_n or (h_n and a_n and (h_n in a_n or a_n in h_n)):
                 continue
+            # 2026-05-01 additions, both worked-example documented in
+            # eval/goldie/comparator-rules.md:
+            #   1. Unicode-NFKD + Latin-special-letter normalization
+            #      catches "Sant'Anna"/"Sant'Anna" (curly vs straight)
+            #      and "Ecole"/"École" (gold lost the accent).
+            h_u = _rases_normalize(h)
+            a_u = _rases_normalize(a)
+            if h_u and a_u and (h_u == a_u or h_u in a_u or a_u in h_u):
+                continue
+            #   2. Digit-skip subset: AI's non-digit tokens ⊆ gold's tokens
+            #      AND AI shorter — catches dropped postal codes /
+            #      "Mumbai, 400085, India" vs "Mumbai, India".
+            if _rases_token_subset_with_digit_skip(h_u, a_u):
+                continue
+            #   3. Token-sort fuzzy fallback (rapidfuzz). Catches edge
+            #      cases like "Material Science" vs "Materials Science"
+            #      (publisher's own pluralization variance) that survive
+            #      tokenization. Conservative threshold = 88.
+            try:
+                from rapidfuzz import fuzz
+                if (h_u and a_u and
+                    fuzz.token_sort_ratio(h_u, a_u) >= 88 and
+                    abs(len(h_u) - len(a_u)) < 0.4 * max(len(h_u), len(a_u))):
+                    continue
+            except ImportError:
+                pass
         return False
     return True
 
