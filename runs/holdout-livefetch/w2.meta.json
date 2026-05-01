@@ -1,0 +1,29 @@
+{
+  "n_targets": 4,
+  "results": [
+    {
+      "doi": "10.1161/01.str.32.6.1291",
+      "steps": 10,
+      "duration_s": 340.93,
+      "error": null
+    },
+    {
+      "doi": "10.1016/0021-9673(93)80418-8",
+      "steps": 0,
+      "duration_s": 0.29,
+      "error": "no_structured_output"
+    },
+    {
+      "doi": "10.1016/j.epsl.2025.119420",
+      "steps": 0,
+      "duration_s": 0.17,
+      "error": "no_structured_output"
+    },
+    {
+      "doi": "10.25259/nmji_377_2024",
+      "steps": 0,
+      "duration_s": 0.17,
+      "error": "no_structured_output"
+    }
+  ]
+}

@@ -194,7 +194,6 @@ async def main_async(args) -> int:
 
     prompt_body = _strip_yaml_front_matter(Path(args.prompt).read_text())
 
-    browser = Browser(cdp_url=args.cdp_url)
     llm = ChatAnthropic(model=args.model)
 
     results = []
@@ -203,6 +202,12 @@ async def main_async(args) -> int:
     async def one(t):
         async with sem:
             log.info("[fetch] %s reason=%s", t["doi"], t.get("reason", ""))
+            # Recreate Browser per-DOI: browser-use's Agent calls
+            # BrowserStopEvent on completion which leaves the session in a
+            # closed state. The next Agent on the same Browser object then
+            # fails with `CDP client not initialized`. Workaround: a fresh
+            # Browser handle per DOI re-attaches to the live Chrome via CDP.
+            browser = Browser(cdp_url=args.cdp_url)
             r = await fetch_one(browser, llm, t, prompt_body, args.max_steps)
             log.info("  done %.1fs steps=%d %s",
                      r["duration_s"], r["steps"], r.get("error") or "ok")

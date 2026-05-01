@@ -1,0 +1,29 @@
+{
+  "n_targets": 4,
+  "results": [
+    {
+      "doi": "10.3791/30429",
+      "steps": 8,
+      "duration_s": 276.01,
+      "error": null
+    },
+    {
+      "doi": "10.1109/spmb59478.2023.10372728",
+      "steps": 0,
+      "duration_s": 0.37,
+      "error": "no_structured_output"
+    },
+    {
+      "doi": "10.1007/978-94-017-2981-9_4",
+      "steps": 0,
+      "duration_s": 0.15,
+      "error": "no_structured_output"
+    },
+    {
+      "doi": "10.1109/jrproc.1955.277953",
+      "steps": 0,
+      "duration_s": 0.26,
+      "error": "no_structured_output"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "n_targets": 4,
+  "results": [
+    {
+      "doi": "10.1080/01956051.2025.2517586",
+      "steps": 2,
+      "duration_s": 52.32,
+      "error": null
+    },
+    {
+      "doi": "10.1006/cviu.2002.0969",
+      "steps": 0,
+      "duration_s": 0.42,
+      "error": "no_structured_output"
+    },
+    {
+      "doi": "10.1108/978-1-64802-637-920251008",
+      "steps": 0,
+      "duration_s": 0.24,
+      "error": "no_structured_output"
+    },
+    {
+      "doi": "10.4274/turkderm.galenos.2022.81370",
+      "steps": 0,
+      "duration_s": 0.18,
+      "error": "no_structured_output"
+    }
+  ]
+}
