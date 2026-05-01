@@ -391,20 +391,11 @@ def run_doi(
             duration_s=round(time.perf_counter() - start, 2),
         )
 
-    # Tier 1: meta tags. Skipped when --skip-meta-tags is on (Casey apples-to-apples mode).
-    meta_extraction = None if skip_meta_tags else extract_via_meta_tags(html, doi, link)
-    if meta_extraction is not None:
-        return TaxicabResult(
-            no=no, doi=doi, link=link, extraction=meta_extraction,
-            tier="meta_tags", cost_usd=0.0, resolved_url=resolved_url,
-            duration_s=round(time.perf_counter() - start, 2),
-        )
-
-    # Tier 2: Claude on full HTML.
+    # Claude is PRIMARY. Meta tags are SECONDARY (backfill empty rases only).
     if not use_llm_fallback or not api_key:
         return TaxicabResult(
             no=no, doi=doi, link=link, tier="failed",
-            error="no meta tags + LLM fallback disabled or missing key",
+            error="LLM disabled or no API key",
             duration_s=round(time.perf_counter() - start, 2),
             resolved_url=resolved_url,
         )
@@ -420,6 +411,23 @@ def run_doi(
             usage=usage or {},
             resolved_url=resolved_url,
         )
+
+    # Backfill empty per-author rases from citation_author_institution meta tags
+    # (skipped under --skip-meta-tags). Conservative: only fills when Claude
+    # returned empty for an author whose name matches a meta-tag entry.
+    if not skip_meta_tags:
+        meta_extraction = extract_via_meta_tags(html, doi, link)
+        if meta_extraction:
+            sec_by_name = {
+                (sa.get("name") or "").strip().lower(): sa
+                for sa in (meta_extraction.get("Authors") or [])
+            }
+            for pa in (extraction.get("Authors") or []):
+                if (pa.get("rasses") or "").strip():
+                    continue
+                sa = sec_by_name.get((pa.get("name") or "").strip().lower())
+                if sa and (sa.get("rasses") or "").strip():
+                    pa["rasses"] = sa["rasses"].strip()
 
     return TaxicabResult(
         no=no, doi=doi, link=link, extraction=extraction, tier="claude",
