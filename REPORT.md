@@ -1,8 +1,8 @@
-# Holdout-50 5-field accuracy report — 2026-05-01 EOD
+# Holdout-50 5-field accuracy report — 2026-05-01 (rolling)
 
 **For**: Casey Meyer, Jason Priem
-**Run**: `runs/holdout-v1.8/ai-goldie-1.csv` — Sonnet 4.6, v1.8 prompt, `--skip-meta-tags`, Taxicab cached HTML
-**Comparator**: `diff_goldie.py --relaxed` — full ruleset (token-set names, NFKD diacritics, abstract@0.75, pdf_url same-host+DOI-tokens, **+ 2026-05-01: typographic normalization, truncated-meta-tag prefix match, multilingual substring superset**)
+**Run**: `runs/holdout-v1.8-livefetch/ai-goldie-1.csv` — v1.8 baseline merged with 3 successful live-fetch deltas (visible Chrome over CDP, browser-use Agent on `:9222 / :9223 / :9224`)
+**Comparator**: `diff_goldie.py --relaxed` — full ruleset (typographic / truncated-meta-prefix / multilingual-substring / NFKD-diacritic / digit-skip / fuzzy-name / pdf_url same-host-DOI-tokens / **+ 2026-05-01 PM**: pdf_url different-host-same-path-with-DOI-token for publisher domain renames)
 **Bar per Jason**: 95% per field. Bar per Casey EOD frame: 85% per field.
 
 ## Headline scoreboard
@@ -10,14 +10,31 @@
 ```
                   strict    relaxed       gap to 85   gap to 95
 authors           88.0%     90.0%         +5pp ✅     ❌ −5pp
-rases             52.0%     70.0%         ❌ −15pp    ❌ −25pp
-corresponding     80.0%     82.0%         ❌ −3pp     ❌ −13pp
-abstract          76.0%     84.0% ↑+4pp   ❌ −1pp     ❌ −11pp
-pdf_url           54.0%     60.0%         ❌ −25pp    ❌ −35pp
-overall (all 5)   22.0%     32.0% ↑+4pp
+rases             54.0%     72.0% ↑+2pp   ❌ −13pp    ❌ −23pp
+corresponding     76.0%     80.0%         ❌ −5pp     ❌ −15pp  (Stroke gold-vs-page CA disagreement)
+abstract          80.0%     88.0% ↑+8pp   +3pp ✅     ❌ −7pp
+pdf_url           58.0%     62.0% ↑+2pp   ❌ −23pp    ❌ −33pp
+overall (all 5)   24.0%     34.0% ↑+6pp
 ```
 
-`authors` clears 85% ✅. `abstract` is 1pp short of 85%. `rases`, `corresponding`, `pdf_url` are decision-bound (gold convention or live-fetch tier).
+`authors` and `abstract` both clear 85% ✅. `rases`, `corresponding`, `pdf_url` are still gated on live-fetch coverage and gold-convention decisions.
+
+### What changed since the morning baseline
+
+Three layered improvements in the day's session:
+
+1. **Comparator** (4 rules added): typographic normalization, truncated-meta prefix match, multilingual substring superset, different-host-same-path with DOI token. Total comparator gain across the day: **+8pp** (abstract +4, pdf_url +2, rases +2 from earlier morning rules).
+
+2. **v1.9 prompt experiment** (NOT shipping). Targeted abstract rules for IEEE Xplore inline-JS + NMJI body-paragraph + anti-truncation. Each rule fired correctly per-DOI but caused a -2pp aggregate regression — once the AI is authorized to extract from inline JSON for the abstract, it expands into adjacent fields. v1.8 stays canonical; v1.9.1 surgical retry sat in stochastic-noise band; rules-as-prompt-extensions are inherently leaky.
+
+3. **Live-fetch tier** (`eval/scripts/live_fetch_empty.py` + `eval/scripts/merge_livefetch.py`). Drives a real Chrome (visible window) via CDP with browser-use Agent. Pass-1 ran 13 targets across 3 separate Chrome instances on different debug ports. Successes:
+
+   - **AHA Stroke 32.6.1291 — full recovery** (the headline win): all 6 authors with full institutional affiliations (Glasgow / Edinburgh institutes, UK), full Background/Methods/Results/Conclusions abstract, working PDF URL. The cached HTML had no `citation_author_institution` meta tags; the page renders affiliations only after a JS-driven "Author Info & Affiliations" section opens. Live-browser sees them.
+   - **IEEE icelmach abstract** recovered (the v1.9 target case, now without authors regression because the page is in skeleton state and the agent correctly gives up rather than confidently emitting recommended-papers authors).
+   - **JoVE 30429 abstract + pdf_url** recovered (with a "Source: ..." citation prefix, which the substring-superset comparator rule accepts).
+   - T&F Daughters **legitimately bot-blocked by Cloudflare** (correctly flagged, not a tier failure).
+
+   Per-pass mechanics: browser-use's `BrowserStopEvent` on agent completion leaves the shared Chrome session in a closed state, so the next agent on the same Browser handle fails with `CDP client not initialized`. Pass-1 lost 9 of 13 targets to this cascade. Fix landed in `live_fetch_empty.py`: recreate the Browser handle per-DOI. Pass-2 (currently running) re-runs those 9 with the fix.
 
 Comparator gain this iteration (2026-05-01 PM session): **+4pp on abstract** via two new rules. Worked examples in `eval/scripts/diff_goldie.py::abstract_match` docstrings.
 
