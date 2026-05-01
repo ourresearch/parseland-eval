@@ -216,6 +216,50 @@ The anti-truncation rule was also redundant: the comparator's truncated-meta-pre
 
 ---
 
+## v1.9.1 surgical retry — 2026-05-01 late PM, sat in stochastic-noise band
+
+Applied the lesson: gated the inline-JS rule to DOIs starting with `10.1109/` (IEEE Xplore) and explicitly forbade extraction of authors / pdf_url / corresponding from the same JSON blob.
+
+Per-DOI verification: the IEEE icelmach abstract was recovered (empty → 788 chars). But aggregate scoring sat in the LLM stochastic-variance noise band:
+
+```
+                  v1.8     v1.9.1     delta
+authors           90.0%    88.0%      -2pp (1 real + scope leak)
+rases             70.0%    68.0%      -2pp (1 É vs E' unicode noise)
+corresponding     82.0%    78.0%      -4pp (CA flag flips on
+                                            independent DOI — pure
+                                            stochasticity)
+abstract          84.0%    86.0%      +2pp (IEEE icelmach gain)
+pdf_url           60.0%    58.0%      -2pp (no rule should have
+                                            touched this — variance)
+overall           32.0%    30.0%      -2pp
+```
+
+Even with the gating, the IEEE rule still leaked into authors on the same DOI: the AI emitted `Mohamed Amine Mendaci, Sami Hlioui, Mohamed Gabsi` as authors (those are recommended-articles authors). Once the AI sees authorization to read inline JSON, it does so for adjacent fields regardless of explicit prompt constraints.
+
+NOT shipping v1.9.1 either. v1.8 stays canonical.
+
+---
+
+## Live-fetch tier — infrastructure built and proven, full run blocked on sequential time budget
+
+Built `eval/scripts/live_fetch_empty.py` that drives a real Chrome (visible window via CDP on `:9222`) with browser-use Agent. Targets the 13 holdout-50 DOIs where v1.8's cached-HTML extraction returned empty content for fields the gold has.
+
+**Smoke test results** (full proof of concept):
+
+- Headless Chrome → IEEE returns `Error 418 - Access denied / bot check`. `HeadlessChrome` user-agent string is widely blocked.
+- Visible Chrome → IEEE icelmach abstract recovered correctly in 408 seconds (14 navigation steps). Authors correctly NOT emitted (page-skeleton state, no false-confidence fallback like v1.9.1 had). Output at `runs/holdout-livefetch/smoke2.csv`.
+
+**Full 13-target run is blocked on time budget**, not infrastructure:
+
+- Concurrency 3 (the obvious speedup) does NOT work on single Chrome — browser-use Agents fight over the shared browser session: `CDP client not initialized - browser may not be connected yet` errors after the first agent's session reset cascades. To parallelize, would need N separate Chrome processes on different ports (`:9222`, `:9223`, ...). Engineering work, deferred.
+- Concurrency 1 (sequential) at the smoke pace of ~7 min / DOI → ~90 minutes wall on 13 DOIs. Estimated cost ~$2-3.
+- Many publishers will still block visible Chrome (Elsevier, AHA, Wolters Kluwer hit Cloudflare). Realistic recovery rate is probably 4-7 of 13. Estimated max delta: rases +6-10pp (70 → 76-80%), abstract +3-5pp (84 → 87-89%).
+
+**Decision**: ship the infrastructure now. Run the full 13 sequentially in the next cycle (90 min wall is fine offline). Keep concurrency 1 for stability; revisit multi-Chrome-process parallelization only if the sequential numbers hit a meaningful publisher mix.
+
+---
+
 ## Summary asks (in priority order)
 
 1. **Approve `GOLD-UPDATE-PROPOSAL.md`** — 13 author-rows on rases. +11pp per-author / +4pp per-DOI on rases.
