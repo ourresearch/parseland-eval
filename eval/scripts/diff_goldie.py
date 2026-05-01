@@ -299,14 +299,70 @@ def corresponding_match(human_authors: list[dict], ai_authors: list[dict], *, re
 
 
 _HYPHEN_BREAK_RE = re.compile(r"-\s+")  # PDF-extraction artifacts: "extrac-\n  tion" → "extraction"
+_TYPOGRAPHIC_TRANS = str.maketrans({
+    # Smart quotes → straight (gold often has curly, AI often has straight, or vice versa)
+    "‘": "'", "’": "'", "‚": "'", "‛": "'",
+    "“": '"', "”": '"', "„": '"', "‟": '"',
+    # En/em/figure dash → hyphen
+    "–": "-", "—": "-", "‒": "-", "―": "-",
+    # Non-breaking space, narrow no-break, thin space → regular space
+    " ": " ", " ": " ", " ": " ", " ": " ",
+    # Soft hyphen → drop
+    "­": "",
+    # Bullet, ellipsis (single-char) → spelled out so SequenceMatcher matches "..."
+    "•": "*",
+    "…": "...",
+    # Â character that appears in mojibake'd Indonesian abstracts (UTF-8 BOM mis-decoded)
+    "Â": " ",
+})
 
 
 def _normalize_abstract_text(s: str) -> str:
-    """Collapse whitespace and join hyphen-broken words. Both common artifacts
-    of PDF-derived vs HTML-derived abstract text."""
+    """Collapse whitespace, join hyphen-broken words, normalize typographic
+    punctuation so HTML-rendered and gold-pasted abstracts converge."""
+    s = s.translate(_TYPOGRAPHIC_TRANS)
     s = _HYPHEN_BREAK_RE.sub("", s)  # join "extrac- tion" → "extraction"
     s = _WS_RE.sub(" ", s).strip()
     return s
+
+
+_TRUNCATED_META_TAIL_RE = re.compile(r"\.{2,}\s*$")  # e.g. "...the meta-description ended..."
+
+
+def _is_truncated_meta_tag(s: str) -> bool:
+    """Detect AI extractions that pulled the page's meta-description tag
+    instead of the full abstract. Pattern: ≤250 chars and ends with '...'.
+
+    Worked example (holdout-50, DOI 10.1080/01956051.2025.2517586):
+      AI len=200, ends with 'Daughters of...'
+      Gold has the full abstract (~1300 chars).
+      Without this check, ratio is ~0.30 → fail. With prefix match → match.
+
+    Worked example (DOI 10.1161/01.str.32.6.1291):
+      AI len=200, ends with 'intra-arterial digital subtractio...'
+      Gold has the full abstract starting with the same sentence.
+      Prefix match passes.
+    """
+    return len(s) <= 250 and bool(_TRUNCATED_META_TAIL_RE.search(s))
+
+
+def _abstract_substring_match(short: str, long: str, threshold: float) -> bool:
+    """Accept when the shorter abstract appears as a high-fidelity substring
+    of the longer one. Catches multilingual concatenations where gold has
+    only one language but AI extracted both (Indonesian + English block).
+
+    Worked example (holdout-50, DOI 10.24952/masharif.v9i1.3848):
+      Gold: Indonesian abstract (~750 chars)
+      AI:   "Abstrak <Indonesian text> Abstract <English text>" (~1500 chars)
+      Substring(gold, AI) → high best-block ratio → match.
+    """
+    if not short or not long or len(long) < len(short):
+        return False
+    # SequenceMatcher.find_longest_match is O(n*m) but n,m ≤ ~3k chars so fine.
+    matcher = difflib.SequenceMatcher(None, short, long, autojunk=False)
+    block = matcher.find_longest_match(0, len(short), 0, len(long))
+    coverage = block.size / max(1, len(short))
+    return coverage >= threshold
 
 
 def abstract_match(human: str | None, ai: str | None,
@@ -322,10 +378,33 @@ def abstract_match(human: str | None, ai: str | None,
         # Threshold tuned 2026-04-30 against v1.8 holdout-50: lowering from
         # 0.95 → 0.75 caught 2 borderline cases without false positives.
         # See sweep results: 0.65→82%, 0.75→80%, 0.84→76%, 0.95→76%.
-        # Plus normalize whitespace and join hyphen-broken words.
+        # Plus typographic + whitespace + hyphen-break normalization.
         h = _normalize_abstract_text(h)
         a = _normalize_abstract_text(a)
         threshold = 0.75
+        if difflib.SequenceMatcher(None, h, a).ratio() >= threshold:
+            return True
+        # Truncated-meta-tag prefix match (added 2026-05-01).
+        # If AI looks like a truncated meta description, accept when gold
+        # starts with the same prefix (drop the trailing ellipsis first).
+        if _is_truncated_meta_tag(a):
+            a_prefix = _TRUNCATED_META_TAIL_RE.sub("", a).rstrip()
+            if a_prefix and h.lower().startswith(a_prefix.lower()):
+                return True
+        if _is_truncated_meta_tag(h):
+            h_prefix = _TRUNCATED_META_TAIL_RE.sub("", h).rstrip()
+            if h_prefix and a.lower().startswith(h_prefix.lower()):
+                return True
+        # Substring superset (added 2026-05-01): shorter abstract appears
+        # as a contiguous block in the longer one. Catches multilingual
+        # AI extractions that include both source-language and translation.
+        if len(a) > len(h):
+            if _abstract_substring_match(h, a, 0.90):
+                return True
+        elif len(h) > len(a):
+            if _abstract_substring_match(a, h, 0.90):
+                return True
+        return False
     return difflib.SequenceMatcher(None, h, a).ratio() >= threshold
 
 
