@@ -1,0 +1,23 @@
+{
+  "n_targets": 3,
+  "results": [
+    {
+      "doi": "10.1006/cviu.2002.0969",
+      "steps": 3,
+      "duration_s": 76.49,
+      "error": null
+    },
+    {
+      "doi": "10.4274/turkderm.galenos.2022.81370",
+      "steps": 2,
+      "duration_s": 68.14,
+      "error": null
+    },
+    {
+      "doi": "10.1108/978-1-64802-637-920251008",
+      "steps": 2,
+      "duration_s": 55.25,
+      "error": null
+    }
+  ]
+}

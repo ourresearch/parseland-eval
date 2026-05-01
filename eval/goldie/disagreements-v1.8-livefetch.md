@@ -774,11 +774,6 @@
 ]
 - landing_page_truth: TBD
 
-**pdf_url**
-- AI:    https://www.frontiersin.org/articles/10.3389/fendo.2023.1147554/pdf
-- Human: https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2023.1147554/pdf
-- landing_page_truth: TBD
-
 ## DOI: 10.36838/v4i6.14
 
 **pdf_url**

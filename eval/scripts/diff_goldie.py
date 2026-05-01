@@ -544,7 +544,18 @@ def _pdf_url_match_relaxed(h: str, a: str, doi: str) -> bool:
         # appear in both URLs. Catches BMJ-style "18.2.128" → "/18/2/128/"
         # and Frontiers viewer-vs-download paths.
         if doi_tail:
-            tokens = [t for t in _DOI_TOKEN_RE.findall(doi_tail) if len(t) >= 3]
+            # Strip supplementary-material suffix like ".s001"/".s002" from the
+            # DOI tail before tokenizing — the supplementary file URL on
+            # Frontiers (and other publishers) carries only the parent article's
+            # tokens, not the .s### suffix. Worked example:
+            #   doi:  10.3389/fendo.2023.1147554.s002
+            #   gold: frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2023.1147554/pdf
+            #   ai:   frontiersin.org/articles/10.3389/fendo.2023.1147554/pdf
+            #   → both contain fendo / 2023 / 1147554; neither contains "s002"
+            #     because Frontiers serves the supplementary off the parent
+            #     article URL. Stripping the suffix lets the rule fire. MATCH.
+            tail_for_tokens = re.sub(r"\.s\d+$", "", doi_tail)
+            tokens = [t for t in _DOI_TOKEN_RE.findall(tail_for_tokens) if len(t) >= 3]
             if tokens and all(t in h_l for t in tokens) and all(t in a_l for t in tokens):
                 return True
         return False
