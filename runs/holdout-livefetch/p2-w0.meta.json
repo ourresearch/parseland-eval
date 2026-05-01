@@ -1,0 +1,23 @@
+{
+  "n_targets": 3,
+  "results": [
+    {
+      "doi": "10.1109/spmb59478.2023.10372728",
+      "steps": 8,
+      "duration_s": 243.11,
+      "error": null
+    },
+    {
+      "doi": "10.1109/jrproc.1955.277953",
+      "steps": 4,
+      "duration_s": 117.21,
+      "error": null
+    },
+    {
+      "doi": "10.1007/978-94-017-2981-9_4",
+      "steps": 5,
+      "duration_s": 151.12,
+      "error": null
+    }
+  ]
+}
