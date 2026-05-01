@@ -729,44 +729,6 @@
 - Human: https://journalturkderm.org/pdf/a8b2a838-ca73-407f-ba5b-c86eada59dd3/articles/turkderm.galenos.2022.81370/TURKDERM_56_2_80_83.pdf
 - landing_page_truth: TBD
 
-## DOI: 10.58837/chula.jamjuree.21.3.7
-
-**rases**
-- AI:    [
-  {
-    "name": "กาญจนา นาคสกุล",
-    "rasses": "",
-    "corresponding_author": false,
-    "affiliations": []
-  }
-]
-- Human: [
-  {
-    "name": "กาญจนานาคสกุล",
-    "rasses": "",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
-**corresponding**
-- AI:    [
-  {
-    "name": "กาญจนา นาคสกุล",
-    "rasses": "",
-    "corresponding_author": false,
-    "affiliations": []
-  }
-]
-- Human: [
-  {
-    "name": "กาญจนานาคสกุล",
-    "rasses": "",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
 ## DOI: 10.7256/2454-0730.2019.1.20595
 
 **authors**

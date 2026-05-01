@@ -181,17 +181,27 @@ def authors_match(human_authors: list[dict], ai_authors: list[dict], *, relaxed:
 
 def _name_to_author(authors: list[dict], *, relaxed: bool = False) -> dict[str, dict]:
     """Map normalized name → author. With relaxed=True, also indexes by
-    token set so 'Smith, John' and 'John Smith' resolve to the same author."""
+    token set (for 'Smith, John' vs 'John Smith') and by no-whitespace
+    variant (for Thai / CJK script segmentation drift)."""
     out: dict[str, dict] = {}
     for a in authors:
         if not a.get("name"):
             continue
         out[normalize_name(a["name"])] = a
         if relaxed:
-            # Use a sorted-token string as a secondary key (frozenset isn't a
-            # great dict key for lookup; sorted-tokens is order-canonical).
+            # Sorted-token secondary key for "Last, First" vs "First Last".
             tok_key = " ".join(sorted(_name_token_set(a["name"])))
             out.setdefault(tok_key, a)
+            # No-whitespace tertiary key for Thai / CJK / other non-space-
+            # segmented scripts where gold and AI may disagree on whether
+            # to insert a space at syllable boundaries. Worked example
+            # (DOI 10.58837/chula.jamjuree.21.3.7):
+            #   gold "กาญจนานาคสกุล"  → no-ws key "กาญจนานาคสกุล"
+            #   ai   "กาญจนา นาคสกุล" → no-ws key "กาญจนานาคสกุล"
+            # The no-ws keys collide → rases / corresp comparators now
+            # treat them as the same author.
+            nows_key = normalize_name(a["name"]).replace(" ", "")
+            out.setdefault(nows_key, a)
     return out
 
 
