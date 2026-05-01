@@ -5,11 +5,11 @@
 **Comparator**: `diff_goldie.py --relaxed` — full ruleset (typographic / truncated-meta-prefix / multilingual-substring / NFKD-diacritic / digit-skip / fuzzy-name / pdf_url same-host-DOI-tokens / **+ 2026-05-01 PM**: pdf_url different-host-same-path-with-DOI-token for publisher domain renames)
 **Bar per Jason**: 95% per field. Bar per Casey EOD frame: 85% per field.
 
-## Headline scoreboard — after live-fetch pass-2 + comparator round 2
+## Headline scoreboard — after live-fetch pass-2 + comparator round 3
 
 ```
                   strict    relaxed       gap to 85   gap to 95
-authors           90.0%     92.0% ↑+2pp   +7pp ✅     ❌ −3pp
+authors           90.0%     94.0% ↑+4pp   +9pp ✅     ❌ −1pp ⚠️
 rases             62.0%     82.0% ↑+12pp  ❌ −3pp     ❌ −13pp
 corresponding     78.0%     80.0%         ❌ −5pp     ❌ −15pp  (Stroke gold-vs-page CA disagreement)
 abstract          78.0%     88.0% ↑+8pp   +3pp ✅     ❌ −7pp
@@ -17,13 +17,13 @@ pdf_url           54.0%     64.0% ↑+4pp   ❌ −21pp    ❌ −31pp
 overall (all 5)   32.0%     42.0% ↑+14pp
 ```
 
-`authors` and `abstract` clear 85% ✅. `rases` is **3pp short** of the 85% bar (no longer the dominant gap). `corresponding` and `pdf_url` are now the binding constraints, both gated on gold-convention or auditor decisions.
+`authors` is **1pp from the 95% bar** (Thai/CJK no-whitespace name match caught the chula DOI). `abstract` clears 85%. `rases` is 3pp short. `corresponding` and `pdf_url` are now the binding constraints, both gated on gold-convention or auditor decisions.
 
 ### Day's gain summary (vs morning baseline at 28% overall)
 
 ```
                   morning   end-of-day   delta
-authors           88.0%     92.0%        +4pp
+authors           88.0%     94.0%        +6pp ✅ (1pp from 95)
 rases             60.0%     82.0%        +22pp  (live-fetch tier, biggest mover)
 corresponding     82.0%     80.0%        -2pp   (Stroke marker disagreement)
 abstract          80.0%     88.0%        +8pp   (comparator + live-fetch)
