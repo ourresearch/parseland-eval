@@ -179,6 +179,43 @@ Comparator gain this iteration (2026-05-01 PM session): **+4pp on abstract** via
 
 ---
 
+## v1.9 prompt experiment — 2026-05-01 PM, NET LOSS, NOT SHIPPING
+
+Drafted v1.9 with three new abstract rules to address the 5 empty-abstract cases. Cached HTML inspection showed that 2 of those cases ARE prompt-fixable:
+  - **IEEE Xplore** embeds the full abstract in inline JS as `"abstract":"..."` (no `citation_abstract` meta tag, no `<div class="abstract">`).
+  - **NMJI India** has no separate abstract block — the gold "abstract" IS the first body paragraph inside `<main><div class="body">`.
+And 1 had a known wrong-text shape:
+  - **Daughters of Dust** (T&F) — v1.8 emitted a 200-char "..."-truncated meta description that's actually a body-quote, not the real abstract.
+
+v1.9 added: (a) an inline-JS JSON fallback for `"abstract":"..."` patterns, (b) a body-paragraph fallback for case-report formats, and (c) a hard rule "never emit any string ending with `...` and ≤ 250 chars" (anti-meta-truncation).
+
+**Per-DOI verification confirmed each rule fired correctly:**
+  - IEEE icelmach: v1.8 empty → v1.9 = 788 chars matching gold ✅
+  - NMJI: v1.8 empty → v1.9 = 1492 chars (extracted, but gold paper appears to be a *different case report* than what's on the live page; needs auditor review) ⚠️
+  - Daughters of Dust: v1.8 = 200-char truncated → v1.9 = empty (rule fired) ✅
+
+**But aggregate measurement was a net regression**:
+
+```
+                  v1.8     v1.9 exp    delta
+authors           90.0%    88.0%       -2pp
+rases             70.0%    68.0%       -2pp
+corresponding     82.0%    80.0%       -2pp
+abstract          84.0%    84.0%       0pp
+pdf_url           60.0%    56.0%       -4pp
+overall (all 5)   32.0%    30.0%       -2pp
+```
+
+**Why**: the IEEE inline-JS rule is too unscoped. On `10.1109/icelmach.2018.8507065`, the AI found the abstract correctly but ALSO grabbed a related-papers JSON blob and emitted `Mahroo Eftekhari, Daniel Fodorean` as the authors — those are recommended-papers authors, not paper authors. v1.8 returned empty authors there (correctly preferring null over wrong); v1.9 confidently returned wrong authors. Same shape on a couple of pdf_url regressions.
+
+The anti-truncation rule was also redundant: the comparator's truncated-meta-prefix-match rule (added earlier today) already handles the legitimate truncation cases (Stroke 32.6.1291), so banning the extractor from emitting them just lost that case.
+
+**Decision**: keep v1.8 as canonical. v1.9 outputs preserved as `eval/prompts/ai-goldie-v1.9-experiment.md`, `runs/holdout-v1.9-experiment/`, and `eval/goldie/summary-v1.9-experiment.json` for reference. A surgical v1.9.1 with publisher-prefix-gated rules (IEEE Xplore only, no body-paragraph fallback, no anti-truncation) might recover the +2pp on abstract without the regressions; deferred to next cycle.
+
+**Lesson**: prompt rules that "look harder" expand the AI's confidence to emit content it shouldn't. The narrower a rule's trigger, the safer its addition.
+
+---
+
 ## Summary asks (in priority order)
 
 1. **Approve `GOLD-UPDATE-PROPOSAL.md`** — 13 author-rows on rases. +11pp per-author / +4pp per-DOI on rases.
@@ -186,6 +223,7 @@ Comparator gain this iteration (2026-05-01 PM session): **+4pp on abstract** via
 3. **Decision on PDF URL gold convention** — 10 gold_empty + AI_full cases. If we accept AI's working publisher PDFs as valid, +20pp on pdf_url.
 4. **Decision on abstract threshold** — accept 0.75 (where it lives now) or lower to 0.65 (+2pp).
 5. **Auditor review of 4 authors DOIs** — gold-quality questions. +4-5pp on authors → ~95%.
+6. **Auditor review of NMJI gold** (`10.25259/nmji_377_2024`) — gold abstract describes a 68-y-o female / orbital apex syndrome, but the live page describes a 38-y-o agriculturist male with melioidosis spondylitis. Either gold was extracted from a different paper or the page content has changed since the audit.
 
 Without these decisions, today's measurements are the comparator+prompt ceiling on this pipeline. Three fields (rases, pdf_url, abstract) are decision-bound, not engineering-bound.
 
