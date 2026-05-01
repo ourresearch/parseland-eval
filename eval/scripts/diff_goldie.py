@@ -139,6 +139,20 @@ def _name_token_set(name: str) -> frozenset[str]:
     return frozenset(normalize_name(name).split())
 
 
+def _name_no_ws(name: str) -> str:
+    """No-whitespace variant of name for Thai/CJK script comparison.
+
+    Thai script doesn't use spaces between words; gold and AI may disagree
+    on whether to insert a space at the syllable boundary.
+
+    Worked example (DOI 10.58837/chula.jamjuree.21.3.7):
+      gold: "กาญจนานาคสกุล" (no space)
+      ai:   "กาญจนา นาคสกุล" (with space — different segmentation choice)
+      → after normalize_name + space-strip: identical Thai code-points.
+    """
+    return normalize_name(name).replace(" ", "")
+
+
 def authors_match(human_authors: list[dict], ai_authors: list[dict], *, relaxed: bool = False) -> bool:
     h = {normalize_name(a.get("name", "")) for a in human_authors if a.get("name")}
     a = {normalize_name(x.get("name", "")) for x in ai_authors if x.get("name")}
@@ -147,6 +161,13 @@ def authors_match(human_authors: list[dict], ai_authors: list[dict], *, relaxed:
     if h == a:
         return True
     if relaxed:
+        # No-whitespace fallback for Thai / CJK / other non-space-segmented
+        # scripts where the auditor and AI may disagree on whether to insert
+        # spaces at syllable boundaries.
+        h_nws = {_name_no_ws(a.get("name", "")) for a in human_authors if a.get("name")}
+        a_nws = {_name_no_ws(x.get("name", "")) for x in ai_authors if x.get("name")}
+        if h_nws == a_nws:
+            return True
         # Token-set fallback bridges 'Last, First' vs 'First Last'.
         # Per SKILL.md "Verify across publishers" — this affects the v1.8
         # 12-DOI Springer regression observed earlier today, plus any other
@@ -269,6 +290,16 @@ def rases_match(human_authors: list[dict], ai_authors: list[dict], *, relaxed: b
             #      AND AI shorter — catches dropped postal codes /
             #      "Mumbai, 400085, India" vs "Mumbai, India".
             if _rases_token_subset_with_digit_skip(h_u, a_u):
+                continue
+            #   2b. Punctuation-stripped substring (added 2026-05-01 night).
+            #      Worked example (DOI 10.1016/0021-9673(93)80418-8):
+            #        gold: "...P.O. Box 124, S-221 00 Lund, Sweden"
+            #        ai:   "...P.O. Box 124, S-221 00 Lund Sweden"
+            #      Identical except for the comma before "Sweden". Strip all
+            #      non-alphanumeric chars and whitespace, then substring-match.
+            h_pp = re.sub(r"[^a-z0-9]+", "", h_u)
+            a_pp = re.sub(r"[^a-z0-9]+", "", a_u)
+            if h_pp and a_pp and (h_pp == a_pp or h_pp in a_pp or a_pp in h_pp):
                 continue
             #   3. Token-sort fuzzy fallback (rapidfuzz). Catches edge
             #      cases like "Material Science" vs "Materials Science"

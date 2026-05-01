@@ -731,24 +731,6 @@
 
 ## DOI: 10.58837/chula.jamjuree.21.3.7
 
-**authors**
-- AI:    [
-  {
-    "name": "กาญจนา นาคสกุล",
-    "rasses": "",
-    "corresponding_author": false,
-    "affiliations": []
-  }
-]
-- Human: [
-  {
-    "name": "กาญจนานาคสกุล",
-    "rasses": "",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
 **rases**
 - AI:    [
   {
