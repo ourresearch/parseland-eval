@@ -529,25 +529,46 @@ def _pdf_url_match_relaxed(h: str, a: str, doi: str) -> bool:
     h_c = canonicalize_url(h); a_c = canonicalize_url(a)
     if not h_c or not a_c:
         return False
-    h_host = urlsplit(h_c).netloc; a_host = urlsplit(a_c).netloc
-    if h_host != a_host:
-        return False
+    h_split = urlsplit(h_c); a_split = urlsplit(a_c)
+    h_host = h_split.netloc; a_host = a_split.netloc
 
     h_l = h_c.lower(); a_l = a_c.lower()
-
-    # 1. Existing rule: full DOI tail in both URLs.
     doi_tail = doi.split("/", 1)[-1].lower() if "/" in doi else ""
-    if doi_tail and doi_tail in h_l and doi_tail in a_l:
-        return True
 
-    # 2. New rule (added 2026-04-30): same host + ALL alphanumeric tokens of
-    # length ≥ 3 from DOI tail appear in both URLs. Catches BMJ-style
-    # "18.2.128" → "/18/2/128/" and Frontiers viewer-vs-download paths.
-    if doi_tail:
-        tokens = [t for t in _DOI_TOKEN_RE.findall(doi_tail) if len(t) >= 3]
-        if tokens and all(t in h_l for t in tokens) and all(t in a_l for t in tokens):
+    if h_host == a_host:
+        # 1. Existing rule: full DOI tail in both URLs.
+        if doi_tail and doi_tail in h_l and doi_tail in a_l:
             return True
 
+        # 2. Same host + ALL alphanumeric tokens of length ≥ 3 from DOI tail
+        # appear in both URLs. Catches BMJ-style "18.2.128" → "/18/2/128/"
+        # and Frontiers viewer-vs-download paths.
+        if doi_tail:
+            tokens = [t for t in _DOI_TOKEN_RE.findall(doi_tail) if len(t) >= 3]
+            if tokens and all(t in h_l for t in tokens) and all(t in a_l for t in tokens):
+                return True
+        return False
+
+    # 3. Different host but identical path AND DOI tokens shared
+    # (added 2026-05-01). Catches publisher domain renames where the article
+    # path stayed the same but the host changed.
+    #
+    # Worked example (DOI 10.24952/masharif.v9i1.3848):
+    #   gold: jurnal.uinsyahada.ac.id/index.php/Al-masharif/article/download/3848/2612
+    #   ai:   jurnal.iain-padangsidimpuan.ac.id/index.php/Al-masharif/article/download/3848/2612
+    #   → identical paths; both contain DOI token "3848"; STAIN was renamed to UIN. MATCH.
+    #
+    # Negative example (silverchair watermark vs scitation): different paths.
+    # Negative example (NMJI opaque article-token vs DOI-content path): different paths.
+    if h_split.path and h_split.path == a_split.path:
+        if doi_tail:
+            tokens = [t for t in _DOI_TOKEN_RE.findall(doi_tail) if len(t) >= 3]
+            seg_count = len([s for s in h_split.path.split("/") if s])
+            # Identical path is itself a strong same-resource signal. Require
+            # ≥ 3 segments (no stubs like "/pdf") AND at least one DOI token
+            # appearing in the shared path (guards against arbitrary paths).
+            if tokens and seg_count >= 3 and any(t in h_l for t in tokens):
+                return True
     return False
 
 
