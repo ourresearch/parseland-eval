@@ -5,19 +5,31 @@
 **Comparator**: `diff_goldie.py --relaxed` — full ruleset (typographic / truncated-meta-prefix / multilingual-substring / NFKD-diacritic / digit-skip / fuzzy-name / pdf_url same-host-DOI-tokens / **+ 2026-05-01 PM**: pdf_url different-host-same-path-with-DOI-token for publisher domain renames)
 **Bar per Jason**: 95% per field. Bar per Casey EOD frame: 85% per field.
 
-## Headline scoreboard
+## Headline scoreboard — after live-fetch pass-2 + comparator round 2
 
 ```
                   strict    relaxed       gap to 85   gap to 95
-authors           88.0%     90.0%         +5pp ✅     ❌ −5pp
-rases             54.0%     72.0% ↑+2pp   ❌ −13pp    ❌ −23pp
-corresponding     76.0%     80.0%         ❌ −5pp     ❌ −15pp  (Stroke gold-vs-page CA disagreement)
-abstract          80.0%     88.0% ↑+8pp   +3pp ✅     ❌ −7pp
-pdf_url           58.0%     62.0% ↑+2pp   ❌ −23pp    ❌ −33pp
-overall (all 5)   24.0%     34.0% ↑+6pp
+authors           90.0%     92.0% ↑+2pp   +7pp ✅     ❌ −3pp
+rases             62.0%     82.0% ↑+12pp  ❌ −3pp     ❌ −13pp
+corresponding     78.0%     80.0%         ❌ −5pp     ❌ −15pp  (Stroke gold-vs-page CA disagreement)
+abstract          78.0%     88.0% ↑+8pp   +3pp ✅     ❌ −7pp
+pdf_url           54.0%     64.0% ↑+4pp   ❌ −21pp    ❌ −31pp
+overall (all 5)   32.0%     42.0% ↑+14pp
 ```
 
-`authors` and `abstract` both clear 85% ✅. `rases`, `corresponding`, `pdf_url` are still gated on live-fetch coverage and gold-convention decisions.
+`authors` and `abstract` clear 85% ✅. `rases` is **3pp short** of the 85% bar (no longer the dominant gap). `corresponding` and `pdf_url` are now the binding constraints, both gated on gold-convention or auditor decisions.
+
+### Day's gain summary (vs morning baseline at 28% overall)
+
+```
+                  morning   end-of-day   delta
+authors           88.0%     92.0%        +4pp
+rases             60.0%     82.0%        +22pp  (live-fetch tier, biggest mover)
+corresponding     82.0%     80.0%        -2pp   (Stroke marker disagreement)
+abstract          80.0%     88.0%        +8pp   (comparator + live-fetch)
+pdf_url           60.0%     64.0%        +4pp
+overall (all 5)   28.0%     42.0%        +14pp
+```
 
 ### What changed since the morning baseline
 
