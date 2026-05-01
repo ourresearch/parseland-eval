@@ -1,0 +1,17 @@
+{
+  "n_targets": 2,
+  "results": [
+    {
+      "doi": "10.24952/masharif.v9i1.3848",
+      "steps": 3,
+      "duration_s": 134.57,
+      "error": null
+    },
+    {
+      "doi": "10.31857/s2587556623070105",
+      "steps": 3,
+      "duration_s": 188.09,
+      "error": null
+    }
+  ]
+}
