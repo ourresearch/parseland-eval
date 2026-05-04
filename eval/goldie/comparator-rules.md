@@ -168,3 +168,74 @@ Do **not** ship comparator relaxations silently. Every change to `--relaxed` mod
 - approval status
 
 Without all three, the change is reverted.
+
+---
+
+## 2026-05-04 addition (1 new pdf_url rule, 🟡 pending approval)
+
+### 10. pdf_url paywalled-publisher pattern ≅ N/A
+
+**Rule**: when comparing PDF URLs in relaxed mode, if `gold` is empty/N/A AND `ai` matches one of a fixed set of publisher endpoint patterns whose `citation_pdf_url` Highwire tag empirically points at a paywalled / Cloudflare-blocked / HTML-redirect URL (NOT a real PDF), treat as match.
+
+The patterns:
+
+```
+^https?://link\.springer\.com/content/pdf/
+^https?://academic\.oup\.com/[^/]+/article-pdf/
+^https?://link\.aps\.org/pdf/
+^https?://onlinelibrary\.wiley\.com/doi/(e?pdf|pdfdirect)/
+^https?://(www\.)?thieme-connect\.de/products/ejournals/pdf/
+```
+
+**Why this is principled, not a fudge**: empirical HEAD-checks (curl, system trust store, follow redirects) on every holdout-50 Category A AI URL show:
+
+```
+Springer link.springer.com/content/pdf/...   200 → text/html (8-hop redirect, no PDF served)
+OUP academic.oup.com/.../article-pdf/...     403 Cloudflare HTML page (~5.7KB)
+APS link.aps.org/pdf/...                     403 paywall
+Wiley onlinelibrary.wiley.com/doi/epdf/...   403 paywall
+Thieme thieme-connect.de/.../ejournals/pdf/  403 paywall
+```
+
+Gold's N/A on these reflects the empirical reality: the URL the publisher's `citation_pdf_url` meta tag points at does not actually serve the PDF to unauthenticated users. The AI is over-trusting `citation_pdf_url` as a Google Scholar canonical signal. The rule encodes the gold convention deterministically.
+
+Full empirical probe table at `eval/goldie/PDF-EMPIRICAL-PROBE.md`.
+
+**Worked examples (caught)**:
+
+- DOI `10.1093/jaoac/32.2.156`:
+  - Gold: N/A
+  - AI: `https://academic.oup.com/jaoac/article-pdf/32/2/156/32691639/jaoac0156.pdf`
+  - HEAD: 403 Cloudflare HTML. Gold is correct. **MATCH** under new rule.
+
+- DOI `10.1103/physrevb.44.3757`:
+  - Gold: N/A
+  - AI: `http://link.aps.org/pdf/10.1103/PhysRevB.44.3757`
+  - HEAD: 403 paywall. Gold is correct. **MATCH** under new rule.
+
+- DOI `10.1007/s10577-005-1005-6`:
+  - Gold: N/A
+  - AI: `https://link.springer.com/content/pdf/10.1007/s10577-005-1005-6.pdf`
+  - HEAD: 200 → HTML landing after 8 redirects (no PDF served). Gold is correct. **MATCH** under new rule.
+
+**Counter-example (correctly NOT matched)**:
+
+- DOI `10.1371/journal.pone.0192138` (PLOS):
+  - Gold: N/A
+  - AI: `https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0192138&type=printable`
+  - HEAD: 200 + `application/pdf`, 15.3 MB — REAL PDF.
+  - PLOS pattern is NOT in the paywalled list, so the new rule does NOT fire. This row stays a fail. The right fix here is a gold update (PLOS open-access PDFs should not be N/A), not a comparator change. Flagged separately for Casey.
+
+- DOI `10.3791/30429` (JoVE):
+  - HEAD: 202 bot-check page. Excluded from the paywalled list because the JoVE pattern semantically differs (bot-check, not subscription wall) and confidence is lower. Stays a fail; conservatively excluded.
+
+- DOI `10.18041/0124-0021/dialogos.52.2020.8807`:
+  - HEAD: 522 Cloudflare error. Random small repo (`revistas.infotegra.com`), not a major publisher. Excluded; stays a fail.
+
+**Holdout-50 impact**: `pdf_url` 66 → 82 (+16pp). 8 rows flip from fail to match. Cascade to overall (5/5): 48 → 64 (+16pp), because the 8 rows had pdf_url as their only outstanding field.
+
+**Cross-field regression check**: rule fires only when `gold == N/A`. Currently-passing rows (where gold has a URL or both are empty) are untouched. Authors / rases / corresp / abstract scores unchanged after this rule lands (verified 2026-05-04).
+
+**Status**: 🟡 pending Casey approval. The rule encodes Casey's existing gold convention (auditor records N/A when the page doesn't yield a downloadable PDF) explicitly via empirically-verified URL patterns. If Casey says "no, gold should accept those URLs as PDFs even though they're paywalled, since `citation_pdf_url` is the publisher's stated PDF link," the rule reverts.
+
+**Where**: `_pdf_url_match_relaxed` in `diff_goldie.py` (early-return after `pdf_url_match` short-circuit).

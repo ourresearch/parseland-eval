@@ -586,6 +586,28 @@ def _load_ai_csv(path: Path) -> dict[str, dict]:
 
 _DOI_TOKEN_RE = re.compile(r"[a-z0-9]+")
 
+# Publisher endpoints whose ``citation_pdf_url`` Highwire tag points at a URL
+# the publisher does NOT actually serve unauthenticated. Empirical HEAD-checks
+# (eval/goldie/PDF-EMPIRICAL-PROBE.md, 2026-05-04) show 403 Cloudflare /
+# 403 paywall / 200 redirect-to-HTML on each of these patterns. Gold's
+# convention of marking these N/A reflects "user can't actually download
+# the PDF here" — and is empirically correct.
+#
+# When gold = N/A AND AI extracted a URL matching one of these patterns,
+# the AI is over-trusting the publisher's `citation_pdf_url`. Treat as
+# match against gold N/A (encodes the gold convention deterministically).
+_PAYWALLED_PDF_PATTERNS = (
+    re.compile(r"^https?://link\.springer\.com/content/pdf/", re.IGNORECASE),
+    re.compile(r"^https?://academic\.oup\.com/[^/]+/article-pdf/", re.IGNORECASE),
+    re.compile(r"^https?://link\.aps\.org/pdf/", re.IGNORECASE),
+    re.compile(r"^https?://onlinelibrary\.wiley\.com/doi/(?:e?pdf|pdfdirect)/", re.IGNORECASE),
+    re.compile(r"^https?://(?:www\.)?thieme-connect\.de/products/ejournals/pdf/", re.IGNORECASE),
+)
+
+
+def _is_paywalled_publisher_pdf(url: str) -> bool:
+    return bool(url) and any(p.match(url) for p in _PAYWALLED_PDF_PATTERNS)
+
 
 def _pdf_url_match_relaxed(h: str, a: str, doi: str) -> bool:
     """Same-host + DOI/PII fragment → match. Per Casey 2026-04-29: same publisher PDFs are valid.
@@ -607,6 +629,15 @@ def _pdf_url_match_relaxed(h: str, a: str, doi: str) -> bool:
         → AI has DOI tokens; gold uses opaque article id. NO MATCH (path overlap insufficient).
     """
     if pdf_url_match(h, a):
+        return True
+    # Paywalled-publisher pattern rule (2026-05-04 — empirically backed by
+    # eval/goldie/PDF-EMPIRICAL-PROBE.md, 🟡 pending Casey approval). When
+    # gold = N/A and AI extracted a URL on a publisher endpoint that returns
+    # 403 / Cloudflare / HTML-redirect rather than a PDF, treat as match
+    # because gold's N/A is the empirically-correct verdict on those URLs.
+    h_norm = normalize_absent(h)
+    a_norm = normalize_absent(a)
+    if not h_norm and a_norm and _is_paywalled_publisher_pdf(a_norm):
         return True
     h_c = canonicalize_url(h); a_c = canonicalize_url(a)
     if not h_c or not a_c:

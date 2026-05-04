@@ -39,20 +39,6 @@
 ]
 - landing_page_truth: TBD
 
-## DOI: 10.1007/s10577-005-1005-6
-
-**pdf_url**
-- AI:    https://link.springer.com/content/pdf/10.1007/s10577-005-1005-6.pdf
-- Human: N/A
-- landing_page_truth: TBD
-
-## DOI: 10.1007/s10967-018-6384-1
-
-**pdf_url**
-- AI:    https://link.springer.com/content/pdf/10.1007/s10967-018-6384-1.pdf
-- Human: N/A
-- landing_page_truth: TBD
-
 ## DOI: 10.1016/0016-5085(95)22767-9
 
 **pdf_url**
@@ -178,53 +164,11 @@
 ]
 - landing_page_truth: TBD
 
-## DOI: 10.1055/s-0033-1340558
-
-**pdf_url**
-- AI:    http://www.thieme-connect.de/products/ejournals/pdf/10.1055/s-0033-1340558.pdf
-- Human: N/A
-- landing_page_truth: TBD
-
-## DOI: 10.1093/jaoac/32.2.156
-
-**pdf_url**
-- AI:    https://academic.oup.com/jaoac/article-pdf/32/2/156/32691639/jaoac0156.pdf
-- Human: N/A
-- landing_page_truth: TBD
-
-## DOI: 10.1093/jaoac/60.2.289
-
-**pdf_url**
-- AI:    https://academic.oup.com/jaoac/article-pdf/60/2/289/32484846/jaoac0289.pdf
-- Human: N/A
-- landing_page_truth: TBD
-
-## DOI: 10.1093/jee/97.2.646
-
-**pdf_url**
-- AI:    https://academic.oup.com/jee/article-pdf/97/2/646/19246523/jee97-0646.pdf
-- Human: N/A
-- landing_page_truth: TBD
-
-## DOI: 10.1103/physrevb.44.3757
-
-**pdf_url**
-- AI:    http://link.aps.org/pdf/10.1103/PhysRevB.44.3757
-- Human: N/A
-- landing_page_truth: TBD
-
 ## DOI: 10.1108/978-1-64802-637-920251008
 
 **abstract**
 - AI:    
 - Human: Picture this: 30 educators and 5 researchers are gathered for a full day of professional development. On the tables before them are scraps of colorful paper, sticky notes, pipe cleaners, tape, popsicle sticks, markers, and more. In one corner, three elementary school teachers share their hand-crafted representation of an idea to enhance conversations between students, as teachers from another district give feedback. Their principal joins to listen intently, ask questions, and take notes for her own project to support teachers. In another corner, administrators from five districts meet to discuss the shared problem of practice on everyone’s mind: how to best support their students designated as English learners (DELs). Researchers circulate throughout the room, answering questions about design thinking and brainstorming asset-based instructional supports togethe
-- landing_page_truth: TBD
-
-## DOI: 10.1111/j.1365-2222.2005.02173.x
-
-**pdf_url**
-- AI:    https://onlinelibrary.wiley.com/doi/epdf/10.1111/j.1365-2222.2005.02173.x
-- Human: N/A
 - landing_page_truth: TBD
 
 ## DOI: 10.1121/1.413202
