@@ -213,3 +213,20 @@ Other backfills already passing as both-empty (4 Springer book chapters); now pa
 - **NMJI** `10.25259/nmji_377_2024` — gold's `view-pdf/?article=<token>` (HTML wrapper) vs AI's `content/.../NMJI-377-2024.pdf` (real PDF). Same host, gold uses opaque token. Existing rule requires DOI tokens in both URLs.
 - **Terra-docs IJHSR** `10.36838/v4i6.14` — Taxicab no-harvest (oxjob #133).
 - **Cyberleninka** `10.7256/2454-0730.2019.1.20595` — cached HTML lacks PDF link.
+
+---
+
+## 2026-05-04 PM (later) — Cyrillic→Latin name transliteration → authors 98%
+
+| authors | rases | corresp | abstract | pdf_url | overall |
+|---|---|---|---|---|---|
+| **98% ✅✅** | 90% | 88% | 96% ✅ | 90% | 72% |
+
+What moved: Added Cyrillic→Latin (BGN/PCGN-style) transliteration to `normalize_name` in `diff_goldie.py`. Russian Servicology `10.7256/2454-0730.2019.1.20595` extracts the page's Cyrillic-script names verbatim ("Глущенко Валерий Владимирович"); gold uses BGN-transliterated English ("Glushchenko Valeriy Vladimirovich"). After transliteration both normalize to identical lowercase Latin tokens — names now match.
+
+Score impact:
+- authors 96 → 98 (Russian Servicology was 1 of 2 fails; the other is Dialogos compound)
+- corresp 86 → 88 (shared author names enable per-author CA comparison; both AI/gold have all-False so vacuous match)
+- rases stays 90 (per-author rases content is *translated* across languages, not transliterated — comparator-level translation is out of scope)
+
+**authors clears the 98% bar.** 3 of 5 fields now within 5pp of 95% target (rases 90, corresp 88, pdf_url 90).

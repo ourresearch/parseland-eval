@@ -55,8 +55,52 @@ _ABSENT_SENTINELS = {"", "n/a", "na", "none", "null"}
 
 # ---- normalization ---------------------------------------------------------
 
+# Cyrillic → Latin transliteration (BGN/PCGN-style, the convention used by
+# gold for Russian author names — "Глущенко" → "Glushchenko", "Козырев" →
+# "Kozyrev"). Multi-character mappings come first to avoid early consumption.
+_CYRILLIC_TO_LATIN = [
+    ("щ", "shch"), ("Щ", "Shch"),
+    ("ё", "yo"),   ("Ё", "Yo"),
+    ("ж", "zh"),   ("Ж", "Zh"),
+    ("ч", "ch"),   ("Ч", "Ch"),
+    ("ш", "sh"),   ("Ш", "Sh"),
+    ("ц", "ts"),   ("Ц", "Ts"),
+    ("ю", "yu"),   ("Ю", "Yu"),
+    ("я", "ya"),   ("Я", "Ya"),
+    ("х", "kh"),   ("Х", "Kh"),
+    ("а", "a"), ("б", "b"), ("в", "v"), ("г", "g"), ("д", "d"),
+    ("е", "e"), ("з", "z"), ("и", "i"), ("й", "y"), ("к", "k"),
+    ("л", "l"), ("м", "m"), ("н", "n"), ("о", "o"), ("п", "p"),
+    ("р", "r"), ("с", "s"), ("т", "t"), ("у", "u"), ("ф", "f"),
+    ("ы", "y"), ("э", "e"),
+    ("А", "A"), ("Б", "B"), ("В", "V"), ("Г", "G"), ("Д", "D"),
+    ("Е", "E"), ("З", "Z"), ("И", "I"), ("Й", "Y"), ("К", "K"),
+    ("Л", "L"), ("М", "M"), ("Н", "N"), ("О", "O"), ("П", "P"),
+    ("Р", "R"), ("С", "S"), ("Т", "T"), ("У", "U"), ("Ф", "F"),
+    ("Ы", "Y"), ("Э", "E"),
+    ("ъ", ""), ("ь", ""), ("Ъ", ""), ("Ь", ""),
+]
+
+
+def _transliterate_cyrillic(s: str) -> str:
+    """Convert Cyrillic letters to BGN/PCGN-style Latin. Latin chars pass
+    through unchanged. Used in name comparison so Russian-script AI names
+    can match gold's English transliterations."""
+    if not s or all(ord(c) < 0x0400 or ord(c) > 0x04FF for c in s):
+        return s  # No Cyrillic — fast path.
+    for cyr, lat in _CYRILLIC_TO_LATIN:
+        s = s.replace(cyr, lat)
+    return s
+
+
 def normalize_name(s: str) -> str:
     """Lowercase + punctuation-to-space + diacritic-strip + whitespace-collapse.
+
+    Also applies Cyrillic→Latin BGN/PCGN transliteration so Russian-script
+    author names ("Глущенко Валерий Владимирович") match gold's
+    English-transliterated form ("Glushchenko Valeriy Vladimirovich").
+    Worked example: holdout-50 DOI 10.7256/2454-0730.2019.1.20595 —
+    AI emits the page's Russian script verbatim; gold uses BGN.
 
     Diacritic stripping handles common cases like 'Peter Sørensen' (gold) vs
     'Peter Sorensen' (AI from byline) — observed on holdout-50 DOI
@@ -64,7 +108,7 @@ def normalize_name(s: str) -> str:
     characters from combining marks; we keep the base.
     """
     import unicodedata
-    s = (s or "").lower()
+    s = _transliterate_cyrillic(s or "").lower()
     # NFKD: 'ø' → 'o' + COMBINING SOLIDUS OVERLAY; 'é' → 'e' + COMBINING ACUTE
     s = unicodedata.normalize("NFKD", s)
     # Drop combining marks (category Mn = mark, nonspacing).
