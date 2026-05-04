@@ -290,3 +290,84 @@ The 95%-on-holdout-50 milestone we've been tracking does not generalize to train
 - Audit gold quality on train-50 first to know how much of the gap is annotation vs extraction.
 
 Recommend the second option — pick a fresh 50 from outside the 100-row human-goldie, audit it once, and treat it as the next gate.
+
+---
+
+## 2026-05-04 13:30 CDT — train-50 root-cause categorization (no code changes)
+
+Walked the 32 train-50 disagreements row-by-row. Deliberately **no code changes this cycle** — applying our holdout-tuned methods reflexively was the trap that produced the 36pp gap in the first place. Categorization first, fixes second (and only when leak-safe).
+
+### Bucket distribution
+
+| Bucket | Count | Description | Path |
+|---|---|---|---|
+| **A: cache-thin** | 7 | Taxicab returned <8K tokens (PDF binary, redirect-only page) | Live-fetch tier — existing infra, no new code |
+| **B: gold-empty AI-has-data** | 6 | Gold says `authors=[]` / `rases=[]` but page has the data | Gold-update decisions — Casey/Shubh |
+| **C: AI-empty gold-has-data** | (subsumed in A) | LLM saw no useful HTML | Live-fetch |
+| **D: name/aff content mismatch** | 3 | Both have authors but content differs | Articulate-why per row (below) |
+| **E: rases-only** | 6 | Authors match; rases content differs | Articulate-why per row (below) |
+| **G: abstract-only** | 1 | Single abstract divergence | Articulate-why |
+| **H: pdf_url-only** | 7 | Empirical-probed — see breakdown | Mix of gold-flip + comparator-extension candidates |
+| **Z: other** | 2 | Multi-field, doesn't fit clean buckets | Articulate-why |
+
+Total: 32 rows = 7 (A) + 6 (B) + 3 (D) + 6 (E) + 1 (G) + 7 (H) + 2 (Z).
+
+### Bucket H — empirical PDF probe (HEAD-checked all 7 AI URLs)
+
+| DOI | AI URL | HEAD result | Verdict |
+|---|---|---|---|
+| `10.1016/j.celrep.2018.10.057` | `cell.com/article/.../pdf` | 403 → HTML | Same-host vs gold's `cell.com/action/showPdf?pii=` — same article, different path |
+| `10.1038/ng1297-370` | `nature.com/articles/.../pdf` | 200 → HTML (7 redirects) | Gold N/A; AI publisher-canonical-but-paywalled. Same as holdout PM directive |
+| `10.1086/116973` | `ui.adsabs.harvard.edu/.../ADS_PDF` | **200 + application/pdf** | Real PDF via NASA ADS gateway. Gold N/A. Clean gold-flip candidate |
+| `10.1088/0253-6102/36/1/109` | `iopscience.iop.org/.../pdf` | 200 → HTML | Gold N/A; AI publisher-canonical-but-paywalled. IOPscience not in rule #10 |
+| `10.53555//kuey.v30i9.5180` | `kuey.net/.../article/download/5180/5728` | **200 + application/pdf** | Real PDF. Gold has `view/` of same. Same-host different-endpoint |
+| `10.62480/tjms.2025.vol42.pp71-73` | `zienjournals.com/.../download/6045/4922` | **200 + application/pdf** | Real PDF. Gold has same path + trailing component. Subset match |
+| `10.9734/ajess/2023/v47i31023` | `journalajess.com/.../download/1023/1998` | 403 → HTML | OJS paywall. Gold has same path + trailing component |
+
+3 of 7 AI URLs are real PDFs (return `application/pdf` with content) — strict wins. 4 of 7 are publisher-canonical-but-paywalled — same shape as holdout PM directive, would need either a gold flip or a rule #10 publisher-pattern extension. The latter is the overfit shape; the former is what Shubh chose for holdout.
+
+### Bucket E — articulate-why (no fix)
+
+- `10.1016/j.mee.2007.12.032` — AI rases is a **superset** of gold's. AI: "Microelectronics Research Group, NCSR Demokritos, Institute of Microelectronics, Aghia Paraskevi 15310, Greece". Gold: "Institute of Microelectronics, NCSR Demokritos, Aghia Paraskevi 15310, Greece". Comparator could absorb via substring, but the existing rule already does substring matching — would need investigation why it didn't fire.
+- `10.1257/aer.p20171042` — AI: "Stanford U", Gold: empty. **Gold-empty rases**. Same convention question as DSQ on holdout (Casey-call pending).
+- `10.2320/jinstmet1952.61.12_1352` — AI: "NKK総合材料技術研究所", Gold: empty. **Same gold-empty pattern**, Japanese text.
+- `10.3390/polym13183031` — AI: empty, Gold: full Korean / Vietnamese affiliations. **MDPI extraction gap.** LLM got 4 author names but no rases on a 22K-token harvest. Per-publisher extractor would fix but **risks overfit** (we have 2 MDPI cases, sample of 50).
+- `10.3390/su13041644` — Same as polym13183031 — MDPI rases extraction gap.
+- `10.4326/jjcvs.28.399` — AI: "藤田保健衛生大学胸部外科" (Fujita Health University Thoracic Surgery), Gold: empty. **Gold-empty rases**, Japanese.
+
+3 of 6 are gold-empty (same convention call as DSQ on holdout). 2 of 6 are MDPI extraction gaps. 1 of 6 is a comparator question (superset substring).
+
+### Bucket D — articulate-why (no fix)
+
+- `10.1079/cabicompendium.60129` — AI: "CABI" (the org), Gold: "Robin Nicholas". CABI Compendium pages list the publisher org as a contributor field; gold pulled the actual researcher (likely from an attached PDF). Page genuinely shows different info than gold's source.
+- `10.1088/0256-307x/35/4/045201` — AI: "Chun-Hua Li", Gold: "Chun-Hua Li (李春华)". CJK-suffix-in-parentheses pattern. **Comparator extension candidate**, but risks overfit (extending the Thai/CJK rule). Skip.
+- `10.5603/ah.2015.0003` — AI: "Elżbieta Jaroszyriska", Gold: "Elżbieta Jaroszyńska". OCR/encoding artifact: AI saw `ri` where the actual character is `ń`. Stochastic.
+
+### Buckets G + Z
+
+- `10.2307/3283523` (abstract-only): single-row, Z-bucket-shaped one-off.
+- `10.1016/s0378-1097(99)00346-8` (corresp-only on OUP-redirected old Elsevier): one-off.
+- `10.3138/chr-027-04-br24` (abstract + pdf_url): one-off.
+
+### What actually moves the score this cycle
+
+**Nothing.** No code changed. The cycle's output is:
+
+1. **Categorization** — above. 32 rows mapped to root cause.
+2. **Concrete decisions to surface** — for Casey/Shubh, sent to Slack:
+   - 6 Bucket B rows (gold-empty when page has data) — flip to AI extraction or articulate why empty?
+   - 4 Bucket H rows (paywalled-publisher canonical, same as holdout PM directive) — flip gold N/A → AI publisher URL?
+   - 3 Bucket H rows (real PDF, gold has different URL) — flip gold or comparator-absorb?
+   - 3 Bucket E rows (gold-empty rases) — same DSQ convention question.
+3. **Infrastructure path** — 7 Bucket A rows need live-fetch tier. Existing infra; needs Chrome+CDP setup which the user controls.
+
+### Holding the line on overfit-risk fixes
+
+Items I'm explicitly NOT doing this cycle, despite each being a 1-2pp gain:
+- Adding MDPI rases extractor (2 train rows, 0 holdout).
+- Extending Thai/CJK comparator to strip parenthesized CJK suffix (1 train row).
+- Extending rule #10 to add Nature / IOPscience / cell.com / journalajess (4 train rows).
+- Extending OJS pattern to absorb same-host `view/` ↔ `download/` (1-3 train rows).
+- Adjusting comparator for substring-superset rases (1 train row).
+
+Each of these would be a holdout-or-train-specific patch. The right pattern is: **wait for the validation-set decision (recommended Option A from the prior entry)** so we know what we're optimizing against before extending the comparator further.
