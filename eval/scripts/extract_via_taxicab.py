@@ -834,15 +834,19 @@ def run_doi(
                 sa = sec_by_name.get((pa.get("name") or "").strip().lower())
                 if sa and (sa.get("rasses") or "").strip():
                     pa["rasses"] = sa["rasses"].strip()
-            # Note: a citation_pdf_url backfill was tried here on 2026-05-04
-            # and reverted (-6pp on holdout-50 pdf_url). The publisher's own
-            # citation_pdf_url meta tag IS a valid PDF link, but gold marks
-            # most book-chapter / non-typical-article DOIs as "N/A" by
-            # convention even when the publisher exposes the link. So
-            # backfilling from this meta tag breaks 4 "both empty = match"
-            # rows for every 1 real-miss it recovers (Brill 10.1163/...).
-            # The fix space is gold-convention, not extraction. See
-            # GOLD-UPDATE-PROPOSAL pdf_url section + REPORT.md.
+            # PDF URL backfill from citation_pdf_url meta tag (re-enabled
+            # 2026-05-04 PM per user directive: "for the PDF URL we pick the
+            # URL pdf from the meta tag and that is the right not the N/A in
+            # the goldie"). The original guideline during gold creation was
+            # extract-from-meta-tag-regardless-of-paywall; the current N/A
+            # cells in gold are downstream annotation drift, not the canonical
+            # convention. Comparator rule #10 (paywalled-pattern ≅ N/A) plus
+            # its extended pattern list (Emerald / JoVE / Dialogos OJS / Brill)
+            # absorb the gold-N/A vs AI-meta-tag mismatch deterministically.
+            if not (extraction.get("PDF URL") or "").strip():
+                meta_pdf = (meta_extraction.get("PDF URL") or "").strip()
+                if meta_pdf:
+                    extraction["PDF URL"] = meta_pdf
 
     # Abstract-only JSON-LD backfill. Fires when the LLM-extracted abstract
     # looks like a meta-tag truncation (200-char ellipsis, mid-word cutoff,

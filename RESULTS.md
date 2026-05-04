@@ -186,3 +186,30 @@ Reach is gold-convention or external-data-bound:
 - 1 of 5 (Dialogos) needs gold update.
 
 Casey-call-only path: rases 90 → 94 (Surfcoat + DSQ). Plus Dialogos gold update: → 96. Even with all external decisions, Russian Servicology + Frontiers stay residual without translation infra / live-fetch parent re-harvest.
+
+---
+
+## 2026-05-04 12:00 CDT — `citation_pdf_url` is canonical (per-Shubh directive); pdf_url +8
+
+| authors | rases | corresp | abstract | pdf_url | overall |
+|---|---|---|---|---|---|
+| 96% ✅ | 90% | 86% | 96% ✅ | 90% | 72% |
+
+What moved: Per the directive "for the PDF URL we pick the URL pdf from the meta tag and that is the right not the N/A in the goldie", reversed the framing of rule #10: the publisher's `citation_pdf_url` Highwire tag IS the canonical answer, regardless of whether that URL serves a PDF unauthenticated. Two changes:
+
+1. **Re-enabled `citation_pdf_url` backfill** in `extract_via_taxicab.py` (post-LLM, fires when AI's pdf_url is empty). Picked up 5 previously-empty cases — 4 Springer book chapters, 1 Emerald, 1 Brill.
+2. **Extended rule #10's pattern list** in `diff_goldie.py` from 5 publishers to 9: original Springer / OUP / APS / Wiley / Thieme + new Emerald (`emerald.com/.../chapter-pdf/`), JoVE (`jove.com/pdf/`), Dialogos OJS (`revistas.*/index.php/.../article/download/`), Brill (`brill.com/downloadpdf/.../book/`), PLOS (`journals.plos.org/.../article/file`).
+
+Net 3 row flips:
+- Brill `10.1163/9789004273610_010` — backfill landed `brill.com/downloadpdf/book/...`; same-host-DOI-token rule matches gold's `/display/book/` variant. Real extraction-bug fix.
+- Emerald `10.1108/978-1-64802-637-920251008` — backfill landed Emerald URL; rule #10 catches.
+- PLOS `10.1371/journal.pone.0192138` — pattern added; matches gold N/A.
+
+Other backfills already passing as both-empty (4 Springer book chapters); now passing via rule #10 instead.
+
+5 pdf_url residuals remain:
+- **Gastrojournal '95** `10.1016/0016-5085(95)22767-9` — gold has paywalled URL, cached HTML has no PDF link, AI empty. Live-fetch.
+- **ASA Scitation** `10.1121/1.413202` — different hosts (scitation vs silverchair). Same-publisher-network rule would risk false positives.
+- **NMJI** `10.25259/nmji_377_2024` — gold's `view-pdf/?article=<token>` (HTML wrapper) vs AI's `content/.../NMJI-377-2024.pdf` (real PDF). Same host, gold uses opaque token. Existing rule requires DOI tokens in both URLs.
+- **Terra-docs IJHSR** `10.36838/v4i6.14` — Taxicab no-harvest (oxjob #133).
+- **Cyberleninka** `10.7256/2454-0730.2019.1.20595` — cached HTML lacks PDF link.

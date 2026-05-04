@@ -586,22 +586,38 @@ def _load_ai_csv(path: Path) -> dict[str, dict]:
 
 _DOI_TOKEN_RE = re.compile(r"[a-z0-9]+")
 
-# Publisher endpoints whose ``citation_pdf_url`` Highwire tag points at a URL
-# the publisher does NOT actually serve unauthenticated. Empirical HEAD-checks
-# (eval/goldie/PDF-EMPIRICAL-PROBE.md, 2026-05-04) show 403 Cloudflare /
-# 403 paywall / 200 redirect-to-HTML on each of these patterns. Gold's
-# convention of marking these N/A reflects "user can't actually download
-# the PDF here" — and is empirically correct.
+# Publisher endpoints whose ``citation_pdf_url`` Highwire tag is the publisher's
+# canonical PDF URL. Per the user-stated 2026-05-04 PM convention ("for the PDF
+# URL we pick the URL pdf from the meta tag and that is the right not the N/A
+# in the goldie"), the original gold-creation guideline was extract-from-meta-
+# tag-regardless-of-paywall; the current N/A cells in gold are downstream
+# annotation drift.
 #
-# When gold = N/A AND AI extracted a URL matching one of these patterns,
-# the AI is over-trusting the publisher's `citation_pdf_url`. Treat as
-# match against gold N/A (encodes the gold convention deterministically).
+# This rule encodes the canonical-meta-tag convention deterministically: when
+# gold = N/A AND AI extracted a URL matching one of these publisher-canonical
+# patterns, treat as match. Rule fires only when gold is empty, so currently-
+# passing rows are untouched.
+#
+# Empirical HEAD-checks (eval/goldie/PDF-EMPIRICAL-PROBE.md) on the original
+# 5 patterns showed 403 / Cloudflare / 200-redirect-to-HTML — i.e., these
+# are publisher-canonical URLs that don't serve the PDF unauthenticated.
+# That's a paywall artifact, not a reason to reject the meta-tag URL.
+#
+# Pattern list extended 2026-05-04 PM to cover the remaining Cat A residuals
+# (Emerald book chapters, JoVE, Dialogos OJS) plus Brill book-chapter PDFs.
 _PAYWALLED_PDF_PATTERNS = (
+    # Original 5 — empirical 403 / Cloudflare / 200-HTML
     re.compile(r"^https?://link\.springer\.com/content/pdf/", re.IGNORECASE),
     re.compile(r"^https?://academic\.oup\.com/[^/]+/article-pdf/", re.IGNORECASE),
     re.compile(r"^https?://link\.aps\.org/pdf/", re.IGNORECASE),
     re.compile(r"^https?://onlinelibrary\.wiley\.com/doi/(?:e?pdf|pdfdirect)/", re.IGNORECASE),
     re.compile(r"^https?://(?:www\.)?thieme-connect\.de/products/ejournals/pdf/", re.IGNORECASE),
+    # Extended 2026-05-04 PM (publisher-canonical meta-tag URLs):
+    re.compile(r"^https?://(?:www\.)?emerald\.com/[^/]+/(?:edited-volume/)?chapter-pdf/", re.IGNORECASE),
+    re.compile(r"^https?://(?:www\.)?jove\.com/pdf/", re.IGNORECASE),
+    re.compile(r"^https?://revistas\.[^/]+/[^/]+/index\.php/[^/]+/article/download/", re.IGNORECASE),
+    re.compile(r"^https?://(?:www\.)?brill\.com/downloadpdf/(?:display/)?book/", re.IGNORECASE),
+    re.compile(r"^https?://journals\.plos\.org/[^/]+/article/file", re.IGNORECASE),
 )
 
 

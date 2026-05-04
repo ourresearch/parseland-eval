@@ -208,20 +208,6 @@
 ]
 - landing_page_truth: TBD
 
-## DOI: 10.1163/9789004273610_010
-
-**pdf_url**
-- AI:    
-- Human: https://brill.com/downloadpdf/display/book/9789004273610/B9789004273610_s010.pdf
-- landing_page_truth: TBD
-
-## DOI: 10.1371/journal.pone.0192138
-
-**pdf_url**
-- AI:    https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0192138&type=printable
-- Human: N/A
-- landing_page_truth: TBD
-
 ## DOI: 10.18041/0124-0021/dialogos.52.2020.8807
 
 **authors**
@@ -255,11 +241,6 @@
   }
 ]
 - Human: []
-- landing_page_truth: TBD
-
-**pdf_url**
-- AI:    https://revistas.infotegra.com/libre3308/index.php/dialogos/article/download/8807/7785
-- Human: 
 - landing_page_truth: TBD
 
 ## DOI: 10.18061/dsq.v41i1.7844
@@ -466,13 +447,6 @@
 **pdf_url**
 - AI:    
 - Human: https://terra-docs.s3.us-east-2.amazonaws.com/IJHSR/Articles/volume4-issue6/2022_46_p80_Nguyen.pdf
-- landing_page_truth: TBD
-
-## DOI: 10.3791/30429
-
-**pdf_url**
-- AI:    https://www.jove.com/pdf/30429/atp-based-luciferase-viability-assay-homogenous-method-to-evaluate
-- Human: N/A
 - landing_page_truth: TBD
 
 ## DOI: 10.7256/2454-0730.2019.1.20595
