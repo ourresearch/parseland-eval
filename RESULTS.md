@@ -230,3 +230,17 @@ Score impact:
 - rases stays 90 (per-author rases content is *translated* across languages, not transliterated — comparator-level translation is out of scope)
 
 **authors clears the 98% bar.** 3 of 5 fields now within 5pp of 95% target (rases 90, corresp 88, pdf_url 90).
+
+---
+
+## 2026-05-04 PM (later 2) — NMJI same-host pdf_url relax → pdf_url 92%
+
+| authors | rases | corresp | abstract | pdf_url | overall |
+|---|---|---|---|---|---|
+| 98% ✅✅ | 90% | 88% | 96% ✅ | 92% | 72% |
+
+What moved: extended `_pdf_url_match_relaxed` with rule 2b — when same host AND AI URL has all DOI tokens AND AI URL ends in `.pdf`, treat as match. Catches NMJI `10.25259/nmji_377_2024`: gold = `nmji.in/content/141/2026/39/2/pdf/NMJI-39-130.pdf` (no DOI tokens after gold update), AI = `nmji.in/content/141/2025/0/1/pdf/NMJI-377-2024.pdf` (contains "nmji"/"377"/"2024"). Under canonical-meta-tag convention, AI's URL IS the publisher's `citation_pdf_url`, so it's the right answer when on the publisher's own host.
+
+The earlier `negative example` framing in the comparator docstring (NMJI explicitly rejected) doesn't hold under the new convention; rule 2b inverts that decision.
+
+Overall stays at 72 because NMJI still fails corresp + abstract — those are the row-locking residuals on this DOI.

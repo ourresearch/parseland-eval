@@ -335,11 +335,6 @@
 - Human: Melioidosis is an emerging infectious disease caused by Burkholderia pseudomallei,1 usually when an individual is exposed to mud or pools of water.2 A 68-year-old diabetic female with orbital apex syndrome on steroid therapy, presented as vertebral spondylitis with pre-vertebral and para spinal abscesses mimicking tuberculosis with a history of acute onset of throbbing neck pain. High-resolution computed tomography thorax (Fig. 1) showed cavitary consolidation in the right upper lobe of the lungs and a focal area of traction bronchiectasis with scar tissue in the left upper lobe. Magnetic resonance imaging of the cervical spine with contrast (Fig. 2) showed diffuse marrow oedema in the C2 vertebra with fluid in C2–C3 facet joint on the right side. Multiseptated collections of size 8 cm (superior-inferior extent) and 1.2 cm (anteroposterior dimension) were seen in the prevertebral space within the prevertebral muscles from the C1 vertebra to the C4–C5 intervertebral disc with no obvious intraspinal or epidural extension. Ill-defined collections and inflammatory soft tissue were seen extending into the posterior paraspinal muscles at C2 and C3 vertebral levels, with oedema in the posterior paraspinal muscles from C1 to C7 levels, more on the left side (Fig. 3), suggesting infective spondylitis involving C2 vertebrae with prevertebral/paraspinal collections. Pus culture grew B. pseudomallei and improved on intravenous meropenem and ceftazidime for 4 weeks and oral co-trimoxazole for 6 months. Concomitant infection of lungs and visceral organs should raise a of suspicion of melioidosis.3 It is usually associated with lumbar involvement and neurological complications in 4% cases with paravertebral collection.
 - landing_page_truth: TBD
 
-**pdf_url**
-- AI:    https://nmji.in/content/141/2025/0/1/pdf/NMJI-377-2024.pdf
-- Human: https://nmji.in/content/141/2026/39/2/pdf/NMJI-39-130.pdf
-- landing_page_truth: TBD
-
 ## DOI: 10.31857/s2587556623070105
 
 **corresponding**

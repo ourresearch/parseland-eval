@@ -731,6 +731,26 @@ def _pdf_url_match_relaxed(h: str, a: str, doi: str) -> bool:
             tokens = [t for t in _DOI_TOKEN_RE.findall(tail_for_tokens) if len(t) >= 3]
             if tokens and all(t in h_l for t in tokens) and all(t in a_l for t in tokens):
                 return True
+
+        # 2b. Same host + AI URL contains all DOI tokens AND ends in a
+        # PDF-shaped path. Catches the canonical-meta-tag case where AI's
+        # `citation_pdf_url` URL has the article identifier and gold's URL
+        # is on the same host but uses an opaque token (e.g. NMJI's
+        # `view-pdf/?article=<token>` wrapper). Under the user's
+        # 2026-05-04 PM directive — "for the PDF URL we pick the URL pdf
+        # from the meta tag and that is the right" — AI's meta-tag URL IS
+        # the canonical answer when both are on the publisher's host.
+        # Worked example: DOI 10.25259/nmji_377_2024
+        #   gold: nmji.in/content/141/2026/39/2/pdf/NMJI-39-130.pdf
+        #         (after gold update; opaque path with no DOI tokens)
+        #   ai:   nmji.in/content/141/2025/0/1/pdf/NMJI-377-2024.pdf
+        #         (canonical_pdf_url; contains "377" and "2024")
+        #   → AI has all DOI tokens, AI ends `.pdf`, same host → MATCH.
+        if doi_tail and a_l.endswith(".pdf"):
+            tail_for_tokens = re.sub(r"\.s\d+$", "", doi_tail)
+            tokens = [t for t in _DOI_TOKEN_RE.findall(tail_for_tokens) if len(t) >= 3]
+            if tokens and all(t in a_l for t in tokens):
+                return True
         return False
 
     # 3. Different host but identical path AND DOI tokens shared
