@@ -355,12 +355,38 @@ _TYPOGRAPHIC_TRANS = str.maketrans({
     "…": "...",
     # Â character that appears in mojibake'd Indonesian abstracts (UTF-8 BOM mis-decoded)
     "Â": " ",
+    # Standalone â that appears when an em-dash (UTF-8 0xE2 0x80 0x94) loses
+    # its trailing two continuation bytes in the Anthropic SDK output stream.
+    # The rest of the text is well-formed; only this single 0xE2 byte
+    # survives. Treating it as the original em-dash → hyphen normalizes the
+    # comparator path so stochastic encoding-loss doesn't drop a row.
+    "â": "-",
 })
+
+
+_MOJIBAKE_PROBE_RE = re.compile(r"[ÃÂâ][\x80-\xbf]?")
+
+
+def _fix_mojibake(s: str) -> str:
+    """Repair UTF-8-decoded-as-Latin-1 mojibake (e.g. ``Purposeâ\\x80\\x94We``
+    instead of ``Purpose—We``). The Anthropic SDK output for the same
+    Stroke/Anesthesia DOI alternates between proper em-dash and the mojibake
+    form across re-runs, which silently breaks comparators that rely on
+    typographic normalization. Applying this in the comparator (not in
+    extraction) keeps the fix field-isolated and shared by AI + gold paths."""
+    if not s or not _MOJIBAKE_PROBE_RE.search(s):
+        return s
+    try:
+        repaired = s.encode("latin-1", errors="ignore").decode("utf-8", errors="strict")
+    except UnicodeDecodeError:
+        return s
+    return repaired
 
 
 def _normalize_abstract_text(s: str) -> str:
     """Collapse whitespace, join hyphen-broken words, normalize typographic
     punctuation so HTML-rendered and gold-pasted abstracts converge."""
+    s = _fix_mojibake(s)
     s = s.translate(_TYPOGRAPHIC_TRANS)
     s = _HYPHEN_BREAK_RE.sub("", s)  # join "extrac- tion" → "extraction"
     s = _WS_RE.sub(" ", s).strip()
@@ -461,6 +487,29 @@ def pdf_url_match(human: str | None, ai: str | None) -> bool:
 
 # ---- IO --------------------------------------------------------------------
 
+_TRAILING_COMMA_RE = re.compile(r",\s*([\]}])")
+
+
+def _load_authors_tolerant(raw: str) -> list[dict]:
+    """Parse the Authors JSON cell. Tolerant of trailing commas before
+    ``]``/``}`` (common in hand-edited gold rows) and of unquoted JSON
+    fragments. Falls back to ``[]`` on hard parse failure."""
+    s = raw.strip()
+    if not s:
+        return []
+    try:
+        return json.loads(s)
+    except json.JSONDecodeError:
+        pass
+    # Strip trailing commas: `,\s*]` → `]`, `,\s*}` → `}`.
+    cleaned = _TRAILING_COMMA_RE.sub(r"\1", s)
+    try:
+        out = json.loads(cleaned)
+        return out if isinstance(out, list) else []
+    except json.JSONDecodeError:
+        return []
+
+
 def _load_human(path: Path) -> dict[str, dict]:
     out: dict[str, dict] = {}
     with path.open(newline="") as f:
@@ -468,11 +517,7 @@ def _load_human(path: Path) -> dict[str, dict]:
             doi = (r.get("DOI") or "").strip()
             if not doi:
                 continue
-            authors_raw = r.get("Authors") or ""
-            try:
-                authors = json.loads(authors_raw) if authors_raw.strip() else []
-            except json.JSONDecodeError:
-                authors = []
+            authors = _load_authors_tolerant(r.get("Authors") or "")
             if not isinstance(authors, list):
                 authors = []
             out[doi] = {
@@ -525,11 +570,7 @@ def _load_ai_csv(path: Path) -> dict[str, dict]:
             doi = (r.get("DOI") or "").strip()
             if not doi:
                 continue
-            authors_raw = r.get("Authors") or ""
-            try:
-                authors = json.loads(authors_raw) if authors_raw.strip() else []
-            except json.JSONDecodeError:
-                authors = []
+            authors = _load_authors_tolerant(r.get("Authors") or "")
             if not isinstance(authors, list):
                 authors = []
             out[doi] = {

@@ -151,6 +151,287 @@ def _fix_encoding(s: str) -> str:
     return s
 
 
+_JSONLD_RE = re.compile(
+    r'<script\b[^>]*\btype\s*=\s*["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+# Match a JSON string literal value for an `abstract` key. Restricted to
+# `abstract` (not `description`) because schema.org's `description` field
+# also appears on Organization / Periodical / Person / Publisher nodes, where
+# its value is the *publisher's* boilerplate, not the article's abstract.
+# Concrete failure mode: the ENCODE Project (10.17989/encsr569oav) ships
+# Dataset-typed JSON-LD whose only `description` lives on the Organization
+# node ("The ENCODE Data Coordination Center..."). That isn't an abstract.
+# `abstract` is more semantically constrained and only appears on
+# article-shaped types in practice.
+#
+# Tolerates whitespace and ignores escaped quotes inside the literal. We use
+# regex (not json.loads) because publisher JSON-LD is frequently malformed —
+# e.g. T&F ships an outer array with a missing comma between sibling objects,
+# which strict parsing rejects. The abstract literal itself is almost always
+# well-formed even when the surrounding structure isn't.
+_JSONLD_ABSTRACT_KEY_RE = re.compile(
+    r'"abstract"\s*:\s*"((?:\\.|[^"\\])*)"',
+    re.IGNORECASE,
+)
+
+
+def _decode_json_string(raw: str) -> str:
+    """Decode the contents of a JSON string literal — handles \\n, \\", \\\\, \\u escapes."""
+    try:
+        return json.loads('"' + raw + '"')
+    except (json.JSONDecodeError, ValueError):
+        # Fallback: only undo the most common escapes.
+        return (raw.replace('\\"', '"')
+                   .replace('\\\\', '\\')
+                   .replace('\\n', '\n')
+                   .replace('\\t', '\t'))
+
+
+def _jsonld_abstract(html: str) -> str:
+    """Pull the longest ``abstract`` literal out of any JSON-LD block on the
+    page. ``description`` is intentionally ignored — see comment on
+    ``_JSONLD_ABSTRACT_KEY_RE`` for the ENCODE-Project failure mode.
+
+    Why this exists: ``_strip_for_llm`` removes script tags before sending HTML
+    to the LLM, which hides JSON-LD's ``abstract`` field. Restoring JSON-LD to
+    the LLM-visible HTML caused cross-field regressions on authors / pdf_url
+    (the LLM started preferring JSON-LD's structured data over citation_*
+    meta tags it had been correctly using). This function is the surgical
+    alternative — backfill ONLY the abstract field, and only post-LLM, so
+    other fields are untouched.
+
+    Returns "" if no JSON-LD abstract is present.
+    """
+    best = ""
+    for raw in _JSONLD_RE.findall(html):
+        for m in _JSONLD_ABSTRACT_KEY_RE.finditer(raw):
+            v = _decode_json_string(m.group(1))
+            if v and len(v) > len(best):
+                best = v
+    return _fix_encoding(html_lib.unescape(best.strip()))
+
+
+_TRUNCATED_TAIL_RE = re.compile(r"(\.{3}|…)\s*$")
+
+
+def _looks_truncated(text: str) -> bool:
+    """LLM abstract looks like a meta-tag truncation: short and either ends
+    with an explicit ellipsis or ends mid-word (no sentence terminator)."""
+    if not text:
+        return True
+    s = text.strip()
+    if len(s) >= 400:
+        return False
+    if _TRUNCATED_TAIL_RE.search(s):
+        return True
+    # Ends mid-sentence: not on . ? ! and length under ~400 chars.
+    last = s[-1]
+    if last not in ".?!。":
+        return True
+    return False
+
+
+def _is_title_as_abstract(llm_abstract: str, html: str) -> bool:
+    """The LLM dumped the article title into the abstract field. Detected when
+    the LLM's "abstract" is short (≤200 chars) and string-equal to either the
+    ``citation_title`` meta tag or the article's ``<title>`` (modulo
+    whitespace).
+
+    This pattern shows up on Open-Journal-Systems pages whose abstract block
+    is just a literal repeat of the title (e.g. Diálogos de Saberes — the
+    page renders ``<h2>Resumen</h2><p>{TITLE}</p>``) — gold correctly logs
+    those as no-abstract; we shouldn't credit the LLM for surfacing the
+    title under an abstract heading."""
+    a = (llm_abstract or "").strip()
+    if not a or len(a) > 200:
+        return False
+    title = _first_meta(html, "citation_title", "DC.title", "og:title").strip()
+    if title and a.lower() == title.lower():
+        return True
+    return False
+
+
+_LATIN_ABSTRACT_LABEL_RE = re.compile(
+    r"<b>\s*Abstract\s*:?\s*</b>\s*(?:<[^>]+>\s*)?([A-Z][^<]{120,5000})",
+    re.IGNORECASE,
+)
+
+
+def _is_mostly_non_latin(text: str) -> bool:
+    """True when most characters in ``text`` lie outside the Latin/Latin-1
+    block — i.e. the LLM extracted a Cyrillic / CJK / Devanagari abstract
+    while gold convention prefers the English version when both are present
+    on the same page."""
+    if not text:
+        return False
+    sample = text[:400]
+    non_latin = sum(1 for ch in sample if ch.isalpha() and ord(ch) > 0x024F)
+    letters = sum(1 for ch in sample if ch.isalpha())
+    return letters > 0 and non_latin / letters >= 0.5
+
+
+def _latin_abstract_from_label(html: str) -> str:
+    """When the page contains an explicit ``<b>Abstract:</b>`` label followed
+    by a Latin paragraph, return that paragraph. nbpublish.com (Russian
+    serviceology journal) renders both languages in this layout: a Cyrillic
+    annotation block first, then ``<b>Abstract:</b> <english text>``.
+    Returns "" if no such block is present.
+    """
+    m = _LATIN_ABSTRACT_LABEL_RE.search(html)
+    if not m:
+        return ""
+    candidate = html_lib.unescape(m.group(1)).strip()
+    return _fix_encoding(candidate)
+
+
+# ---- post-LLM corresponding-author backfill --------------------------------
+
+# Page-level CA evidence — used as a guard against the "drop all CA" rule.
+# If the page does have an explicit marker, the all-CA flagging may be real.
+_PAGE_CA_MARKER_RES = (
+    re.compile(r'class\s*=\s*"[^"]*\bcorresp(?:onding)?\b[^"]*"', re.IGNORECASE),
+    re.compile(r'fa-envelope', re.IGNORECASE),
+    re.compile(r'\bcorrespond(?:ing|ence)\b', re.IGNORECASE),
+    re.compile(r'<sup>\s*\*\s*</sup>', re.IGNORECASE),
+    re.compile(r'Correspondence\s+to', re.IGNORECASE),
+    # Non-English markers per v1.8 prompt (see ai-goldie-v1.8.md).
+    re.compile(r'Penulis korespondensi|Корреспондирующий|Yazışma adresi', re.IGNORECASE),
+)
+
+
+def _page_has_ca_marker(html: str) -> bool:
+    return any(p.search(html) for p in _PAGE_CA_MARKER_RES)
+
+
+# Anchor: a class attribute that explicitly flags an HTML element as the
+# corresponding-author block. T&F's pattern:
+#   <span class="contribDegrees corresponding "> ... <a>Matthew Leggatt</a> ...
+_CORRESP_OPEN_TAG_RE = re.compile(
+    r'class\s*=\s*"[^"]*\bcorresp(?:onding)?\b[^"]*"[^>]*>',
+    re.IGNORECASE,
+)
+_AUTHOR_NAME_INSIDE_RE = re.compile(
+    # Match the leading text node of an author anchor; tolerate sibling
+    # inline tags (e.g. T&F renders `<a>Name<i class="fa-envelope"></i></a>`,
+    # which `([^<]+)</a>` rejects because the </a> isn't adjacent).
+    r'<a\b[^>]*class\s*=\s*"[^"]*\bauthor\b[^"]*"[^>]*>([^<]+?)(?:<[^>]+>)*\s*</a>',
+    re.IGNORECASE,
+)
+
+
+def _ca_names_from_class_marker(html: str) -> set[str]:
+    """Author names that appear inside an HTML element whose class explicitly
+    flags it as the corresponding-author block (e.g. T&F's
+    ``<span class="contribDegrees corresponding">``). Returns a set of
+    lowercase, whitespace-collapsed names so callers can match against AI
+    extraction names regardless of capitalization / whitespace artifacts.
+
+    Implementation: anchor on the corresp class open-tag, then scan the next
+    ~600 chars for an ``<a class="author">…</a>`` element. We stay
+    conservative on window size to avoid grabbing names from later author
+    sections; the corresponding block is typically just one author wrapper.
+    """
+    out: set[str] = set()
+    for m in _CORRESP_OPEN_TAG_RE.finditer(html):
+        window = html[m.end():m.end() + 600]
+        for nm in _AUTHOR_NAME_INSIDE_RE.findall(window):
+            cleaned = " ".join(html_lib.unescape(nm).split()).strip().lower()
+            if cleaned:
+                out.add(cleaned)
+    return out
+
+
+def _maybe_drop_all_ca(authors: list[dict], html: str) -> bool:
+    """If the LLM flagged *every* author as corresponding AND the page has
+    no explicit CA marker (asterisk / class="corresp" / envelope / explicit
+    text), drop all flags. The "all-CA" pattern reliably indicates the LLM
+    is using per-author ``mailto:``/``citation_author_email`` presence as
+    proxy evidence — gold convention rejects that proxy when no explicit
+    marker is on the page (see DOI 10.7256/2454-0730.2019.1.20595)."""
+    if len(authors) < 2:
+        return False
+    flagged = [bool(a.get("corresponding_author")) for a in authors]
+    if not all(flagged):
+        return False
+    if _page_has_ca_marker(html):
+        return False
+    for a in authors:
+        a["corresponding_author"] = False
+    return True
+
+
+def _maybe_backfill_ca_from_class(authors: list[dict], html: str) -> bool:
+    """When the LLM did not flag any author as corresponding AND the page
+    has a ``class*="corresp"`` block wrapping a specific author name, mark
+    that author. Worked example: T&F's Daughters paper
+    (``10.1080/01956051.2025.2517586``) wraps Matthew Leggatt's section in
+    ``<span class="contribDegrees corresponding ">``. Without this rule the
+    LLM has to learn that pattern through prompt rules, which leaks (see
+    feedback_prompt_rules_leak)."""
+    if not authors:
+        return False
+    if any(a.get("corresponding_author") for a in authors):
+        return False  # LLM already chose; don't override
+    target_names = _ca_names_from_class_marker(html)
+    if not target_names:
+        return False
+    changed = False
+    for a in authors:
+        nm = " ".join(str(a.get("name") or "").split()).strip().lower()
+        if nm and any(nm == t or nm in t or t in nm for t in target_names):
+            a["corresponding_author"] = True
+            changed = True
+    return changed
+
+
+# T&F's visible-HTML author pattern:
+#   <a class="author">{NAME}<i class="fa-envelope"></i></a>
+#   <span class="overlay">{AFFILIATION_TEXT}<a class="author-extra-info">View further...</a></span>
+# T&F does NOT ship `citation_author_institution` meta tags, so the existing
+# `extract_via_meta_tags` Highwire path can't help. This regex pulls the
+# affiliation off the visible markup so the rases backfill below can fill
+# any author whose LLM-extracted rases is empty.
+_TF_AUTHOR_OVERLAY_RE = re.compile(
+    r'<a\b[^>]*class\s*=\s*"[^"]*\bauthor\b[^"]*"[^>]*>([^<]+?)(?:<[^>]+>)*\s*</a>'
+    r'\s*<span\s+class\s*=\s*"[^"]*\boverlay\b[^"]*"[^>]*>([^<]+?)(?=<|$)',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _affiliation_from_overlay(html: str) -> dict[str, str]:
+    """Map ``{author_name_lowercased: affiliation_text}`` extracted from T&F's
+    visible-HTML overlay structure. Returns empty dict if the page doesn't use
+    that pattern."""
+    out: dict[str, str] = {}
+    for m in _TF_AUTHOR_OVERLAY_RE.finditer(html):
+        name = " ".join(html_lib.unescape(m.group(1)).split()).strip()
+        aff = " ".join(html_lib.unescape(m.group(2)).split()).strip()
+        if name and aff:
+            out[name.lower()] = _fix_encoding(aff)
+    return out
+
+
+def _maybe_backfill_rases_from_overlay(authors: list[dict], html: str) -> bool:
+    """Fill empty per-author rases from T&F-style ``<span class="overlay">``
+    affiliation blocks (see ``_affiliation_from_overlay``)."""
+    if not authors:
+        return False
+    aff_by_name = _affiliation_from_overlay(html)
+    if not aff_by_name:
+        return False
+    changed = False
+    for a in authors:
+        if (a.get("rasses") or "").strip():
+            continue
+        nm = " ".join(str(a.get("name") or "").split()).strip().lower()
+        if nm in aff_by_name:
+            a["rasses"] = aff_by_name[nm]
+            changed = True
+    return changed
+
+
 def extract_via_meta_tags(html: str, doi: str, link: str) -> dict[str, Any] | None:
     """Try to extract everything from citation_* meta tags. Returns None if not enough."""
     title = _fix_encoding(_first_meta(html, "citation_title", "DC.title", "og:title"))
@@ -428,6 +709,53 @@ def run_doi(
                 sa = sec_by_name.get((pa.get("name") or "").strip().lower())
                 if sa and (sa.get("rasses") or "").strip():
                     pa["rasses"] = sa["rasses"].strip()
+
+    # Abstract-only JSON-LD backfill. Fires when the LLM-extracted abstract
+    # looks like a meta-tag truncation (200-char ellipsis, mid-word cutoff,
+    # or empty) AND the page's JSON-LD carries a longer, sentence-terminated
+    # abstract. Field-isolated: only the Abstract field is touched, so the
+    # cross-field regressions seen when JSON-LD was made visible to the LLM
+    # itself (authors/pdf_url drifting to JSON-LD-derived values) cannot
+    # occur here.
+    llm_abstract = (extraction.get("Abstract") or "").strip()
+    if _looks_truncated(llm_abstract):
+        ld_abstract = _jsonld_abstract(html)
+        if ld_abstract and len(ld_abstract) > max(len(llm_abstract) * 3 // 2, 200):
+            extraction["Abstract"] = ld_abstract
+            llm_abstract = ld_abstract
+
+    # Drop abstract when the LLM emitted the article title under an abstract
+    # heading (Open-Journal-Systems convention on pages with no real
+    # abstract).
+    if _is_title_as_abstract(llm_abstract, html):
+        extraction["Abstract"] = ""
+        llm_abstract = ""
+
+    # Latin-abstract preference. When the LLM extracted a Cyrillic / CJK /
+    # Devanagari abstract from a page that also presents an explicit
+    # ``<b>Abstract:</b>`` Latin block (gold-convention preference for
+    # English when both languages are on the page), replace with the Latin
+    # version.
+    if llm_abstract and _is_mostly_non_latin(llm_abstract):
+        latin = _latin_abstract_from_label(html)
+        if latin and len(latin) >= 120:
+            extraction["Abstract"] = latin
+
+    # Post-LLM corresponding-author corrections. Two surgical, page-evidence
+    # gated rules that are safe to apply across all extractions:
+    # (a) drop spurious all-CA flagging when there is no explicit marker on
+    #     the page (catches the per-author-mailto false positive);
+    # (b) backfill CA from explicit ``class*="corresp"`` HTML wrappers when
+    #     the LLM didn't pick up the marker.
+    authors = extraction.get("Authors") or []
+    _maybe_drop_all_ca(authors, html)
+    _maybe_backfill_ca_from_class(authors, html)
+
+    # Affiliation backfill from T&F's visible-HTML overlay pattern (T&F omits
+    # citation_author_institution Highwire tags; the existing
+    # ``extract_via_meta_tags`` path can't help). Conservative: only fills
+    # per-author rases that the LLM left empty.
+    _maybe_backfill_rases_from_overlay(authors, html)
 
     return TaxicabResult(
         no=no, doi=doi, link=link, extraction=extraction, tier="claude",
