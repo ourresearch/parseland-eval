@@ -337,7 +337,7 @@
 
 **pdf_url**
 - AI:    https://nmji.in/content/141/2025/0/1/pdf/NMJI-377-2024.pdf
-- Human: https://nmji.in/view-pdf/?article=2b7c94f230faf5807e1ab432b3c3d7bbkM7TBji7ddk=
+- Human: https://nmji.in/content/141/2026/39/2/pdf/NMJI-39-130.pdf
 - landing_page_truth: TBD
 
 ## DOI: 10.31857/s2587556623070105
