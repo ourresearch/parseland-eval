@@ -35,3 +35,10 @@ dashboard/.vite/
 .idea/
 .vscode/
 *.swp
+
+
+# Experimental run scratch directories
+runs/abstract-jsonld-fix/
+runs/cviu-fresh/
+runs/holdout-jsonld-bf/
+runs/holdout-jsonld-fix/

@@ -1,44 +1,5 @@
 # Disagreements
 
-## DOI: 10.1006/cviu.2002.0969
-
-**rases**
-- AI:    [
-  {
-    "name": "S. Ghebreab",
-    "rasses": "",
-    "corresponding_author": false
-  },
-  {
-    "name": "A.W.M. Smeulders",
-    "rasses": "",
-    "corresponding_author": false
-  },
-  {
-    "name": "P.R. Pfluger",
-    "rasses": "",
-    "corresponding_author": false
-  }
-]
-- Human: [
-  {
-    "name": "S. Ghebreab",
-    "rasses": "Intelligent Sensory Information Systems Group, Informatics Institute, University of Amsterdam, Kruislaan 403, Amsterdam, 1098 SJ, The Netherlands",
-    "corresponding_author": false
-  },
-  {
-    "name": "A.W.M. Smeulders",
-    "rasses": "Intelligent Sensory Information Systems Group, Informatics Institute, University of Amsterdam, Kruislaan 403, Amsterdam, 1098 SJ, The Netherlands",
-    "corresponding_author": false
-  },
-  {
-    "name": "P.R. Pfluger",
-    "rasses": "Department of Mathematics, Korteweg-De Vries Institute, University of Amsterdam, Plantage Muidergracht 24, Amsterdam, 1018 TV, The Netherlands",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
 ## DOI: 10.1016/0016-5085(95)22767-9
 
 **pdf_url**

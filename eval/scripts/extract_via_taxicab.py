@@ -432,6 +432,131 @@ def _maybe_backfill_rases_from_overlay(authors: list[dict], html: str) -> bool:
     return changed
 
 
+# Elsevier ScienceDirect React SPA: author + affiliation data is embedded as a
+# JSON blob inside ``<script type="application/json" data-iso-key="_0">``. The
+# script tag is stripped by ``_strip_for_llm`` (correctly — the LLM-input
+# leakage rule still applies), so the LLM never sees authors or affiliations
+# on these pages and emits empty ``rasses`` for every author. This deterministic
+# extractor walks the JSON's ``authors.content[*]`` author-group structure,
+# follows ``cross-ref/refid`` from each author to the matching ``affiliation/id``,
+# and returns ``{author_name_lower: address_text}``.
+#
+# Why per-publisher: the JSON shape is Elsevier's; nothing else uses it. This
+# is the canonical "publisher-specific extractor" path approved under the
+# `feedback_push_to_95_money_no_object` directive.
+_ELSEVIER_ISO_RE = re.compile(
+    r'<script[^>]*type\s*=\s*"application/json"[^>]*data-iso-key\s*=\s*"_0"[^>]*>(.*?)</script>',
+    re.IGNORECASE | re.DOTALL,
+)
+_ELSEVIER_FOOTNOTE_NAMES = frozenset({"footnote", "cross-ref"})
+
+
+def _elsevier_iso_collect_text(node) -> str:
+    """Recursively gather visible text from an Elsevier sd-iso JSON node,
+    skipping footnote / cross-ref subtrees (which carry email addresses,
+    not the affiliation address)."""
+    if isinstance(node, str):
+        return node
+    if isinstance(node, dict):
+        if node.get("#name") in _ELSEVIER_FOOTNOTE_NAMES:
+            return ""
+        out: list[str] = []
+        v = node.get("_")
+        if isinstance(v, str):
+            out.append(v)
+        for child in node.get("$$", []) or []:
+            t = _elsevier_iso_collect_text(child)
+            if t:
+                out.append(t)
+        return " ".join(out)
+    if isinstance(node, list):
+        return " ".join(_elsevier_iso_collect_text(x) for x in node)
+    return ""
+
+
+def _affiliation_from_elsevier_iso(html: str) -> dict[str, str]:
+    """Map ``{author_name_lower: affiliation_text}`` extracted from Elsevier
+    ScienceDirect's React SPA JSON. Returns empty dict if the page doesn't
+    use that pattern."""
+    m = _ELSEVIER_ISO_RE.search(html)
+    if not m:
+        return {}
+    raw = m.group(1)
+    try:
+        data = json.loads(raw)
+    except (json.JSONDecodeError, ValueError):
+        return {}
+    authors_content = (data.get("authors") or {}).get("content") or []
+
+    aff_by_id: dict[str, str] = {}
+    authors: list[dict[str, list[str]]] = []
+    for group in authors_content:
+        if not isinstance(group, dict) or group.get("#name") != "author-group":
+            continue
+        for child in group.get("$$", []) or []:
+            nm = child.get("#name")
+            if nm == "author":
+                given = surname = ""
+                refids: list[str] = []
+                for sub in child.get("$$", []) or []:
+                    n2 = sub.get("#name")
+                    if n2 == "given-name":
+                        given = sub.get("_", "") or ""
+                    elif n2 == "surname":
+                        surname = sub.get("_", "") or ""
+                    elif n2 == "cross-ref":
+                        rid = (sub.get("$") or {}).get("refid") or ""
+                        # Affiliation refids start with "A"/"AF"; "F"-prefixed
+                        # refids point at email footnotes (skip).
+                        if rid and (rid.startswith("AF") or
+                                    (rid.startswith("A") and not rid.startswith("AC"))):
+                            if not rid.startswith(("F", "f")):
+                                refids.append(rid)
+                full_name = f"{given} {surname}".strip()
+                if full_name:
+                    authors.append({"name": full_name, "refids": refids})
+            elif nm == "affiliation":
+                aid = (child.get("$") or {}).get("id") or ""
+                if not aid:
+                    continue
+                for sub in child.get("$$", []) or []:
+                    if sub.get("#name") == "textfn":
+                        text = " ".join(_elsevier_iso_collect_text(sub).split())
+                        if text:
+                            aff_by_id[aid] = text
+                        break
+
+    out: dict[str, str] = {}
+    for a in authors:
+        affs = [aff_by_id[r] for r in a["refids"] if r in aff_by_id]
+        if affs:
+            # Multiple affiliations joined with "; " matches gold convention.
+            out[a["name"].lower()] = "; ".join(affs)
+    return out
+
+
+def _maybe_backfill_rases_from_elsevier_iso(authors: list[dict], html: str) -> bool:
+    """Fill empty per-author rases from Elsevier ScienceDirect's
+    `data-iso-key="_0"` React JSON. Worked example: DOI 10.1006/cviu.2002.0969 —
+    the cached HTML's JSON block contains all 3 authors with their full
+    University-of-Amsterdam affiliations, but the LLM gets an empty view
+    after `_strip_for_llm` removes the script."""
+    if not authors:
+        return False
+    aff_by_name = _affiliation_from_elsevier_iso(html)
+    if not aff_by_name:
+        return False
+    changed = False
+    for a in authors:
+        if (a.get("rasses") or "").strip():
+            continue
+        nm = " ".join(str(a.get("name") or "").split()).strip().lower()
+        if nm in aff_by_name:
+            a["rasses"] = aff_by_name[nm]
+            changed = True
+    return changed
+
+
 def extract_via_meta_tags(html: str, doi: str, link: str) -> dict[str, Any] | None:
     """Try to extract everything from citation_* meta tags. Returns None if not enough."""
     title = _fix_encoding(_first_meta(html, "citation_title", "DC.title", "og:title"))
@@ -765,6 +890,14 @@ def run_doi(
     # ``extract_via_meta_tags`` path can't help). Conservative: only fills
     # per-author rases that the LLM left empty.
     _maybe_backfill_rases_from_overlay(authors, html)
+
+    # Affiliation backfill from Elsevier ScienceDirect's React-SPA JSON.
+    # Cached HTML carries author/affiliation data ONLY in a
+    # ``<script data-iso-key="_0">`` JSON blob; ``_strip_for_llm`` removes
+    # script tags so the LLM never sees this content. Worked example: CVIU
+    # 10.1006/cviu.2002.0969 — backfills the 3 University-of-Amsterdam
+    # affiliations the LLM emits empty.
+    _maybe_backfill_rases_from_elsevier_iso(authors, html)
 
     return TaxicabResult(
         no=no, doi=doi, link=link, extraction=extraction, tier="claude",

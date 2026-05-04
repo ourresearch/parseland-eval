@@ -156,3 +156,33 @@ overall  64% — derived
 ```
 
 Authoritative live numbers: `eval/goldie/summary-final.json`. Per-DOI disagreements: `eval/goldie/disagreements-final.md`. Empirical PDF probe (Cat A/B/C URL HEAD-checks): `eval/goldie/PDF-EMPIRICAL-PROBE.md`. Active comparator rules + status: `eval/goldie/comparator-rules.md`.
+
+---
+
+## 2026-05-04 04:00 CDT — Elsevier ScienceDirect React-SPA JSON extractor (rases +2)
+
+| authors | rases | corresp | abstract | pdf_url | overall |
+|---|---|---|---|---|---|
+| 96% ✅ | 90% | 86% | 96% ✅ | 82% | 66% |
+
+What moved: Deterministic post-LLM extractor for Elsevier's `<script type="application/json" data-iso-key="_0">` author-affiliation JSON. Walks `authors.content[*]` author-group nodes, follows `cross-ref/refid` from each author to the matching `affiliation/id`, returns `{author_name_lower: address_text}`. Skips `footnote` / `cross-ref` subtrees in `textfn` to keep email noise out. CVIU 10.1006/cviu.2002.0969: 3 University-of-Amsterdam affiliations recovered cleanly, exact match to gold (Intelligent Sensory Information Systems Group on authors 0/1, Korteweg-De Vries Institute on author 2).
+
+Also installed `rapidfuzz` so comparator rule #9 (token-sort fuzzy fallback) actually fires — was previously silently no-op due to `try/except ImportError`. No score movement on holdout-50 (Surfcoat's failure is multi-aff pick, not pluralization variance, so fuzzy doesn't catch it), but the rule is now enforced for future runs.
+
+### Rases ceiling at 90% — articulate-why for the 5 residuals
+
+- **Surfcoat** `10.1016/j.surfcoat.2023.129748` — multi-affiliation pick ambiguity. AI picked author's School-of-Materials-Science aff; gold picked Institute-of-Aero-Engine-Research / AECC-Shenyang-Engine aff. Both are valid for the same author; they're just different orgs. Casey call needed: which aff is canonical when an author has multiple?
+- **DSQ** `10.18061/dsq.v41i1.7844` — gold says empty; AI extracted `University of Pennsylvania` from `citation_author_institution`. Casey call: should AI extract from Highwire meta when gold marks empty?
+- **Frontiers s002** `10.3389/fendo.2023.1147554.s002` — gold has 4 different per-author affiliations (UCSF / Eunice Shriver NICHD / NIH / NINDS); BOTH the s002 supplementary page AND the parent `10.3389/fendo.2023.1147554` page only carry one identical NINDS affiliation for all 4 authors. Gold's data is from outside the paper (likely current author affiliations from a registry). **Structurally unfixable from the cached HTML.** Live-fetch wouldn't help — the parent page also has only the single NINDS aff.
+- **Russian Servicology** `10.7256/2454-0730.2019.1.20595` — AI has Russian-script author names + Russian rases; gold has BGN-transliterated English names + English rases (translation). Cyrillic→Latin transliteration would bridge author names (Глущенко → Glushchenko) but rases content is *translated*, not transliterated (Российский государственный социальный университет → Russian State Social University, not Rossiyskiy gosudarstvennyy sotsial'nyy universitet). Comparator-level translation is out of scope. Per-author rases stays unmatched even with name-side bridging.
+- **Dialogos** `10.18041/0124-0021/dialogos.52.2020.8807` — gold has 0 authors; AI extracted Oscar Andrés López Cortés (Universidad Libre) which the page does carry. Gold quality issue — auditor missed the author block. Per-author comparator can't reconcile gold-empty against AI-has-author without a "vacuous-match-when-gold-silent" rule, which would broadly mask legitimate extraction errors on the 13 holdout rows where gold authors=[] (OED entries / ENCODE Dataset / older indexes that genuinely shouldn't have authors).
+
+### Path to rases 95%
+
+Reach is gold-convention or external-data-bound:
+- 2 of 5 (Surfcoat, DSQ) need Casey calls — same convention question lives on pdf_url Cat A.
+- 1 of 5 (Frontiers s002) is structurally unfixable from cached HTML.
+- 1 of 5 (Russian Servicology) needs translation, not transliteration.
+- 1 of 5 (Dialogos) needs gold update.
+
+Casey-call-only path: rases 90 → 94 (Surfcoat + DSQ). Plus Dialogos gold update: → 96. Even with all external decisions, Russian Servicology + Frontiers stay residual without translation infra / live-fetch parent re-harvest.
