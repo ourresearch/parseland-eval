@@ -244,3 +244,49 @@ What moved: extended `_pdf_url_match_relaxed` with rule 2b — when same host AN
 The earlier `negative example` framing in the comparator docstring (NMJI explicitly rejected) doesn't hold under the new convention; rule 2b inverts that decision.
 
 Overall stays at 72 because NMJI still fails corresp + abstract — those are the row-locking residuals on this DOI.
+
+---
+
+## 2026-05-04 12:44 CDT — first measurement of train-50 (rows 1-50)
+
+**Commit context**: fresh extraction of train-50 with `ai-goldie-v1.9.1.md` prompt at the current state of `extract_via_taxicab.py` (citation_pdf_url backfill + post-LLM transforms + Elsevier ISO extractor enabled) + comparator at the current state of `diff_goldie.py` (rule #10 9-publisher list + Cyrillic transliteration + NMJI same-host rule 2b). Run output: `runs/train-final/ai-goldie-1.csv`. Comparator artifacts: `eval/goldie/summary-train-final.json` + `eval/goldie/disagreements-train-final.md`.
+
+| split | authors | rases | corresp | abstract | pdf_url | overall |
+|---|---|---|---|---|---|---|
+| holdout-50 (current) | **98%** ✅✅ | 90% | 88% | **96%** ✅ | 92% | 72% |
+| **train-50 (this run)** | **70%** | **58%** | **66%** | **80%** | **76%** | **36%** |
+| Δ (holdout − train) | +28 | +32 | +22 | +16 | +16 | +36 |
+
+**This is a generalization gap, not a new high-water mark.** Every prompt iteration past v1.4 and every comparator / extractor / post-LLM transform landed since 2026-04-30 was tuned against holdout-50 disagreements. Train-50 was the prompt-tuning split for v1.0–v1.4 and has not been measured since v1.4. Nothing in this run is a regression — it's the first honest read on a never-measured set.
+
+### Disagreement field counts (32 of 50 rows fail at least one field)
+
+| field | train-50 fails | holdout-50 fails | gap |
+|---|---|---|---|
+| rases | 21 | 5 | 16 |
+| corresp | 17 | 6 | 11 |
+| authors | 15 | 1 | 14 |
+| pdf_url | 12 | 4 | 8 |
+| abstract | 10 | 2 | 8 |
+
+### What likely drives the gap (hypotheses; not yet investigated row-by-row)
+
+1. **Holdout-tuned post-LLM transforms.** The 6 post-LLM transforms in `extract_via_taxicab.py` are publisher-specific patterns observed on holdout-50 (T&F `class*="corresp"` wrapper, Diálogos title-as-abstract, Russian Servicology Latin-block preference, etc.). Train-50 has different publishers — Cell Reports, Acta Haematologica, Phys Rev B (different DOI), AHR, J. Inst. Met. — and different failure modes. The transforms would not be expected to fire on those publishers.
+2. **Holdout-tuned comparator rules.** Rule #10 (paywalled-publisher pattern ≅ N/A), Cyrillic transliteration, NMJI same-host, and the Thai/CJK no-whitespace rules all encode specific holdout-50 disagreement patterns. They generalize cleanly when the same patterns appear in train-50 but don't help where train-50 fails for different reasons.
+3. **Gold quality.** The CA second sweep (CLAUDE.md: "dedicated CA second sweep over all 100 rows after the first audit pass") was scoped to all 100 rows in principle, but the convention reset on pdf_url N/A → publisher canonical URL was applied only to rows the user sampled — concentrated in holdout. Train-50 likely has more annotation drift remaining.
+4. **Stochastic LLM noise.** Same prompt, different DOIs, different cached HTML. Some variance is expected even with no systematic gap.
+
+### Where to look first
+
+The 14 authors fails on train-50 (vs 1 on holdout-50) is the most suspicious gap. Authors is supposed to be the locked field — if v1.9.1 + the comparator can't get train-50 above 95 on authors, either (a) train-50 has a systematic source of name disagreement we haven't seen on holdout-50, or (b) gold-quality drift on train-50 is large.
+
+Per-row breakdown at `eval/goldie/disagreements-train-final.md` (32 DOIs).
+
+### What this means for the 95% bar
+
+The 95%-on-holdout-50 milestone we've been tracking does not generalize to train-50. Honest reading is that we have a *holdout-overfit* extractor + comparator, not a *95% extractor*. To know what the team can actually run at 10K scale, we need to either:
+- Iterate on train-50 the way we iterated on holdout-50 (risk: we'll just overfit train-50 too); or
+- Sample a third 50 from outside both splits and call that the locked validation set, freezing both train-50 and holdout-50; or
+- Audit gold quality on train-50 first to know how much of the gap is annotation vs extraction.
+
+Recommend the second option — pick a fresh 50 from outside the 100-row human-goldie, audit it once, and treat it as the next gate.
