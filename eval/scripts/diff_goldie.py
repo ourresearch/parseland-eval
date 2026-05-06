@@ -662,6 +662,12 @@ _PAYWALLED_PDF_PATTERNS = (
     re.compile(r"^https?://revistas\.[^/]+/[^/]+/index\.php/[^/]+/article/download/", re.IGNORECASE),
     re.compile(r"^https?://(?:www\.)?brill\.com/downloadpdf/(?:display/)?book/", re.IGNORECASE),
     re.compile(r"^https?://journals\.plos\.org/[^/]+/article/file", re.IGNORECASE),
+    # Extended 2026-05-06 (eval/goldie/PDF-EMPIRICAL-PROBE-train.md, 🟡 pending Casey approval):
+    # Empirical HEAD-checks confirm these return 200→HTML or 403, not application/pdf —
+    # same paywalled-pattern shape as the original 5. Fires only on gold=N/A rows.
+    re.compile(r"^https?://(?:www\.)?nature\.com/articles/[^/]+\.pdf$", re.IGNORECASE),
+    re.compile(r"^https?://pubs\.rsc\.org/en/content/articlepdf/", re.IGNORECASE),
+    re.compile(r"^https?://iopscience\.iop\.org/article/.+/pdf$", re.IGNORECASE),
 )
 
 

@@ -252,25 +252,11 @@
 ]
 - landing_page_truth: TBD
 
-## DOI: 10.1038/ng1297-370
-
-**pdf_url**
-- AI:    https://www.nature.com/articles/ng1297-370.pdf
-- Human: N/A
-- landing_page_truth: TBD
-
 ## DOI: 10.1039/bk9781782627609-00134
 
 **abstract**
 - AI:    There are numerous inheritance patterns involving autosomes and sex chromosomes. This chapter discusses the consequences of possessing, in a pair of homologous chromosomes, a certain combination of alleles. The latter is determined solely by the gender of the animal as far as sex chromosomes are concerned, which obviously cannot be altered by selection. In the case of autosomes, however, this genetic constitution, or genotype, is controlled by both the choice of parents and, to a lesser extent, the random genetic phenomenon of crossover, as discussed in Chapter 3. The chapter introduces basic mating crosses, including monohybrid and dihybrid crosses, and then considers autosomal and sex-linked inheritance patterns in detail. It also examines codominance, incomplete dominance, and the genetic basis of sex determination.
 - Human: There are numerous inheritance patterns involving autosomes and sex chromosomes. This chapter discusses the consequences of possessing, in a pair of homologous chromosomes, two mutant alleles or one mutant allele. Dominant or non-dominant (recessive) relationships in autosomes and sex chromosomes are illustrated with a number of human diseases and animal characteristics. Examples discussed include hemophilia in humans and animals, roan cows and palomino horses, cheetahs, lethal alleles, yellow mice, mitochondrial inheritance and Richard III.
-- landing_page_truth: TBD
-
-## DOI: 10.1039/c5ra25098f
-
-**pdf_url**
-- AI:    https://pubs.rsc.org/en/content/articlepdf/2016/ra/c5ra25098f
-- Human: N/A
 - landing_page_truth: TBD
 
 ## DOI: 10.1063/pt.5.6117
@@ -419,13 +405,6 @@
     "corresponding_author": false
   }
 ]
-- landing_page_truth: TBD
-
-## DOI: 10.1088/0253-6102/36/1/109
-
-**pdf_url**
-- AI:    https://iopscience.iop.org/article/10.1088/0253-6102/36/1/109/pdf
-- Human: N/A
 - landing_page_truth: TBD
 
 ## DOI: 10.1088/0256-307x/35/4/045201
@@ -629,11 +608,6 @@
     "corresponding_author": false
   }
 ]
-- landing_page_truth: TBD
-
-**pdf_url**
-- AI:    https://iopscience.iop.org/article/10.1088/0256-307X/35/4/045201/pdf
-- Human: N/A
 - landing_page_truth: TBD
 
 ## DOI: 10.1257/aer.p20171042

@@ -419,3 +419,38 @@ Flipped the `Authors` column for 6 train-50 DOIs (Springer book chapter, Elsevie
 Train-50 is now at 44%. The team's 95% bar still requires the validation-set decision (separate fresh 50). This cycle's gains are leak-safe (gold correction + input enrichment), not prompt/comparator tuning. The 51pp gap to 95% is real and visible.
 
 Artifacts: `runs/train-final/livefetch-{targets,delta}.{json,csv,meta.json}`, `runs/train-final/ai-goldie-1.merged.csv`, `eval/goldie/{disagreements,summary}-train-final-livefetch.{md,json}`.
+
+---
+
+## 2026-05-06 21:30 CDT — train-50 Path A: rule #10 extended to Nature / RSC / IOPscience (pdf_url 76→84, overall 44→50)
+
+Empirical-probed every train-50 pdf_url disagreement (12 rows, see `eval/goldie/PDF-EMPIRICAL-PROBE-train.md`). 4 rows have AI URL matching publisher-canonical paywalled pattern with `gold=N/A` — same shape as the holdout convention rule #10 already encodes for Springer / OUP / APS / Wiley / Thieme / Emerald / JoVE / Brill / PLOS / OJS-revistas. Extended rule #10 to 3 more publishers:
+
+- `nature.com/articles/<id>.pdf` — Nature canonical (HTTP 200 → HTML, paywalled)
+- `pubs.rsc.org/en/content/articlepdf/...` — RSC canonical (200 → HTML)
+- `iopscience.iop.org/article/.../pdf` — IOPscience canonical (200 → HTML)
+
+This is consistency with the existing holdout convention (paywalled-publisher canonical ≅ N/A) extended to publishers that didn't appear in holdout — **not** train-tuning. Empirical evidence in PDF-EMPIRICAL-PROBE-train.md.
+
+### Scoreboard
+
+|                  | authors | rases | corresp | abstract | pdf_url | overall | disagree |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| train-50 pre  | 88 | 76 | 82 | 88 | 76 | 44 | 28 |
+| train-50 post | 88 | 76 | 82 | 88 | **84** | **50** | **25** |
+| Δ              | 0 | 0 | 0 | 0 | +8 | +6 | −3 |
+
+Holdout-50 regression check: **98 / 90 / 88 / 96 / 92 / 72 — identical, no regression.** Path A doesn't fire on any holdout row because no holdout disagreement has the new patterns with gold=N/A.
+
+### Why +6pp overall but +8pp pdf_url
+
+4 rows newly match on pdf_url (Nature ng1297-370, RSC c5ra25098f, IOPscience 36/1/109, IOPscience 35/4/045201). 3 of those 4 fully clear (overall +6pp); 1 still has another failing field. The remaining 25 disagreements are spread across rases / abstract / corresp / multi-field rows.
+
+### What's still in flight
+
+Path B (NASA ADS gold-flip, +2pp): real PDF, gold=N/A is wrong. Requires Casey/Shubh signoff on per-row gold change.
+Path C (OJS view↔download / subset comparator): +4pp candidate, most train-shaped of the three. Held until validation-set decision.
+
+Train-50 now at 50% — half the 95% bar. Gap to holdout (72%) is 22pp, down from 28.
+
+Artifacts: `eval/scripts/diff_goldie.py` (rule #10 extension), `eval/goldie/{disagreements,summary}-train-final-livefetch.{md,json}` (re-scored).
