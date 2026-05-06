@@ -1,0 +1,35 @@
+{
+  "n_targets": 5,
+  "results": [
+    {
+      "doi": "10.1063/pt.5.6117",
+      "steps": 17,
+      "duration_s": 487.16,
+      "error": null
+    },
+    {
+      "doi": "10.1016/j.clpl.2024.100067",
+      "steps": 18,
+      "duration_s": 575.06,
+      "error": null
+    },
+    {
+      "doi": "10.1307/mmj/20236362",
+      "steps": 6,
+      "duration_s": 166.42,
+      "error": null
+    },
+    {
+      "doi": "10.1109/icsrs48664.2019.8987669",
+      "steps": 6,
+      "duration_s": 182.19,
+      "error": null
+    },
+    {
+      "doi": "10.1016/j.jallcom.2006.06.063",
+      "steps": 14,
+      "duration_s": 419.49,
+      "error": null
+    }
+  ]
+}

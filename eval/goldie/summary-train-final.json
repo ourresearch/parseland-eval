@@ -3,11 +3,11 @@
   "n_human_only": [],
   "n_ai_only": [],
   "per_field": {
-    "authors": 70.0,
-    "rases": 58.0,
-    "corresponding": 66.0,
+    "authors": 82.0,
+    "rases": 70.0,
+    "corresponding": 78.0,
     "abstract": 80.0,
     "pdf_url": 76.0
   },
-  "overall": 36.0
+  "overall": 40.0
 }

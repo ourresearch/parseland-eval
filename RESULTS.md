@@ -371,3 +371,51 @@ Items I'm explicitly NOT doing this cycle, despite each being a 1-2pp gain:
 - Adjusting comparator for substring-superset rases (1 train row).
 
 Each of these would be a holdout-or-train-specific patch. The right pattern is: **wait for the validation-set decision (recommended Option A from the prior entry)** so we know what we're optimizing against before extending the comparator further.
+
+---
+
+## 2026-05-05 20:30 CDT — train-50 buckets B + A: gold flip + live-fetch
+
+Two leak-safe interventions on train-50 in one cycle. **No prompt changes, no comparator changes, no merge-rule changes.** Both interventions either correct gold or enrich input — neither tunes against train-50 outputs.
+
+### Bucket B — gold-flip (commit `51fc98c`)
+
+Flipped the `Authors` column for 6 train-50 DOIs (Springer book chapter, Elsevier Pattern Recognition, RSC ×2, De Gruyter chapter, Chinese J Chromatography) where gold was malformed JSON / `[]` / `N/A` and the page had clean author data. Replaced with v1.9.1 AI extraction. Mirrored to `human-goldie.csv` per user signoff.
+
+### Bucket A — live-fetch (no commit yet)
+
+5 of the 7 cache-thin DOIs routed through the existing live-fetch tier (`live_fetch_empty.py` → real visible Chrome over CDP, `browser-use` Agent, v1.9.1 prompt). 2 skipped as not-recoverable on the publisher's own page (10.1086/ahr/37.2.298 — 1932 OUP page, 10.3030/821328 — CORDIS project page, not a journal article). Delta merged into the train-final baseline via `merge_livefetch.py`'s leak-safe rules — all 5 target DOIs got overrides applied, zero non-target rows touched.
+
+### Train-50 scoreboard progression
+
+| Cycle | authors | rases | corresp | abstract | pdf_url | overall | disagree |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `c64b5d7` first measurement | 70 | 58 | 66 | 80 | 76 | 36 | 32 |
+| post bucket-B flip (`51fc98c`) | 82 | 70 | 78 | 80 | 76 | 40 | 30 |
+| post live-fetch (this entry) | **88** | **76** | **82** | **88** | 76 | **44** | **28** |
+| Δ this cycle | +6 | +6 | +4 | +8 | 0 | +4 | −2 |
+
+### What moved
+
+- 4 of 5 live-fetched DOIs returned non-empty abstracts → +8pp abstract.
+- 3 of 5 returned author names matching gold → +6pp authors.
+- 2 of 5 returned author names *with* affiliations → +6pp rases (the Elsevier Bhabha-ARC and IEEE icsrs48664 rows).
+- IEEE icsrs48664 affiliation has visible OCR-style typos ("Electrionic", "Tseting") — accepted as live-fetch noise; not tuning around it.
+- pdf_url unchanged: of the 5 live-fetch deltas, only one had a non-empty pdf_url and it didn't strict-match gold's expected URL.
+
+### Still failing (28 disagreements)
+
+| Bucket | Count this cycle | Path |
+|---|---:|---|
+| H (pdf_url) | ~7 | Empirical-probe data already in prior entry — needs Casey gold-flip / rule extension call |
+| D (name/aff content mismatch) | 3 | Articulate-why per row in prior entry |
+| E (rases-only) | ~5 | Gold-empty convention call + 2 MDPI extraction gaps |
+| Live-fetch partial wins | ~3 | Names recovered without affs (clpl Elsevier, Project Euclid, Physics Today) — gold has affs we couldn't render |
+| Z + G | ~3 | Per-row articulate-why |
+| Skipped (Bucket A unrecoverable) | 2 | AHR-1932 + CORDIS need Casey scope decision |
+
+### Discipline check
+
+Train-50 is now at 44%. The team's 95% bar still requires the validation-set decision (separate fresh 50). This cycle's gains are leak-safe (gold correction + input enrichment), not prompt/comparator tuning. The 51pp gap to 95% is real and visible.
+
+Artifacts: `runs/train-final/livefetch-{targets,delta}.{json,csv,meta.json}`, `runs/train-final/ai-goldie-1.merged.csv`, `eval/goldie/{disagreements,summary}-train-final-livefetch.{md,json}`.

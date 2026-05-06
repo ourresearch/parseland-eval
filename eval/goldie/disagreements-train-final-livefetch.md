@@ -9,29 +9,24 @@
 
 ## DOI: 10.1016/j.clpl.2024.100067
 
-**authors**
-- AI:    []
-- Human: [
+**rases**
+- AI:    [
   {
     "name": "Giulia Alessandri",
-    "rasses": "Scuola Superiore Sant'Anna, Piazza Martiri della Libertà 33, Pisa, PI, 56127, Italy",
-    "corresponding_author": true
+    "rasses": "",
+    "corresponding_author": false
   },
   {
     "name": "Tiberio Daddi",
-    "rasses": "Scuola Superiore Sant'Anna, Piazza Martiri della Libertà 33, Pisa, PI, 56127, Italy",
+    "rasses": "",
     "corresponding_author": false
   },
   {
     "name": "Fabio Iraldo",
-    "rasses": "Scuola Superiore Sant'Anna, Piazza Martiri della Libertà 33, Pisa, PI, 56127, Italy",
+    "rasses": "",
     "corresponding_author": false
   }
 ]
-- landing_page_truth: TBD
-
-**rases**
-- AI:    []
 - Human: [
   {
     "name": "Giulia Alessandri",
@@ -52,7 +47,23 @@
 - landing_page_truth: TBD
 
 **corresponding**
-- AI:    []
+- AI:    [
+  {
+    "name": "Giulia Alessandri",
+    "rasses": "",
+    "corresponding_author": false
+  },
+  {
+    "name": "Tiberio Daddi",
+    "rasses": "",
+    "corresponding_author": false
+  },
+  {
+    "name": "Fabio Iraldo",
+    "rasses": "",
+    "corresponding_author": false
+  }
+]
 - Human: [
   {
     "name": "Giulia Alessandri",
@@ -72,43 +83,31 @@
 ]
 - landing_page_truth: TBD
 
-**abstract**
-- AI:    
-- Human: The issue of sustainable food production has become increasingly important in recent years, starting from Sustainable Development Goals in 2015, moving through important events like Farm to Fork strategy up until the United Nations Food System Summit in 2021. The wine industry also, as a niche of the agri-food sector, has been influenced by this change, but despite its economic and cultural value, its sustainability issues have not been sufficiently explored by academia. The present research expands the debate on environmental sustainability in the wine industry by observing how management academia has addressed this topic over the last twelve years, defining the state of the art of a quite new and unexplored topic. The research has been structured as a systematic literature review of academic papers from 2009 till the first half of 2022. This methodology provides a clear overview of sustainable management practices, effective and potential, throughout the entire agri-food wine production process.
-The papers identified are categorized and divided into major (most recurrent) and secondary topics, according to the prevalence criterion.
-The findings and discussion section provides an in-depth description and analysis of each category, as well as research gaps identification and possible academic issues. Since it was not possible to find similar works, this research would like to be seen as an opportunity to develop the research on environmental sustainability in the wine industry and align the interest of academia and wine stakeholders defining the path for future research.
-- landing_page_truth: TBD
-
 **pdf_url**
-- AI:    
+- AI:    https://www.sciencedirect.com/science/article/pii/S2666791624000137/pdfft
 - Human: https://pdf.sciencedirectassets.com/777795/1-s2.0-S2666791624X00020/1-s2.0-S2666791624000137/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAQaCXVzLWVhc3QtMSJIMEYCIQCpflXzdaraz0J9VrgP7%2FQLuN1hYRTT%2B6HJdvGpujRqsAIhAJr822Q0wx01mGMghgX%2FdtQxdVHhakG%2F%2FmPerIWTrYIFKrwFCMz%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQBRoMMDU5MDAzNTQ2ODY1IgzThvszzXSYLbvCI48qkAVGmwGeWil5oZI0hT60URNJwFowCZHO8Aido%2BeCXxRU3uhjcls%2BOImj2EnKVFN0VAKQT9yiYpEq4EuJr0lYciz%2F5m8tWSTpjJDeM54J5my%2F3F3UqBQJau14pJQow8qoiKu1Ye%2BnY4vH7OkCJYFaE1%2B%2F%2Bu0ko6Aap1luAi6cOsYHRBc2NgrFMuaxsTEXp98uDxnIRRsu%2FHK9kM132m27uxv9oPNLGN7puxCvdbcNjtq3%2BGbY1F2%2FiEsdxnPFHfiWJF%2FFugUMlz57taD59svZ%2BC%2Fvdipt03SZYKUtQRD7d6HyPu7Tz0NAy8n918uLLmX7PAfMh1aACw8Ve2NdtechB2f0SDRp6ZlcLC0oLJ92C0MRTVFkQT2YNbX73DURNRTHH%2FNx9CRcSobhEvecXrI5t13ibdEMiZZopRdl%2FY%2FO%2FFX88tO%2BRndJ8mDL1Jh%2B5BBhSG9X%2FtbynvappM7DPbGgb5W2AgTob%2BEDKHk6OqJikc071%2Beo5TGfcW6zpcMYbkIxQ%2F8lG2mKIYTNenrvNdLcr9WQHO5BNFM%2Fm%2Bei%2FWBlih8A3mpty5Qsss3Rqn42EdmehU%2B3JhNKANjdeK8B%2B83%2FwYK7uck%2BD%2BIbE2rR%2FSu3n8pNPU06vz0%2Fm6d8%2Bn%2BFH98lf2aYI%2B7jH8pK50A%2FTCxlcXSwvBrPVKOPFTJn1bU0%2FQFp84actFRFjbcr9S5aeUuMcij5unUTx5MwlxQ5pEKogRWBsomkel57Crh6WEH%2BzTCTVYscizOvQdrZ404IZMqDUJEpQ2HlnHbXtsnw08BGneex%2BOcHsea7EXu7eAOhWCT4jZG2QOGnHC3LcXgXWkGgT4%2BmFuaTsJKFNjDWNyniNLtykfvFXOQlfQf0d6gd642XkDDn577PBjqwAXFO5Jq65zPmqaN%2F1BLKyYiYsTRiR%2B%2BjOFv%2BM96gI7aMXTo%2BgzXmzUEFQ0w8kBBJYvcRi7cBIO4c3ZH%2Fdbhrk6GEg3fKXbXWG5d1%2F3P4tJn3rUU2XXp8dSQZGihBKlUq462q306a%2FkoZOTAzJtA%2FM%2B7vc%2Fw2IpVHeayjt7AmD8C2u8DFJyH1hb47nOjgfbLkZIyjteMo%2FYk6ZiS19LLbI6yZ6y%2FyMDaYfsoWU8yTTXUM&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260427T193130Z&X-Amz-SignedHeaders=host&X-Amz-Expires=299&X-Amz-Credential=ASIAQ3PHCVTYXEHLNRL7%2F20260427%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=c1f537e5c0c0dbc65c310de01a9a7503ac867b9faaff5399655a9a395f59e8bd&hash=43866301e66d3a15a440140a7bb0057c94bbb519abb91a0b5644b073cc57bd55&host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&pii=S2666791624000137&tid=spdf-dff3e078-cea1-4e17-aa38-c42bbf999cda&sid=036a10659e7bd4475e2b9df767e902b1bd23gxrqa&type=client&tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&rh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&ua=0f15570357535d08575506&rr=9f303f75df0e16d1&cc=us
 - landing_page_truth: TBD
 
 ## DOI: 10.1016/j.jallcom.2006.06.063
 
 **authors**
-- AI:    []
-- Human: [
+- AI:    [
   {
     "name": "R.V. Wandekar",
     "rasses": "Chemistry Division, Bhabha Atomic Research Centre, Trombay, Mumbai 400 085, India",
     "corresponding_author": false
   },
   {
-    "name": "Bina Wani",
+    "name": "B.N. Wani",
     "rasses": "Chemistry Division, Bhabha Atomic Research Centre, Trombay, Mumbai 400 085, India",
     "corresponding_author": false
   },
   {
     "name": "S.R. Bharadwaj",
     "rasses": "Chemistry Division, Bhabha Atomic Research Centre, Trombay, Mumbai 400 085, India",
-    "corresponding_author": true
+    "corresponding_author": false
   }
 ]
-- landing_page_truth: TBD
-
-**rases**
-- AI:    []
 - Human: [
   {
     "name": "R.V. Wandekar",
@@ -129,7 +128,23 @@ The findings and discussion section provides an in-depth description and analysi
 - landing_page_truth: TBD
 
 **corresponding**
-- AI:    []
+- AI:    [
+  {
+    "name": "R.V. Wandekar",
+    "rasses": "Chemistry Division, Bhabha Atomic Research Centre, Trombay, Mumbai 400 085, India",
+    "corresponding_author": false
+  },
+  {
+    "name": "B.N. Wani",
+    "rasses": "Chemistry Division, Bhabha Atomic Research Centre, Trombay, Mumbai 400 085, India",
+    "corresponding_author": false
+  },
+  {
+    "name": "S.R. Bharadwaj",
+    "rasses": "Chemistry Division, Bhabha Atomic Research Centre, Trombay, Mumbai 400 085, India",
+    "corresponding_author": false
+  }
+]
 - Human: [
   {
     "name": "R.V. Wandekar",
@@ -147,11 +162,6 @@ The findings and discussion section provides an in-depth description and analysi
     "corresponding_author": true
   }
 ]
-- landing_page_truth: TBD
-
-**abstract**
-- AI:    
-- Human: The rare earth deficient manganites Ln0.95MnO3+δ (Ln = La, Nd or Gd) have been prepared by conventional ceramic method as well as by wet chemical methods like nitrate route and sol–gel route. Structural transformation, thermal expansion and electrical conductivity at elevated temperature were investigated on Ln0.95MnO3+δ. The X-ray diffraction studies revealed that crystal symmetry of all the rare earth deficient manganites prepared either by sol–gel or solid-state route showed orthorhombic symmetry except lanthanum manganite prepared by solid-state route and the nitrate route. The thermal expansion behavior was studied using thermo-dilatometry and high temperature XRD techniques. The electrical conductivity studies of Ln0.95MnO3+δ showed a clear phase transformation in case of La0.95MnO3+δ synthesized by solid state route which was missing in all other rare earth manganites prepared by solid state and nitrate routes and wet chemical method. A comparative study on their linear thermal expansion behavior indicates that the value of coefficient of thermal expansion (α) reduces to half as it goes from La to Gd. The electrical conductivity of sample synthesized by nitrate route was more as compared to sample prepared by other route like ceramic or sol–gel.
 - landing_page_truth: TBD
 
 ## DOI: 10.1016/j.mee.2007.12.032
@@ -266,7 +276,13 @@ The findings and discussion section provides an in-depth description and analysi
 ## DOI: 10.1063/pt.5.6117
 
 **authors**
-- AI:    []
+- AI:    [
+  {
+    "name": "Glenn M. Julian",
+    "rasses": "",
+    "corresponding_author": false
+  }
+]
 - Human: [
   {
     "name": "Shacheenatha Jha",
@@ -277,7 +293,13 @@ The findings and discussion section provides an in-depth description and analysi
 - landing_page_truth: TBD
 
 **rases**
-- AI:    []
+- AI:    [
+  {
+    "name": "Glenn M. Julian",
+    "rasses": "",
+    "corresponding_author": false
+  }
+]
 - Human: [
   {
     "name": "Shacheenatha Jha",
@@ -288,7 +310,13 @@ The findings and discussion section provides an in-depth description and analysi
 - landing_page_truth: TBD
 
 **corresponding**
-- AI:    []
+- AI:    [
+  {
+    "name": "Glenn M. Julian",
+    "rasses": "",
+    "corresponding_author": false
+  }
+]
 - Human: [
   {
     "name": "Shacheenatha Jha",
@@ -608,91 +636,6 @@ The findings and discussion section provides an in-depth description and analysi
 - Human: N/A
 - landing_page_truth: TBD
 
-## DOI: 10.1109/icsrs48664.2019.8987669
-
-**authors**
-- AI:    []
-- Human: [
-  {
-    "name": "Xiaobing Li",
-    "rasses": "Reliability and Environmental Engineering Center, China Electrionic Product Reliability and Environment, Tseting Research Institute, Guangzhou, China",
-    "corresponding_author": false
-  },
-  {
-    "name": "Guangze Pan",
-    "rasses": "Reliability and Environmental Engineering Center, China Electrionic Product Reliability and Environment, Tseting Research Institute, Guangzhou, China",
-    "corresponding_author": false
-  },
-  {
-    "name": "Jun Ying",
-    "rasses": "College of Mechanical and Aerospace Engineering, Jilin University, Changchun, China",
-    "corresponding_author": false
-  },
-  {
-    "name": "Xiaocui Zhu",
-    "rasses": "College of Mechanical and Aerospace Engineering, Jilin University, Changchun, China",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
-**rases**
-- AI:    []
-- Human: [
-  {
-    "name": "Xiaobing Li",
-    "rasses": "Reliability and Environmental Engineering Center, China Electrionic Product Reliability and Environment, Tseting Research Institute, Guangzhou, China",
-    "corresponding_author": false
-  },
-  {
-    "name": "Guangze Pan",
-    "rasses": "Reliability and Environmental Engineering Center, China Electrionic Product Reliability and Environment, Tseting Research Institute, Guangzhou, China",
-    "corresponding_author": false
-  },
-  {
-    "name": "Jun Ying",
-    "rasses": "College of Mechanical and Aerospace Engineering, Jilin University, Changchun, China",
-    "corresponding_author": false
-  },
-  {
-    "name": "Xiaocui Zhu",
-    "rasses": "College of Mechanical and Aerospace Engineering, Jilin University, Changchun, China",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
-**corresponding**
-- AI:    []
-- Human: [
-  {
-    "name": "Xiaobing Li",
-    "rasses": "Reliability and Environmental Engineering Center, China Electrionic Product Reliability and Environment, Tseting Research Institute, Guangzhou, China",
-    "corresponding_author": false
-  },
-  {
-    "name": "Guangze Pan",
-    "rasses": "Reliability and Environmental Engineering Center, China Electrionic Product Reliability and Environment, Tseting Research Institute, Guangzhou, China",
-    "corresponding_author": false
-  },
-  {
-    "name": "Jun Ying",
-    "rasses": "College of Mechanical and Aerospace Engineering, Jilin University, Changchun, China",
-    "corresponding_author": false
-  },
-  {
-    "name": "Xiaocui Zhu",
-    "rasses": "College of Mechanical and Aerospace Engineering, Jilin University, Changchun, China",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
-**abstract**
-- AI:    
-- Human: Aiming at the problem of fitting error in accelerated degradation data processing, a model optimization method was proposed. Firstly, the best fitting model was selected according to the minimum Residual Sum of Squares, and pseudo-failure lifetime was calculated for each degradation data group. Secondly, the optimization method of the lifetime distribution model was proposed and the best lifetime distribution was obtained according to the minimum fitting error. Finally, a case example was given, which indicated that the deviation may occurred without the model optimization.
-- landing_page_truth: TBD
-
 ## DOI: 10.1257/aer.p20171042
 
 **rases**
@@ -740,61 +683,6 @@ The findings and discussion section provides an in-depth description and analysi
     "corresponding_author": false
   }
 ]
-- landing_page_truth: TBD
-
-## DOI: 10.1307/mmj/20236362
-
-**authors**
-- AI:    []
-- Human: [
-  {
-    "name": "Henri Anciaux",
-    "rasses": "",
-    "corresponding_author": false
-  },
-  {
-    "name": "Nikos Georgiou",
-    "rasses": "",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
-**rases**
-- AI:    []
-- Human: [
-  {
-    "name": "Henri Anciaux",
-    "rasses": "",
-    "corresponding_author": false
-  },
-  {
-    "name": "Nikos Georgiou",
-    "rasses": "",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
-**corresponding**
-- AI:    []
-- Human: [
-  {
-    "name": "Henri Anciaux",
-    "rasses": "",
-    "corresponding_author": false
-  },
-  {
-    "name": "Nikos Georgiou",
-    "rasses": "",
-    "corresponding_author": false
-  }
-]
-- landing_page_truth: TBD
-
-**abstract**
-- AI:    
-- Human: We prove that among all constant-width bodies of revolution, the minimum of the ratio of the volume to the cubed width is attained by the constant-width body obtained by rotation of the Reuleaux triangle about an axis of symmetry.
 - landing_page_truth: TBD
 
 ## DOI: 10.1515/9783111535784-008
