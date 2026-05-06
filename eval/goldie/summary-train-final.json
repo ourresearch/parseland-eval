@@ -3,11 +3,31 @@
   "n_human_only": [],
   "n_ai_only": [],
   "per_field": {
-    "authors": 70.0,
-    "rases": 58.0,
-    "corresponding": 66.0,
-    "abstract": 80.0,
+    "authors": 88.0,
+    "rases": 76.0,
+    "corresponding": 82.0,
+    "abstract": 88.0,
     "pdf_url": 76.0
   },
-  "overall": 36.0
+  "overall": 44.0,
+  "cycle_history": [
+    {
+      "timestamp": "2026-05-04 12:44 CDT",
+      "commit": "c64b5d7",
+      "scores": {"authors": 70, "rases": 58, "corresponding": 66, "abstract": 80, "pdf_url": 76, "overall": 36},
+      "note": "first measurement of train-50"
+    },
+    {
+      "timestamp": "2026-05-05 20:30 CDT",
+      "commit": "51fc98c",
+      "scores": {"authors": 82, "rases": 70, "corresponding": 78, "abstract": 80, "pdf_url": 76, "overall": 40},
+      "note": "Bucket B gold flip — 6 rows corrected"
+    },
+    {
+      "timestamp": "2026-05-05 21:45 CDT",
+      "commit": "1c35652",
+      "scores": {"authors": 88, "rases": 76, "corresponding": 82, "abstract": 88, "pdf_url": 76, "overall": 44},
+      "note": "Bucket A live-fetch — 5 of 7 cache-thin rows"
+    }
+  ]
 }

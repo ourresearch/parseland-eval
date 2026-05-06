@@ -371,3 +371,70 @@ Items I'm explicitly NOT doing this cycle, despite each being a 1-2pp gain:
 - Adjusting comparator for substring-superset rases (1 train row).
 
 Each of these would be a holdout-or-train-specific patch. The right pattern is: **wait for the validation-set decision (recommended Option A from the prior entry)** so we know what we're optimizing against before extending the comparator further.
+
+---
+
+## 2026-05-05 20:30 CDT — train-50 leak-safe Cycle 1: Bucket B gold flip (+4pp)
+
+| split | authors | rases | corresp | abstract | pdf_url | overall |
+|---|---|---|---|---|---|---|
+| train-50 (before) | 70% | 58% | 66% | 80% | 76% | 36% |
+| **train-50 (after)** | **82%** | **70%** | **78%** | 80% | 76% | **40%** |
+| Δ | +12 | +12 | +12 | — | — | +4 |
+
+**What moved:** 6 train-50 rows where gold was malformed JSON / `[]` / `N/A` but the publisher page carries clean author metadata. Replaced gold with v1.9.1 AI extraction; mirrored into `eval/human-goldie.csv` per Shubh signoff.
+
+| DOI | Publisher | Gold defect | AI extraction |
+|---|---|---|---|
+| `10.1007/978-4-431-67897-7_41` | Springer book chapter | `authors=[]` | 5 authors (Yamawaki, Kagaya, Okamoto, Takebayashi, Saeki) w/ CREST + Hiroshima affiliations |
+| `10.1016/j.patcog.2011.03.031` | Elsevier Pattern Recognition | malformed JSON | 3 authors w/ Ericsson Research affiliations |
+| `10.1039/bk9781782627609-00134` | RSC book chapter | `[]` | 2 authors (Sherrington, Sherrington) w/ Strathclyde |
+| `10.1039/c5ra25098f` | RSC | `N/A` | 4 authors w/ Chinese Academy affiliations |
+| `10.1515/9783111535784-008` | De Gruyter chapter | `[]` | 1 author (Helbig) w/ Leipzig |
+| `10.3724/sp.j.1123.2014.10009` | Chinese J. Chromatography | `N/A` | 3 authors w/ Chinese Academy affiliations |
+
+**Leak-safe by construction:** gold corrections only, no prompt/comparator/merge-rule changes. Input enrichment does not bleed holdout information into train.
+
+---
+
+## 2026-05-05 21:45 CDT — train-50 leak-safe Cycle 2: Bucket A live-fetch (+4pp)
+
+| split | authors | rases | corresp | abstract | pdf_url | overall |
+|---|---|---|---|---|---|---|
+| train-50 (before) | 82% | 70% | 78% | 80% | 76% | 40% |
+| **train-50 (after)** | **88%** | **76%** | **82%** | **88%** | 76% | **44%** |
+| Δ | +6 | +6 | +4 | +8 | — | +4 |
+
+**What moved:** 5 of 7 Bucket A cache-thin rows routed through live-fetch tier (visible Chrome over CDP, browser-use Agent, v1.9.1 prompt). Merge was leak-safe by construction: override only when baseline empty / rases-all-empty. 5 of 5 target rows changed; zero non-target rows touched.
+
+| DOI | Why cache was thin | Live-fetch result |
+|---|---|---|
+| `10.1016/j.clpl.2024.100067` | Taxicab cached PDF binary, not article HTML | Elsevier landing page → 3 authors + abstract |
+| `10.1016/j.jallcom.2006.06.063` | Cache held `linkinghub.elsevier.com` redirect snapshot | Followed redirect → 3 authors w/ full Bhabha-ARC affiliation + abstract |
+| `10.1063/pt.5.6117` | Physics Today wrapper; content loads after JS | 1 author (no aff) |
+| `10.1109/icsrs48664.2019.8987669` | IEEE Cloudflare/bot-block stripped body | Cleared bot-block → 4 authors w/ affiliations + abstract. **Caveat:** affiliation has visible OCR-style typos (`Electrionic`, `Tseting`); accepted as live-fetch noise |
+| `10.1307/mmj/20236362` | Project Euclid renders authors after JS | 2 authors (no aff) + abstract |
+
+**2 rows skipped — need Casey/Shubh call:**
+
+- `10.1086/ahr/37.2.298` — American Historical Review 1932. OUP page genuinely lacks structured authorship metadata. Publisher-page-content limit, not parser bug. **Question:** accept gold as-is (known-loss class) or revise expectation?
+- `10.3030/821328` — CORDIS EU project page. Not a journal article — no per-author attribution model. **Question:** should non-article DOIs (project DBs, dataset records) be in scope for eval, or filtered upstream?
+
+**Why pdf_url stayed at 76%:** Of 5 live-fetch deltas, only one had non-empty pdf_url and it didn't strict-match gold. The 7-row pdf_url residual is the same shape as holdout's empirical-probe — Casey/Shubh gold-convention call, not an extractor problem. Analogous holdout data: `eval/goldie/PDF-EMPIRICAL-PROBE.md`.
+
+---
+
+## train-50 post-livefetch status
+
+| field | score | bar | gap |
+|---|---|---|---|
+| authors | 88% | 95% | 7pp |
+| rases | 76% | 95% | 19pp |
+| corresp | 82% | 95% | 13pp |
+| abstract | 88% | 95% | 7pp |
+| pdf_url | 76% | 95% | 19pp |
+| **overall** | **44%** | — | 51pp to 95% |
+
+**28 disagreements remain** (down from 32). Per-row breakdown: `eval/goldie/disagreements-train-final-livefetch.md`.
+
+**Discipline check:** train-50 sits at 44% against a 95% bar. The 51pp gap is real. We are explicitly *not* closing it via prompt/comparator tweaks because that's exactly the holdout-overfit pattern that put train at 36% in the first place. The validation-set decision (fresh 50 outside human-goldie) is the gating call.
