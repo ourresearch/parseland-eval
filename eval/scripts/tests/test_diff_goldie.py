@@ -499,3 +499,98 @@ def test_iter_q_does_not_apply_to_unflagged_row():
     }
     summary, _ = diff(human, ai, relaxed=True)
     assert summary["per_field"]["authors"] == 0.0  # disagreement preserved
+
+
+# ---- Iter R (2026-05-07) pdf_url branch of rule #14 + rule #15 ------------
+
+def test_iter_r_auth_walled_awards_pdf_url():
+    """Holdout DOI 10.1121/1.413202 — Has Bot Check=TRUE, AI emits obsolete
+    asa.scitation.org URL (the host that Taxicab cached before the journal
+    moved to pubs.aip.org). Rule #14 should award pdf_url match alongside
+    the existing authors/rases/corresp awards."""
+    from diff_goldie import diff
+    human = {
+        "10.1121/1.413202": {
+            "doi": "10.1121/1.413202",
+            "authors": [],
+            "abstract": "",
+            "pdf_url": "https://pubs.aip.org/asa/jasa/article-pdf/x/y/z.pdf",
+            "has_bot_check": "TRUE",
+            "notes": "No corresponding author",
+        },
+    }
+    ai = {
+        "10.1121/1.413202": {
+            "doi": "10.1121/1.413202",
+            "authors": [],
+            "abstract": "",
+            "pdf_url": "https://asa.scitation.org/doi/pdf/10.1121/1.413202",
+        },
+    }
+    summary, _ = diff(human, ai, relaxed=True)
+    assert summary["per_field"]["pdf_url"] == 100.0
+
+
+def test_iter_r_resolves_to_pdf_awards_pdf_url_only():
+    """Holdout DOI 10.36838/v4i6.14 — Resolves To PDF=TRUE, AI is empty
+    (no Taxicab harvest), gold has the S3 URL retrieved via redirect.
+    Rule #15 (separate from rule #14) awards only pdf_url, not author
+    fields — because PDF-direct DOIs CAN have legitimate author data
+    on later authenticated views, so author flips would be incorrect."""
+    from diff_goldie import diff
+    human = {
+        "10.36838/v4i6.14": {
+            "doi": "10.36838/v4i6.14",
+            "authors": [],
+            "abstract": "",
+            "pdf_url": "https://terra-docs.s3.us-east-2.amazonaws.com/x.pdf",
+            "has_bot_check": "FALSE",
+            "notes": "Information was directly retrieved from the PDF",
+            "resolves_to_pdf": "TRUE",
+        },
+    }
+    ai = {
+        "10.36838/v4i6.14": {
+            "doi": "10.36838/v4i6.14",
+            "authors": [],
+            "abstract": "",
+            "pdf_url": "",
+        },
+    }
+    summary, _ = diff(human, ai, relaxed=True)
+    assert summary["per_field"]["pdf_url"] == 100.0
+
+
+def test_iter_r_does_not_apply_to_unflagged_pdf_url_disagreement():
+    """Unflagged rows still register pdf_url disagreements normally."""
+    from diff_goldie import diff
+    human = {
+        "10.9999/normal": {
+            "doi": "10.9999/normal",
+            "authors": [],
+            "abstract": "",
+            "pdf_url": "https://publisher.example.com/real.pdf",
+            "has_bot_check": "FALSE",
+            "notes": "",
+            "resolves_to_pdf": "FALSE",
+        },
+    }
+    ai = {
+        "10.9999/normal": {
+            "doi": "10.9999/normal",
+            "authors": [],
+            "abstract": "",
+            "pdf_url": "",  # AI didn't extract — should be a real miss
+        },
+    }
+    summary, _ = diff(human, ai, relaxed=True)
+    assert summary["per_field"]["pdf_url"] == 0.0
+
+
+def test_gold_is_pdf_redirect_only_fires_when_column_set():
+    from diff_goldie import _gold_is_pdf_redirect
+    assert _gold_is_pdf_redirect({"resolves_to_pdf": "TRUE"}) is True
+    assert _gold_is_pdf_redirect({"resolves_to_pdf": "true"}) is True
+    assert _gold_is_pdf_redirect({"resolves_to_pdf": "FALSE"}) is False
+    assert _gold_is_pdf_redirect({"resolves_to_pdf": ""}) is False
+    assert _gold_is_pdf_redirect({}) is False

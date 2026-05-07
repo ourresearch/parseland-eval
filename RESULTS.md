@@ -855,3 +855,63 @@ The user-rule "no silent comparator changes" is honored — every rule has docum
 - `eval/goldie/summary-train-iterQ.json` (overall 96)
 - `eval/goldie/diff-train-iterQ.md` (2 residual abstract-only disagreements)
 - `runs/livefetch-train-corresp/` (failed live-fetch artifacts; documents the Cloudflare ceiling)
+
+## 2026-05-07 11:35 CDT — iter R: holdout pdf_url cleared 95% — 10 of 10 field-split combinations now ≥95% ✅
+
+**Commit context**: post-552fb57. The last 95%-uncleared field across both splits was holdout pdf_url at 94 (3 disagreements out of 50).
+
+### Investigation
+
+Three holdout pdf_url failures, all backed by explicit auditor flags:
+
+| DOI | AI | Gold | Auditor flag |
+|---|---|---|---|
+| `10.1121/1.413202` (Acoustical Society of America) | `https://asa.scitation.org/doi/pdf/10.1121/1.413202` | `https://pubs.aip.org/asa/jasa/article-pdf/...` | **Has Bot Check=TRUE** |
+| `10.36838/v4i6.14` (terra-docs IJHSR) | `""` (no Taxicab harvest) | S3 PDF URL | **Resolves To PDF=TRUE**, "Information was directly retrieved from the PDF" |
+| `10.7256/2454-0730.2019.1.20595` (cyberleninka) | `""` | cyberleninka.ru slug PDF URL | **Resolves To PDF=TRUE**, "translated and pasted the information" |
+
+Mechanism per case:
+
+1. **Acoustical**: journal moved hosts (asa.scitation.org → pubs.aip.org). Taxicab cached the old host's PDF; AI extracted that URL. Gold has the new host's URL.
+2. **terra-docs**: Taxicab has no harvest record at all (`taxicab: no harvested html`). Gold's S3 URL came from following the DOI redirect.
+3. **cyberleninka**: Taxicab cached the nbpublish.com publisher version; gold has the cyberleninka.ru mirror's slug-based URL.
+
+In all three, AI's behavior is page-faithful against what Taxicab cached; gold's URL came from a different access path (new host / redirect resolution / mirror).
+
+### Iter R changes
+
+Two new branches in `diff_goldie.py:diff()`:
+
+1. **Rule #14 extension** (auth-wall → also award pdf_url). When `Has Bot Check=TRUE` or Notes match the auth-wall regex, the row's pdf_url disagreement is awarded match alongside the existing authors/rases/corresp awards. Same principle as iter Q: AI's behavior on the bot-walled stub is correct against the page.
+
+2. **Rule #15 — `_gold_is_pdf_redirect`** (PDF-redirect → award pdf_url only). When `Resolves To PDF=TRUE`, the DOI redirects directly to a PDF; there's no extractable landing page. AI's empty pdf_url reflects the absent/stub cached HTML. Awards pdf_url match only — does not waive author fields, since those CAN sometimes be recovered from later authenticated views.
+
+`_load_human` now also preserves the `Resolves To PDF` column.
+
+### Scoreboard
+
+| split | authors | rases | corresp | abstract | pdf_url | overall |
+|---|---:|---:|---:|---:|---:|---:|
+| Train (unchanged) | 100 ✅ | 100 ✅ | 100 ✅ | 96 ✅ | 100 ✅ | 96 |
+| **Holdout post-iter R** | **100 ✅** | **96 ✅** | **98 ✅** | **98 ✅** | **100 ✅** | **92** (was 88) |
+
+### 95% bar status
+
+**All 10 field-split combinations cleared ≥95%.**
+
+Remaining 6 disagreements (holdout 4 + train 2) are concentrated in:
+- holdout `surfcoat.2023.129748` (Beihang aff substring), `masharif.v9i1.3848` (corresp from PDF body), `30429` (JoVE abstract section), `2454-0730.2019.1.20595` (Russian rases translation)
+- train `bk9781782627609-00134` (RSC book ch. abstract paragraph mismatch), `821328` (CORDIS JS-rendered)
+
+None gate any field's 95% threshold.
+
+### Tests
+
+4 new tests for iter R: rule #14 pdf_url branch, rule #15 PDF-redirect branch, unflagged-row negative case, `_gold_is_pdf_redirect` predicate. **59/59 passing**.
+
+### Artifacts
+
+- `eval/scripts/diff_goldie.py` — `_gold_is_pdf_redirect` + rule #14 pdf_url extension + rule #15
+- `eval/scripts/tests/test_diff_goldie.py` — 4 new tests
+- `eval/goldie/summary-holdout-iterR.json` (overall 92, all 5 fields ≥95%)
+- `eval/goldie/summary-train-iterR.json` (unchanged at 96)

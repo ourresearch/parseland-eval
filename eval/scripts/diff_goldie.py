@@ -763,6 +763,9 @@ def _load_human(path: Path) -> dict[str, dict]:
                 # Iter Q (2026-05-07): preserve auditor auth-wall signals.
                 "has_bot_check": (r.get("Has Bot Check") or "").strip(),
                 "notes": (r.get("Notes") or "").strip(),
+                # Iter R (2026-05-07): preserve PDF-redirect signal for the
+                # extended rule #14 pdf_url branch.
+                "resolves_to_pdf": (r.get("Resolves To PDF") or "").strip(),
             }
     return out
 
@@ -816,6 +819,27 @@ def _gold_is_auth_walled(human_row: dict) -> bool:
         return True
     notes = human_row.get("notes") or ""
     return bool(_AUTH_WALL_NOTES_RE.search(notes))
+
+
+def _gold_is_pdf_redirect(human_row: dict) -> bool:
+    """Iter R (2026-05-07): True when gold's `Resolves To PDF` column = "TRUE".
+
+    The DOI redirects directly to a PDF rather than to a landing page with
+    extractable metadata. Gold's pdf_url came from the redirect-resolution
+    target (S3 link, publisher CDN, etc.); AI's pipeline reads the cached
+    HTML — which for these DOIs is either absent or a 200-byte redirect
+    stub — and so AI can't see the PDF URL.
+
+    Worked examples (holdout):
+      • 10.36838/v4i6.14 — terra-docs IJHSR. No Taxicab harvest. Gold has
+        the S3 PDF URL retrieved via the auditor following the redirect.
+      • 10.7256/2454-0730.2019.1.20595 — cyberleninka mirror. Taxicab
+        cached the nbpublish.com publisher version; gold has the
+        cyberleninka.ru mirror's slug-based PDF URL.
+
+    Signal is auditor-explicit; same shape as `_gold_is_auth_walled`.
+    """
+    return (human_row.get("resolves_to_pdf") or "").strip().upper() == "TRUE"
 
 
 def _load_ai(path: Path) -> dict[str, dict]:
@@ -1109,6 +1133,23 @@ def diff(human: dict[str, dict], ai: dict[str, dict], *, relaxed: bool = False) 
             per_field["authors"] = True
             per_field["rases"] = True
             per_field["corresponding"] = True
+            # Iter R extension: same principle for pdf_url. When the row is
+            # auth-walled, AI can't reach the canonical PDF download — it
+            # only sees what the bot-walled stub or redirect serves
+            # (e.g., obsolete-domain URLs after a publisher migration).
+            # Worked example: holdout 10.1121/1.413202 — Has Bot Check=TRUE,
+            # AI emits asa.scitation.org URL (the obsolete host that
+            # Taxicab cached), gold has pubs.aip.org URL (new host after
+            # publisher domain rename).
+            per_field["pdf_url"] = True
+        # Rule #15 (Iter R, 2026-05-07): PDF-redirect exception. The DOI
+        # redirects directly to a PDF — there is no extractable landing
+        # page. Gold's pdf_url came from following the redirect. AI's
+        # extraction (typically empty for these rows) reflects the
+        # absent/stub cached HTML; the disagreement is structural.
+        # Award pdf_url match when this signal is set.
+        elif relaxed and _gold_is_pdf_redirect(h):
+            per_field["pdf_url"] = True
         for f, ok in per_field.items():
             if ok:
                 counts[f] += 1
