@@ -453,6 +453,47 @@ def _last_name_from_email_localpart(local: str) -> str:
     return m.group(0).lower() if m else ""
 
 
+# Wiley meta-tag CA email backfill (added 2026-05-07). Wiley puts the
+# corresponding-author email inside `citation_author_institution` (sic) —
+# the same email appears on every author's institution tag, but its
+# local-part (e.g., 'd.s.robinson') identifies which author is CA.
+# Worked example: 10.1111/j.1365-2222.2005.02173.x — both authors share
+# institution text ending '...E-mail: d.s.robinson@imperial.ac.uk' →
+# 'robinson' suffix matches D. S. Robinson, not H. H. Kariyawasam.
+_META_EMAIL_RE = re.compile(r'E-?mail\s*:\s*([A-Za-z0-9._%+-]+)@', re.IGNORECASE)
+
+
+def _maybe_backfill_ca_from_meta_email(authors: list[dict], html: str) -> bool:
+    """Read citation_author_institution meta tags; if any contains an
+    'E-mail: <local>@...' string, treat <local> as the CA local-part and
+    match against author names. Conservative: only fires when no author
+    is currently flagged CA."""
+    if not authors or any(a.get("corresponding_author") for a in authors):
+        return False
+    affs = _all_meta(html, 'citation_author_institution')
+    if not affs:
+        return False
+    candidate = ""
+    for aff in affs:
+        m = _META_EMAIL_RE.search(aff)
+        if m:
+            candidate = _last_name_from_email_localpart(m.group(1))
+            if candidate:
+                break
+    if not candidate:
+        return False
+    for a in authors:
+        nm = " ".join(str(a.get("name") or "").split()).lower()
+        nm_compact = nm.replace(" ", "").replace(".", "")
+        if candidate in nm_compact:
+            a["corresponding_author"] = True
+            return True
+        if len(candidate) > 4 and candidate[1:] in nm_compact:
+            a["corresponding_author"] = True
+            return True
+    return False
+
+
 # IEEE Xplore authors+affiliations backfill (added 2026-05-07).
 # IEEE's cached HTML carries authors as a JSON literal `"authors":[{...}]`
 # inside a script blob. The LLM doesn't see it because `_strip_for_llm`
