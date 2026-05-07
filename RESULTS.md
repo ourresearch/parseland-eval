@@ -507,3 +507,67 @@ Expected lift from live-fetch (back-of-envelope, per-DOI HTML probes in `LEARNIN
 - LEARNING.md is now the canonical disagreement registry. Future sessions check it before re-investigating known patterns. CLAUDE.md "Disagreement learnings" section institutionalizes the routing.
 
 Artifacts: `LEARNING.md` (new), `eval/goldie/comparator-rules.md` (rules 11+12), `eval/parseland_eval/score/authors.py` (score_corresponding), `eval/parseland_eval/score/aggregate.py` (corresp keys), `dashboard/src/lib/schema.ts` (3 optional keys), `eval/goldie/{summary,diff}-train-2026-05-06.{json,md}`, `eval/goldie/{summary,diff}-holdout-2026-05-06.{json,md}`, `runs/audit-2026-05-06/{train,holdout}-new/`.
+
+---
+
+## 2026-05-07 02:30 CDT — v1.9.1 + Taxicab cache re-extraction (LEARNING.md hypothesis test)
+
+Tested LEARNING.md's universal recovery rule end-to-end: re-extracted all 100 DOIs (50 train + 50 holdout) through `extract_via_taxicab.py` with v1.9.1 prompt against the rebuilt gold. Same Taxicab S3-cached HTML the production parser saw. Same comparator (rules #1–#12 active). No prompt edits, no merge-rule edits.
+
+### Scoreboard
+
+| Path | authors | rases | corresp | abstract | pdf_url | overall | disagree |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **Train** pre-experiment (`runs/train-final/ai-goldie-1.merged.csv`) | 88 | 80 | 76 | 94 | 92 | **60** | 20 |
+| Train v1.9.1 fresh (no merge) | 76 | 74 | 68 | 86 | 88 | 48 | 26 |
+| Train v1.9.1 fresh + 5-row livefetch merge | 86 | 82 | 74 | 92 | 90 | **54** | 23 |
+| Δ train (apples-to-apples post-merge) | −2 | +2 | −2 | −2 | −2 | **−6** | +3 |
+| | | | | | | | |
+| **Holdout** pre-experiment (`runs/holdout-v1.9.1/ai-goldie-1.csv`) | 94 | 88 | 82 | 88 | 88 | **66** | 17 |
+| Holdout v1.9.1 fresh | 96 | 90 | 88 | 94 | 92 | **72** | 14 |
+| Δ holdout | +2 | +2 | +6 | +6 | +4 | **+6** | −3 |
+
+Cost: $8.21 total (~$0.082/DOI Sonnet 4.5). Wall: ~80s with concurrency=10 per batch in parallel.
+
+### LEARNING.md 70% claim — NOT borne out
+
+Of the 13 🔴→🌐 (live-fetch-recovery) rows in LEARNING.md, **2 recovered (15%)**, not the predicted ~70%:
+
+✅ Recovered:
+- `10.1088/0256-307x/35/4/045201` (CJK paren suffix) — picked up by rule #12.
+- `10.1016/0021-9673(93)80418-8` (old Elsevier OUP-redirect CA) — v1.9.1 caught it this run.
+
+❌ Still failing (11 of 13):
+- Train: `10.1016/s0378-1097(99)00346-8`, `10.1039/bk9781782627609-00134`, `10.1079/cabicompendium.60129`, `10.3390/polym13183031`, `10.3390/su13041644`
+- Holdout: `10.1016/j.surfcoat.2023.129748`, `10.1108/978-1-64802-637-920251008`, `10.1161/01.str.32.6.1291`, `10.24952/masharif.v9i1.3848`, `10.31857/s2587556623070105`, `10.7256/2454-0730.2019.1.20595`
+
+The user verified during the audit that the truth is on these landing pages in the Taxicab cache. v1.9.1 LLM tier still doesn't surface it. Gap is between *HTML carrying the truth* (verified) and *v1.9.1 prompt successfully extracting it* (refuted by this run).
+
+### Stochastic LLM noise — newly visible
+
+Train regressed −6pp post-merge despite same prompt + same Taxicab cache as the prior train-final extraction. Investigation of the 4 newly-failing rows shows 3 are pure LLM stochasticity:
+
+- `10.2307/3283523` — abstract dropped (was full Toxoplasma text, now empty).
+- `10.2320/jinstmet1952.61.12_1352` — kanji variant chosen: `高木 眞一` (NEW, older form) vs `高木 真一` (gold/OLD, modern form). Same author, different glyph.
+- `10.3109/00048676909159286` — hallucinated PDF URL with a *wrong DOI* (`10.1080/...` instead of `10.3109/...`). NEW added; OLD was empty.
+
+Fresh v1.9.1 extractions introduce ~3-5 rows of stochastic loss per cycle that the prior locked extraction had already overcome. This caps the value of "just re-run extract_via_taxicab" as a recovery strategy and is consistent with the `4d885ab` commit message ("v1.9.1 surgical retry — both stochastic-noise-bound").
+
+### What moved on holdout (+6pp legitimate)
+
+4 newly-passing rows: `10.1080/01956051.2025.2517586`, `10.1093/jee/97.2.646`, `10.1163/9789004273610_010`, `10.4274/turkderm.galenos.2022.81370`. Some via rule #11/#12, some via gold edits, some via cleaner v1.9.1 extraction.
+
+1 newly-failing row: `10.1111/j.1365-2222.2005.02173.x` — likely stochastic on Wiley old paper.
+
+### Implications for the path forward
+
+1. **The 70% claim needs revision.** The HTML-carries-truth audit was real, but extract_via_taxicab.py + v1.9.1 alone is not the recovery mechanism. The decision tree in CLAUDE.md should distinguish "HTML has the truth" from "current prompt extracts it."
+2. **Per-publisher post-LLM transforms** (the leak-safe pattern from the holdout cycle) are the next likely move for the 11 unrecovered rows — each needs targeted handling for its publisher's HTML structure.
+3. **Live_fetch_empty (real Chrome over CDP)** is still the right tier for genuinely cache-thin rows (Bucket A from yesterday's plan), regardless of v1.9.1 quality.
+4. **Stochastic noise** suggests we should pin extractions and only re-extract specific rows when needed, rather than re-running the whole batch.
+
+### Net session
+
+Train: 60 → 54 (−6pp, of which ~6pp is stochastic noise). Holdout: 66 → 72 (+6pp, real). Combined: net flat with information gained about the 70% claim.
+
+Artifacts: `runs/exp-2026-05-07-{train,holdout}/{ai-goldie-1.csv, ai-goldie-1.tier-log.jsonl, disagreements.md, summary.json}`, `runs/exp-2026-05-07-train/ai-goldie-1.merged.csv` (livefetch-merged variant for apples-to-apples).
