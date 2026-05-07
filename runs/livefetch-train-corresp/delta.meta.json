@@ -1,0 +1,17 @@
+{
+  "n_targets": 2,
+  "results": [
+    {
+      "doi": "10.1016/j.jallcom.2006.06.063",
+      "steps": 2,
+      "duration_s": 51.97,
+      "error": null
+    },
+    {
+      "doi": "10.1016/j.clpl.2024.100067",
+      "steps": 4,
+      "duration_s": 93.14,
+      "error": null
+    }
+  ]
+}

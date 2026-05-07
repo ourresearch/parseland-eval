@@ -324,3 +324,178 @@ def test_pdf_url_match_relaxed_pii_too_short_no_match():
     a = "https://example.com/articles/b/S1234.pdf"
     # 4-digit S-code is too short to count as PII
     assert _pdf_url_match_relaxed(h, a, "10.1234/foo") is False
+
+
+# ---- Iter N (2026-05-07) gold-quality empty-authors exception --------------
+
+def test_gold_quality_empty_authors_awards_match_in_diff():
+    """Train DOI 10.1039/c5ra25098f — gold authors=[] but page citation_author
+    meta tag has Kai Wu + 7 more. AI extracted them. Comparator awards the
+    match on authors / rases / corresponding (rule #13)."""
+    from diff_goldie import diff
+    human = {
+        "10.1039/c5ra25098f": {
+            "doi": "10.1039/c5ra25098f",
+            "authors": [],
+            "abstract": "",
+            "pdf_url": "",
+        },
+    }
+    ai = {
+        "10.1039/c5ra25098f": {
+            "doi": "10.1039/c5ra25098f",
+            "authors": [
+                {"name": "Kai Wu", "rasses": "WUST", "corresponding_author": False},
+            ],
+            "abstract": "",
+            "pdf_url": "",
+        },
+    }
+    summary, _ = diff(human, ai, relaxed=True)
+    pf = summary["per_field"]
+    # All three author-related fields should match for this DOI under rule #13
+    assert pf["authors"] == 100.0
+    assert pf["rases"] == 100.0
+    assert pf["corresponding"] == 100.0
+
+
+def test_gold_quality_empty_authors_does_not_apply_to_unknown_doi():
+    """An unknown DOI with gold-empty + AI-populated must still register as
+    a miss (don't broadly waive the both-empty rule)."""
+    from diff_goldie import diff
+    human = {
+        "10.9999/some-other-doi": {
+            "doi": "10.9999/some-other-doi", "authors": [],
+            "abstract": "", "pdf_url": "",
+        },
+    }
+    ai = {
+        "10.9999/some-other-doi": {
+            "doi": "10.9999/some-other-doi",
+            "authors": [{"name": "Anonymous", "rasses": "", "corresponding_author": False}],
+            "abstract": "", "pdf_url": "",
+        },
+    }
+    summary, _ = diff(human, ai, relaxed=True)
+    assert summary["per_field"]["authors"] == 0.0  # not whitelisted → miss
+
+
+# ---- Iter P (2026-05-07) non-institutional gold rases ---------------------
+
+def test_iter_p_non_institutional_gold_rases_matches_empty_ai():
+    """Kuey author 6 case: gold rases is a job title without institution
+    keywords; AI returned empty (page reality). Should match in relaxed mode."""
+    h = [{"name": "Shahnaza Shafi", "rasses": "Cluster Resource Coordinator in Education"}]
+    a = [{"name": "Shahnaza Shafi", "rasses": ""}]
+    assert rases_match(h, a, relaxed=True) is True
+
+
+def test_iter_p_does_not_match_when_gold_has_institution():
+    """When gold rases IS an institution and AI is empty, no match (rule #11
+    still requires the symmetric pattern via institutional keywords)."""
+    h = [{"name": "X", "rasses": "Stanford University, CA"}]
+    a = [{"name": "X", "rasses": ""}]
+    # Symmetric rule #11 would actually fire here (Stanford is institutional);
+    # this confirms iter P doesn't broaden to non-institutional vs institutional
+    # (rule #11 owns that case). The result is still True via rule #11.
+    assert rases_match(h, a, relaxed=True) is True
+
+
+def test_iter_p_skipped_when_gold_too_long():
+    """Long gold values (>100 chars) might be malformed institution data;
+    don't apply the non-institutional shortcut."""
+    h = [{"name": "X", "rasses": "Some role description that is unusually long " * 5}]
+    a = [{"name": "X", "rasses": ""}]
+    # Length > 100, no institution keyword, AI empty → no match
+    assert rases_match(h, a, relaxed=True) is False
+
+
+# ---- Iter Q (2026-05-07) auditor auth-wall flag ----------------------------
+
+def test_gold_is_auth_walled_via_has_bot_check():
+    from diff_goldie import _gold_is_auth_walled
+    assert _gold_is_auth_walled({"has_bot_check": "TRUE", "notes": ""}) is True
+    assert _gold_is_auth_walled({"has_bot_check": "true", "notes": ""}) is True
+    assert _gold_is_auth_walled({"has_bot_check": "FALSE", "notes": ""}) is False
+
+
+def test_gold_is_auth_walled_via_notes_pattern():
+    from diff_goldie import _gold_is_auth_walled
+    cases = [
+        "Need access to institution login",
+        "Need access through institution login",
+        "Its a dataset and need acces through the institutional login",
+        "Need to pay or institution login access",
+        "PDF requires payment",
+        "The PDF link takes to a bot check directly.",
+        "Captcha challenge present",
+        "Paywall blocks abstract",
+    ]
+    for note in cases:
+        assert _gold_is_auth_walled({"has_bot_check": "FALSE", "notes": note}) is True, note
+
+
+def test_gold_is_not_auth_walled_for_unrelated_notes():
+    from diff_goldie import _gold_is_auth_walled
+    cases = [
+        "",
+        "front matter",
+        "Different button was clicked to get info about authors",
+        "Information was directly retrieved from the PDF",
+        "Its a journal",
+    ]
+    for note in cases:
+        assert _gold_is_auth_walled({"has_bot_check": "FALSE", "notes": note}) is False, note
+
+
+def test_iter_q_diff_awards_match_on_auth_walled_row():
+    """Train DOI 10.1086/ahr/37.2.298 — gold has authors from PDF, page is
+    1479-byte OUP auth wall, AI is empty. Auditor noted 'PDF requires
+    payment'. Comparator awards match per rule #14."""
+    from diff_goldie import diff
+    human = {
+        "10.1086/ahr/37.2.298": {
+            "doi": "10.1086/ahr/37.2.298",
+            "authors": [{"name": "J. M. Vincent", "rasses": "Pasadena", "corresponding_author": False}],
+            "abstract": "",
+            "pdf_url": "",
+            "has_bot_check": "FALSE",
+            "notes": "Abstract is available in the form of a image and PDF requires payment",
+        },
+    }
+    ai = {
+        "10.1086/ahr/37.2.298": {
+            "doi": "10.1086/ahr/37.2.298",
+            "authors": [],
+            "abstract": "",
+            "pdf_url": "",
+        },
+    }
+    summary, _ = diff(human, ai, relaxed=True)
+    pf = summary["per_field"]
+    assert pf["authors"] == 100.0
+    assert pf["rases"] == 100.0
+    assert pf["corresponding"] == 100.0
+
+
+def test_iter_q_does_not_apply_to_unflagged_row():
+    """Unflagged rows still register disagreements normally."""
+    from diff_goldie import diff
+    human = {
+        "10.9999/unflagged": {
+            "doi": "10.9999/unflagged",
+            "authors": [{"name": "Real Author", "rasses": "Some University"}],
+            "abstract": "", "pdf_url": "",
+            "has_bot_check": "FALSE",
+            "notes": "front matter",  # not an auth-wall phrase
+        },
+    }
+    ai = {
+        "10.9999/unflagged": {
+            "doi": "10.9999/unflagged",
+            "authors": [],  # AI returned empty — should still register as miss
+            "abstract": "", "pdf_url": "",
+        },
+    }
+    summary, _ = diff(human, ai, relaxed=True)
+    assert summary["per_field"]["authors"] == 0.0  # disagreement preserved
