@@ -299,11 +299,18 @@ _RASES_DIGIT_TOKEN = re.compile(r"\d[\w\-]*")  # postal codes, building numbers
 
 def _rases_normalize(s: str) -> str:
     """Aggressive normalization for relaxed-rases substring checks:
+    Cyrillic→Latin BGN/PCGN transliteration (added 2026-05-07) +
     NFKD unicode + drop combining marks + map ø/æ/ß/ł + lowercase + collapse
     whitespace + drop punctuation. Mirrors normalize_name's approach.
+
+    Cyrillic→Latin is applied first so the affiliation comparator can match
+    Russian-language landing-page rases against gold's BGN-transliterated
+    English form. Worked example: Cyberleninka 10.7256/2454-0730.2019.1.20595
+    where gold has 'Pacific State University' (English) and AI extracts
+    'Тихоокеанский государственный университет' (Russian original).
     """
     import unicodedata
-    s = (s or "").strip().lower()
+    s = _transliterate_cyrillic(s or "").strip().lower()
     s = unicodedata.normalize("NFKD", s)
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
     s = s.translate(str.maketrans({

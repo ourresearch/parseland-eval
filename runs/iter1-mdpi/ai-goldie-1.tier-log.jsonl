@@ -1,0 +1,2 @@
+{"no": 39, "doi": "10.3390/su13041644", "tier": "claude", "duration_s": 12.22, "cost_usd": 0.093, "error": null, "usage": {"input_tokens": 23940, "output_tokens": 377}, "resolved_url": "https://www.mdpi.com/2071-1050/13/4/1644"}
+{"no": 16, "doi": "10.3390/polym13183031", "tier": "claude", "duration_s": 13.14, "cost_usd": 0.0942, "error": null, "usage": {"input_tokens": 23810, "output_tokens": 470}, "resolved_url": "https://www.mdpi.com/2073-4360/13/18/3031"}

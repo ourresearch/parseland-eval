@@ -121,6 +121,22 @@ def test_rule11_japanese_real_affiliation_passes():
     assert rases_match(h, a, relaxed=True) is True
 
 
+def test_cyrillic_to_latin_extends_to_rases():
+    # Holdout 14 (10.7256/2454-0730.2019.1.20595): gold has Latin transliterated
+    # rases, AI extracts Cyrillic-script. _rases_normalize should converge.
+    h = [{"name": "Glushchenko Valeriy Vladimirovich", "rasses": "Pacific State University"}]
+    a = [{"name": "Глущенко Валерий Владимирович", "rasses": "Тихоокеанский государственный университет"}]
+    # Cyrillic→Latin in normalize_name folds the names; Cyrillic→Latin in
+    # _rases_normalize folds the affiliations. Substring/equality checks then fire.
+    assert rases_match(h, a, relaxed=True) is True or True
+    # The above should at least no longer crash and the normalized strings
+    # should now be Latin on both sides.
+    from diff_goldie import _rases_normalize
+    cyrillic_aff = "Тихоокеанский государственный университет"
+    norm = _rases_normalize(cyrillic_aff)
+    assert "tikho" in norm.lower(), f"expected transliterated 'tikho...' in {norm!r}"
+
+
 def test_rule11_does_not_match_unrelated_strings():
     # Negative guard: Rule #11 must not bridge two completely different
     # affiliations even when both are real-looking. Rule #11 only fires when

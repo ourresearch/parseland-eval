@@ -386,6 +386,64 @@ def _maybe_backfill_ca_from_class(authors: list[dict], html: str) -> bool:
     return changed
 
 
+# Old-Elsevier OUP-redirect CA backfill (added 2026-05-07).
+# Targets DOIs `10.1016/...` (1990s) that redirect to an Oxford University
+# Press wrapper. The wrapper uses `<div class="info-author-correspondence">`
+# rather than `class*="corresp"` (word-boundary won't match), so the existing
+# class-based CA backfill misses these. Pattern:
+#   <div class="info-author-correspondence">
+#     <div content-id="corN">...
+#       <a href="mailto:A.P.vanDam@amc.uva.nl">...</a>
+#     </div>
+#   </div>
+# We extract the email's local-part, derive a last-name candidate (the
+# longest alphabetic run of length ≥ 3 ending the local part), and mark the
+# matching author. Worked example: 10.1016/s0378-1097(99)00346-8 — local-part
+# `A.P.vanDam` → "vandam" → matches "Alje P. van Dam".
+_OUP_CA_EMAIL_RE = re.compile(
+    r'<div[^>]*class\s*=\s*"[^"]*info-author-correspondence[^"]*"[^>]*>'
+    r'.{0,2000}?'  # tolerate nested <div class="fax">…</div> + label spans
+    r'<a[^>]*href\s*=\s*"mailto:([^"@]+)@[^"]+"',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _last_name_from_email_localpart(local: str) -> str:
+    """Extract a last-name candidate from an email local-part. Strategy: take
+    the trailing alphabetic run of length ≥ 3 (e.g., 'A.P.vanDam' → 'Dam',
+    'jsmith' → 'jsmith', 'j.smith' → 'smith'), lowercased. Returns '' if no
+    qualifying run exists."""
+    if not local:
+        return ""
+    m = re.search(r'[A-Za-z]{3,}$', local)
+    return m.group(0).lower() if m else ""
+
+
+def _maybe_backfill_ca_from_oup_email(authors: list[dict], html: str) -> bool:
+    """When the page has an OUP-redirect ``info-author-correspondence`` block
+    with a mailto link, set ``corresponding_author=True`` on the author
+    whose name's last token matches the email's local-part trailing alpha
+    run. Conservative: only fires when no author is currently flagged CA."""
+    if not authors or any(a.get("corresponding_author") for a in authors):
+        return False
+    m = _OUP_CA_EMAIL_RE.search(html)
+    if not m:
+        return False
+    candidate = _last_name_from_email_localpart(m.group(1))
+    if not candidate:
+        return False
+    # Match by ANY token of the candidate appearing in the author's name
+    # (lowercased). Catches "A.P.vanDam" → "vandam" → matches "van Dam"
+    # because "vandam" appears in "van dam"-after-whitespace-strip.
+    for a in authors:
+        nm = " ".join(str(a.get("name") or "").split()).lower()
+        nm_compact = nm.replace(" ", "")
+        if candidate and (candidate in nm_compact):
+            a["corresponding_author"] = True
+            return True
+    return False
+
+
 # T&F's visible-HTML author pattern:
 #   <a class="author">{NAME}<i class="fa-envelope"></i></a>
 #   <span class="overlay">{AFFILIATION_TEXT}<a class="author-extra-info">View further...</a></span>
@@ -553,6 +611,180 @@ def _maybe_backfill_rases_from_elsevier_iso(authors: list[dict], html: str) -> b
         nm = " ".join(str(a.get("name") or "").split()).strip().lower()
         if nm in aff_by_name:
             a["rasses"] = aff_by_name[nm]
+            changed = True
+    return changed
+
+
+# JSON-LD ScholarlyArticle author-affiliation backfill (added 2026-05-07).
+# Targets MDPI Patterns 18+19 (10.3390/polym13183031, 10.3390/su13041644) where
+# Claude misses per-author affiliations because the page uses <sup>-digit
+# footnote markers attached to author names. The full institution strings are
+# in the JSON-LD ScholarlyArticle block as `author[].affiliation.name`.
+#
+# Why post-LLM and not LLM-input: per `feedback_prompt_rules_leak.md`, restoring
+# JSON-LD content to the LLM's HTML input causes cross-field regressions (the
+# LLM starts preferring JSON-LD's structured data over the citation_* meta tags
+# it had been correctly using). This is the surgical alternative — backfill
+# only empty per-author rasses fields, post-LLM, so other fields are untouched.
+
+
+def _affiliation_from_jsonld(html: str) -> dict[str, str]:
+    """Map ``{author_name_lower: affiliation_text}`` extracted from any
+    JSON-LD ScholarlyArticle block on the page. Returns empty dict if no
+    such block has nested author affiliations.
+
+    Tolerant parser: tries strict json.loads first, falls back to a name-then-
+    affiliation regex pair scan. JSON-LD on publisher pages is often
+    syntactically malformed (missing commas between sibling array items, etc.);
+    we pull out (name, affiliation_name) pairs structurally where possible.
+    """
+    out: dict[str, str] = {}
+    for raw in _JSONLD_RE.findall(html):
+        # First, try strict parse.
+        try:
+            data = json.loads(raw)
+        except (json.JSONDecodeError, ValueError):
+            data = None
+        if data is not None:
+            for node in _walk_jsonld_nodes(data):
+                authors_field = node.get("author") if isinstance(node, dict) else None
+                if not authors_field:
+                    continue
+                if isinstance(authors_field, dict):
+                    authors_field = [authors_field]
+                if not isinstance(authors_field, list):
+                    continue
+                for a in authors_field:
+                    if not isinstance(a, dict):
+                        continue
+                    name = (a.get("name") or "").strip()
+                    if not name:
+                        given = (a.get("givenName") or "").strip()
+                        family = (a.get("familyName") or "").strip()
+                        name = f"{given} {family}".strip()
+                    if not name:
+                        continue
+                    aff = a.get("affiliation")
+                    aff_text = ""
+                    if isinstance(aff, str):
+                        aff_text = aff.strip()
+                    elif isinstance(aff, dict):
+                        aff_text = (aff.get("name") or "").strip()
+                    elif isinstance(aff, list):
+                        parts: list[str] = []
+                        for entry in aff:
+                            if isinstance(entry, str):
+                                parts.append(entry.strip())
+                            elif isinstance(entry, dict):
+                                v = (entry.get("name") or "").strip()
+                                if v:
+                                    parts.append(v)
+                        aff_text = "; ".join(p for p in parts if p)
+                    if aff_text:
+                        key = " ".join(name.split()).lower()
+                        # Keep the longest affiliation text per name to handle
+                        # publishers that emit multiple JSON-LD blocks (one
+                        # short citation block + one full ScholarlyArticle).
+                        if key not in out or len(aff_text) > len(out[key]):
+                            out[key] = aff_text
+    return out
+
+
+def _walk_jsonld_nodes(data):
+    """Yield every dict node in a parsed JSON-LD tree (handles top-level array,
+    @graph nesting, single object). JSON-LD pages commonly wrap the article in
+    ``{"@graph": [...]}`` rather than putting it at the root."""
+    if isinstance(data, list):
+        for item in data:
+            yield from _walk_jsonld_nodes(item)
+    elif isinstance(data, dict):
+        yield data
+        graph = data.get("@graph")
+        if graph:
+            yield from _walk_jsonld_nodes(graph)
+
+
+def _maybe_backfill_rases_from_jsonld(authors: list[dict], html: str) -> bool:
+    """Fill empty per-author rases from any JSON-LD ScholarlyArticle block on
+    the page that nests ``author[].affiliation.name``. Conservative: only
+    fills when the LLM left rasses empty AND the JSON-LD has a name match.
+    Targets publishers that DO ship JSON-LD (Frontiers, PLOS, some OUP).
+    MDPI does NOT ship JSON-LD — see _maybe_backfill_rases_and_ca_from_mdpi.
+    """
+    if not authors:
+        return False
+    aff_by_name = _affiliation_from_jsonld(html)
+    if not aff_by_name:
+        return False
+    changed = False
+    for a in authors:
+        if (a.get("rasses") or "").strip():
+            continue
+        nm = " ".join(str(a.get("name") or "").split()).strip().lower()
+        if nm in aff_by_name:
+            a["rasses"] = aff_by_name[nm]
+            changed = True
+    return changed
+
+
+# MDPI per-publisher extractor (added 2026-05-07).
+# Targets DOIs `10.3390/...` and pages with `<div class="art-authors">` +
+# `<div class="art-affiliations">` structure. Gold convention here is the
+# *literal sup-marker content* (e.g., "1,†", "3,*"), NOT the resolved
+# institution name — see human-goldie.csv row 16. CA flag = "*" present in
+# the marker. Worked examples: 10.3390/polym13183031, 10.3390/su13041644.
+_MDPI_AUTHOR_SUP_RE = re.compile(
+    r'<span class="sciprofiles-link__name">([^<]+)</span>'
+    r'(?:[^<]|<(?!sup\b))*?<sup>([^<]+)</sup>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _is_mdpi_page(html: str, doi: str) -> bool:
+    """True when the cached HTML is from MDPI."""
+    if (doi or "").lower().startswith("10.3390/"):
+        return True
+    return ('mdpi.com/' in (html or "").lower() or
+            'class="art-affiliations"' in (html or "").lower())
+
+
+def _maybe_backfill_rases_and_ca_from_mdpi(
+    authors: list[dict], html: str, doi: str = ""
+) -> bool:
+    """Per-publisher MDPI rasses + CA flag backfill. Extracts the sup-marker
+    content for each author (e.g., "1,†" / "3,*") in document order and
+    assigns positionally to ``authors`` (MDPI emits sciprofiles-link blocks
+    in author order). Emits the literal sup-marker as the rasses value —
+    matching the human-goldie convention for MDPI rows. Sets
+    corresponding_author=True when "*" is present in the marker.
+
+    Positional matching is used because publisher caches sometimes have
+    corrupted Turkish / Vietnamese / Korean bytes in the visible HTML
+    (worked example: 10.3390/su13041644 caches "OÄuz YÄ±ldÄ±z" with a
+    missing UTF-8 continuation byte that name-matching can't recover from).
+    The author *count* and *order* are reliable; only the *bytes* are not.
+
+    Conservative: only fires on MDPI pages (DOI prefix `10.3390/` OR HTML
+    fingerprint match) AND only fills empty per-author rasses (preserves any
+    existing LLM extraction). CA flag is only *added*, never removed.
+    """
+    if not authors or not _is_mdpi_page(html, doi):
+        return False
+    sup_markers: list[str] = []
+    for m in _MDPI_AUTHOR_SUP_RE.finditer(html):
+        sup_raw = _fix_encoding(html_lib.unescape(m.group(2))).strip()
+        sup_clean = " ".join(sup_raw.split())
+        sup_markers.append(sup_clean)
+    # Be safe on count mismatch — only assign positionally when counts agree.
+    if len(sup_markers) != len(authors):
+        return False
+    changed = False
+    for a, sup_clean in zip(authors, sup_markers):
+        if not (a.get("rasses") or "").strip():
+            a["rasses"] = sup_clean
+            changed = True
+        if "*" in sup_clean and not a.get("corresponding_author"):
+            a["corresponding_author"] = True
             changed = True
     return changed
 
@@ -902,6 +1134,29 @@ def run_doi(
     # 10.1006/cviu.2002.0969 — backfills the 3 University-of-Amsterdam
     # affiliations the LLM emits empty.
     _maybe_backfill_rases_from_elsevier_iso(authors, html)
+
+    # Affiliation backfill from JSON-LD ScholarlyArticle author[].affiliation
+    # (added 2026-05-07). Targets publishers that ship JSON-LD with nested
+    # affiliations (Frontiers, PLOS, some OUP). Conservative: only fills empty
+    # per-author rasses. No-op on publishers that don't ship JSON-LD (MDPI etc).
+    _maybe_backfill_rases_from_jsonld(authors, html)
+
+    # Old-Elsevier OUP-redirect CA flag backfill (added 2026-05-07).
+    # Detects info-author-correspondence + mailto pattern (where the existing
+    # class-based CA backfill misses due to word-boundary mismatch on
+    # 'correspondence' vs 'corresp'). Worked example: Train 5
+    # 10.1016/s0378-1097(99)00346-8 (Alje P. van Dam).
+    _maybe_backfill_ca_from_oup_email(authors, html)
+
+    # MDPI per-publisher rasses + CA flag backfill (added 2026-05-07).
+    # MDPI doesn't ship JSON-LD or citation_author_institution meta tags.
+    # Affiliations live in <div class="art-affiliations"> with <sup>N</sup>
+    # markers attached to author names. Gold's convention for MDPI rows is
+    # the literal sup-marker content ("1,†", "3,*"), NOT the resolved
+    # institution name. Sets corresponding_author=True when the marker
+    # contains "*". Targets Train rows 18 (10.3390/polym13183031) and 19
+    # (10.3390/su13041644).
+    _maybe_backfill_rases_and_ca_from_mdpi(authors, html, doi)
 
     return TaxicabResult(
         no=no, doi=doi, link=link, extraction=extraction, tier="claude",

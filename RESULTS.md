@@ -571,3 +571,55 @@ Fresh v1.9.1 extractions introduce ~3-5 rows of stochastic loss per cycle that t
 Train: 60 → 54 (−6pp, of which ~6pp is stochastic noise). Holdout: 66 → 72 (+6pp, real). Combined: net flat with information gained about the 70% claim.
 
 Artifacts: `runs/exp-2026-05-07-{train,holdout}/{ai-goldie-1.csv, ai-goldie-1.tier-log.jsonl, disagreements.md, summary.json}`, `runs/exp-2026-05-07-train/ai-goldie-1.merged.csv` (livefetch-merged variant for apples-to-apples).
+
+---
+
+## 2026-05-07 PM — per-publisher post-LLM transforms — train 60→68 (+8pp), holdout stable at 72
+
+Three iterations executed in this session, each a leak-safe per-publisher post-LLM transform, applied as a patch over the existing AI baseline (no re-extraction stochasticity except for the 2 MDPI rows where the marker form is structural).
+
+### Iter 1 — MDPI sup-marker rasses + CA backfill (`extract_via_taxicab.py`)
+
+`_maybe_backfill_rases_and_ca_from_mdpi`. Detects MDPI pages (DOI prefix `10.3390/` or HTML fingerprint), extracts each author's `<sup>...</sup>` marker positionally (handles corrupted Turkish/Vietnamese/Korean cache bytes), assigns the literal marker as rasses (matches gold convention for MDPI), and sets `corresponding_author=True` when the marker contains `*`.
+
+Worked examples — Train 18 / 19:
+- `10.3390/polym13183031`: AI was empty rasses + no CA. Now `1,†` / `2,†` / `3,*` / `1,4,5,*` exact-match gold; CA flags on Hong-Ryun Jung + Mincheol Chang match gold.
+- `10.3390/su13041644`: AI was empty rasses + no CA. Now `1,*` / `2,*` rasses (mismatches gold's full institution form, but CA flags on both Kelleci + Yıldız now match gold).
+
+### Iter 2 — Cyrillic→Latin transliteration in `_rases_normalize`
+
+`eval/scripts/diff_goldie.py:_rases_normalize`. Wraps the existing `_transliterate_cyrillic` BGN/PCGN helper around the rases path. Worked-example test added in `test_diff_goldie.py`. Did not move scoreboard this cycle because the only Cyrillic-rases case (Holdout 14 cyberleninka) is gold-English-translation vs AI-Russian-original — translation, not transliteration. Useful for future Cyrillic rows where gold is the BGN-transliterated form.
+
+### Iter 3 — Old-Elsevier OUP-redirect CA email backfill
+
+`_maybe_backfill_ca_from_oup_email`. Detects `<div class="info-author-correspondence">` + nested `mailto:` (existing `_CORRESP_OPEN_TAG_RE` missed this because `\bcorresp\b` doesn't match `correspondence` — word-boundary mismatch). Extracts the email's local-part trailing alpha run (e.g., `A.P.vanDam` → `vandam`) and matches against any author whose name-without-spaces contains it.
+
+Worked example — Train 5: `10.1016/s0378-1097(99)00346-8`. AI had no CA flagged. Now Alje P. van Dam matches gold's CA designation. Holdout 2 (`10.1016/0021-9673(93)80418-8`) does NOT use the OUP wrapper (modern ScienceDirect cache); needs a separate path.
+
+### Scoreboard
+
+| split | authors | rases | corresp | abstract | pdf_url | overall |
+|---|---:|---:|---:|---:|---:|---:|
+| Train pre-iter1 | 88 | 80 | 76 | 94 | 92 | 60 |
+| **Train post-iter3** | **88** | **82** | **84** | **94** | **92** | **68** (+8pp) |
+| Holdout pre / post | 96 | 90 | 88 | 94 | 92 | 72 (stable) |
+
+Train movers: rases +2 (iter1 MDPI), corresp +8 (iter1 MDPI +4 + iter3 OUP +2 + extra row trickling through), overall +8.
+
+Holdout stable: iter1 doesn't apply (no MDPI rows in holdout-50), iter2 didn't help cyberleninka (translation vs transliteration), iter3 doesn't apply to Holdout 2 (different cache structure).
+
+### Path to 95% on every holdout field
+
+Current holdout: authors 96 ✅ / rases 90 / corresp 88 / abstract 94 / pdf_url 92.
+
+Remaining gaps:
+- abstract +1pp (1 row): Emerald book chapter (Holdout 4) abstract cut.
+- corresp +7pp (4 rows): Stroke (Holdout 6), masharif (Holdout 9), Russian Perm (Holdout 11), modern-ScienceDirect Mattiasson (Holdout 2).
+- rases +5pp (3 rows): Beihang aff strings (Holdout 3), substantive content not surface variance.
+- pdf_url +3pp (2 rows): publisher-specific wrappers.
+
+Total ~10 rows. Achievable via per-publisher post-LLM transforms (this session's pattern) plus live-fetch tier (next-cycle Phase C — needs visible Chrome).
+
+### Artifacts
+
+`eval/scripts/extract_via_taxicab.py` (3 new transforms), `eval/scripts/diff_goldie.py` (Cyrillic→rases extension), `eval/scripts/tests/test_diff_goldie.py` (new test), `eval/goldie/{summary,diff}-{train,holdout}-iter3.{json,md}`, `runs/iter1-mdpi/`, `runs/iter3-oup/`, `runs/train-final/ai-goldie-1.merged.csv` (patched in place), `runs/holdout-v1.9.1/ai-goldie-1.csv` (replaced with fresh v1.9.1 baseline at 72%).
