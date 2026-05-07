@@ -453,6 +453,95 @@ def _last_name_from_email_localpart(local: str) -> str:
     return m.group(0).lower() if m else ""
 
 
+# IEEE Xplore authors+affiliations backfill (added 2026-05-07).
+# IEEE's cached HTML carries authors as a JSON literal `"authors":[{...}]`
+# inside a script blob. The LLM doesn't see it because `_strip_for_llm`
+# removes scripts. Worked example: 10.1109/jrproc.1955.277953 — gold has
+# T. J. Carroll + R. M. Ring at MIT Lincoln Labs; HTML has those exactly.
+
+
+def _ieee_authors_json(html: str) -> list[dict] | None:
+    """Extract the IEEE Xplore authors JSON from cached HTML using bracket
+    balancing (regex won't handle nested braces robustly). Returns None if
+    no `\"authors\":[` block is present."""
+    if not html:
+        return None
+    start_marker = '"authors":['
+    idx = html.find(start_marker)
+    if idx < 0:
+        return None
+    open_idx = idx + len(start_marker) - 1
+    depth = 0
+    end_idx = -1
+    for i in range(open_idx, len(html)):
+        c = html[i]
+        if c == '[':
+            depth += 1
+        elif c == ']':
+            depth -= 1
+            if depth == 0:
+                end_idx = i + 1
+                break
+    if end_idx < 0:
+        return None
+    try:
+        return json.loads(html[open_idx:end_idx])
+    except (json.JSONDecodeError, ValueError):
+        return None
+
+
+def _maybe_backfill_authors_from_ieee(authors: list[dict], html: str, doi: str) -> bool:
+    """Replace empty/single-author IEEE extractions with the author JSON
+    embedded in the cached HTML. Conservative: only fires on DOIs starting
+    with `10.1109/` AND when AI's existing extraction has fewer authors
+    than the JSON OR is empty."""
+    if not (doi or "").lower().startswith("10.1109/"):
+        return False
+    parsed = _ieee_authors_json(html)
+    if not parsed or not isinstance(parsed, list):
+        return False
+    # Build new author list from the IEEE JSON.
+    new_authors: list[dict] = []
+    for entry in parsed:
+        if not isinstance(entry, dict):
+            continue
+        name = (entry.get("name") or "").strip()
+        if not name:
+            given = (entry.get("firstName") or "").strip()
+            family = (entry.get("lastName") or "").strip()
+            name = f"{given} {family}".strip()
+        if not name:
+            continue
+        name = _fix_encoding(name)
+        aff = entry.get("affiliation")
+        aff_text = ""
+        if isinstance(aff, list) and aff:
+            aff_text = aff[0] if isinstance(aff[0], str) else (aff[0].get("name") if isinstance(aff[0], dict) else "")
+        elif isinstance(aff, str):
+            aff_text = aff
+        elif isinstance(aff, dict):
+            aff_text = aff.get("name") or ""
+        aff_text = _fix_encoding((aff_text or "").strip())
+        new_authors.append({
+            "name": name,
+            "rasses": aff_text,
+            "corresponding_author": False,
+        })
+    if not new_authors:
+        return False
+    # Only replace if the IEEE JSON has more authors than the existing list
+    # (avoid clobbering correct extractions on already-good rows).
+    if len(new_authors) <= len(authors) and authors:
+        # Same count: only replace if any existing author has empty rasses
+        # and the IEEE JSON would fill it.
+        existing_rasses_empty = any(not (a.get("rasses") or "").strip() for a in authors)
+        if not existing_rasses_empty:
+            return False
+    authors.clear()
+    authors.extend(new_authors)
+    return True
+
+
 # NMJI (Indian medical) abstract backfill (added 2026-05-07).
 # NMJI ships no `citation_abstract` and only the title in og:description.
 # Body text is concatenated into a single `<p id="-1">` inside `<main><div
