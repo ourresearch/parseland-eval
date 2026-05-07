@@ -688,6 +688,71 @@ def _maybe_backfill_pdf_url_from_relative(
     return True
 
 
+# Iter L (2026-05-07): doi.org → local /doi/pdf/ link replacement.
+# When the LLM emits `https?://doi.org/{DOI}` as the PDF URL, that is the DOI
+# resolver, not a PDF. SilverChair platforms (UTPP, OUP older book pages, etc.)
+# emit relative `/doi/pdf/{DOI}` links on the landing page that are the real
+# PDFs. Promote those over the resolver URL.
+#
+# Worked example: train DOI 10.3138/chr-027-04-br24
+#   AI: https://doi.org/10.3138/chr-027-04-br24    (wrong — DOI resolver)
+#   page has: <a href="/doi/pdf/10.3138/chr-027-04-br24?download=true">
+#   resolved_url host: utpjournals.press
+#   → replace AI's URL with https://utpjournals.press/doi/pdf/...
+#   gold: https://utppublishing.com/doi/pdf/10.3138/chr-027-04-br24?download=true
+#   → comparator rule 3 (different host, identical path, DOI tokens) MATCHes.
+def _maybe_replace_doi_org_pdf_with_local(
+    extraction: dict, html: str, doi: str, resolved_url: str | None,
+) -> bool:
+    pdf_url = (extraction.get("PDF URL") or "").strip()
+    if not pdf_url or not html or not doi:
+        return False
+    # Only fire when AI's URL is the DOI resolver itself.
+    if not re.match(r"^https?://(?:dx\.|www\.)?doi\.org/", pdf_url, re.IGNORECASE):
+        return False
+    # Find a relative /doi/pdf/ or /doi/epdf/ link that contains the DOI tail.
+    # Prefer /doi/pdf/ over /doi/epdf/ — gold convention is the PDF link, not
+    # the embedded-PDF viewer.
+    doi_lower = doi.lower()
+    candidates = [
+        c for c in _RELATIVE_PDF_URL_RE.findall(html) if doi_lower in c.lower()
+    ]
+    if not candidates:
+        return False
+    pdf_first = [c for c in candidates if "/doi/pdf/" in c.lower()]
+    rel = pdf_first[0] if pdf_first else candidates[0]
+    # Determine the publisher host. Prefer the resolved_url's host, else
+    # sniff from absolute links on the page.
+    host = ""
+    if resolved_url:
+        try:
+            from urllib.parse import urlsplit
+            host = urlsplit(resolved_url).netloc.lower()
+        except Exception:
+            host = ""
+    if not host:
+        # Fall back to host-sniffing among absolute links containing the DOI.
+        for hm in re.finditer(
+            r'https?://([A-Za-z0-9.-]+)/[^"\s<>]*' + re.escape(doi_lower),
+            html.lower(),
+        ):
+            h = hm.group(1)
+            if h.endswith("doi.org") or h == "doi.org":
+                continue
+            host = h
+            break
+    if not host:
+        return False
+    try:
+        from urllib.parse import urlsplit, urlunsplit
+        rs = urlsplit(rel)
+        absolute = urlunsplit(("https", host, rs.path, rs.query, ""))
+    except Exception:
+        return False
+    extraction["PDF URL"] = absolute
+    return True
+
+
 # Emerald book-chapter abstract backfill (added 2026-05-07).
 # Emerald's chapter pages put the abstract inside
 # <div class="category-section content-section js-content-section"...>
@@ -1504,6 +1569,11 @@ def run_doi(
     # contains "*". Targets Train rows 18 (10.3390/polym13183031) and 19
     # (10.3390/su13041644).
     _maybe_backfill_rases_and_ca_from_mdpi(authors, html, doi)
+
+    # Iter L (2026-05-07): when LLM emits doi.org/{DOI} as PDF URL, look for
+    # a local /doi/pdf/ link on the page (SilverChair pattern) and replace.
+    # Targets train DOI 10.3138/chr-027-04-br24 (UTPP).
+    _maybe_replace_doi_org_pdf_with_local(extraction, html, doi, resolved_url)
 
     return TaxicabResult(
         no=no, doi=doi, link=link, extraction=extraction, tier="claude",

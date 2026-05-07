@@ -306,3 +306,21 @@ def test_pdf_url_match_relaxed_same_host_no_prefix_no_match():
     h = "https://example.com/articles/a/b/c"
     a = "https://example.com/articles/x/y/z"  # different paths, not prefix
     assert _pdf_url_match_relaxed(h, a, "10.1234/foo") is False
+
+
+def test_pdf_url_match_relaxed_elsevier_pii_alphanumeric():
+    """Train DOI 10.1016/j.celrep.2018.10.057 — Cell Reports PII same modulo
+    punctuation."""
+    from diff_goldie import _pdf_url_match_relaxed
+    a = "http://www.cell.com/article/S2211124718316462/pdf"
+    h = "https://www.cell.com/cell-reports/pdf/S2211-1247(18)31646-2.pdf"
+    assert _pdf_url_match_relaxed(h, a, "10.1016/j.celrep.2018.10.057") is True
+
+
+def test_pdf_url_match_relaxed_pii_too_short_no_match():
+    """Don't false-match on short S-codes that aren't real PII."""
+    from diff_goldie import _pdf_url_match_relaxed
+    h = "https://example.com/articles/a/S1234.pdf"
+    a = "https://example.com/articles/b/S1234.pdf"
+    # 4-digit S-code is too short to count as PII
+    assert _pdf_url_match_relaxed(h, a, "10.1234/foo") is False

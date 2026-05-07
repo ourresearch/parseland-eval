@@ -914,6 +914,24 @@ def _pdf_url_match_relaxed(h: str, a: str, doi: str) -> bool:
                 short, long = (h_segs, a_segs) if len(h_segs) < len(a_segs) else (a_segs, h_segs)
                 if long[: len(short)] == short:
                     return True
+
+        # Iter K (2026-05-07): same host + Elsevier PII alphanumeric match.
+        # Elsevier (and Cell Press) emit two URL flavors for the same article
+        # PDF, identified by the `S`-prefixed PII (Publisher Item Identifier).
+        # The same PII appears in both, sometimes punctuated, sometimes not.
+        # Worked example:
+        #   train DOI 10.1016/j.celrep.2018.10.057
+        #   AI:   www.cell.com/article/S2211124718316462/pdf
+        #   Gold: www.cell.com/cell-reports/pdf/S2211-1247(18)31646-2.pdf
+        #   → strip non-alphanumeric: both contain "S2211124718316462". MATCH.
+        # Constraint: PII must be ≥ 15 chars to avoid generic 4-digit S-codes
+        # and require a strong signal of identity.
+        h_alphanum = re.sub(r"[^A-Za-z0-9]", "", h_l)
+        a_alphanum = re.sub(r"[^A-Za-z0-9]", "", a_l)
+        h_pii = re.search(r"s\d{15,17}x?", h_alphanum)
+        a_pii = re.search(r"s\d{15,17}x?", a_alphanum)
+        if h_pii and a_pii and h_pii.group(0) == a_pii.group(0):
+            return True
         return False
 
     # 3. Different host but identical path AND DOI tokens shared
