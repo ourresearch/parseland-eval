@@ -407,6 +407,29 @@ _OUP_CA_EMAIL_RE = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 
+# Generic "Correspondence to <NAME>" / "Reprint requests to <NAME>" pattern
+# (added 2026-05-07). Catches AHA Journals (Stroke 10.1161/01.str.32.6.1291)
+# where the page renders `<div class*="corresp">Correspondence to Dr P.M.
+# White, Department of...` — no mailto in the cache (Cloudflare obfuscates),
+# but the explicit name-after-label resolves which author is CA.
+_GENERIC_CA_LABEL_NAME_RE = re.compile(
+    r'(?:Correspondence\s+(?:to|and\s+reprint\s+requests\s+to)|'
+    r'Reprint\s+requests\s+to|Address\s+(?:correspondence|reprint\s+requests)\s+to)'
+    r'\s+(?:Dr\.?\s+|Prof\.?\s+|Professor\s+)?'
+    r'([A-Z][A-Za-z\.\-]*\s+(?:[A-Za-z\.\-]+\s+)*[A-Z][A-Za-z\-]+)'
+    r'(?=[,\.\s<])',
+    re.IGNORECASE,
+)
+
+
+def _extract_ca_name_candidate(html: str) -> str:
+    """Return the author-name candidate that appears immediately after a
+    correspondence label (e.g., 'Correspondence to Dr P.M. White, Dept...').
+    Returns '' if no qualifying label is found."""
+    m = _GENERIC_CA_LABEL_NAME_RE.search(html)
+    return m.group(1).strip() if m else ""
+
+
 # Generic "author for correspondence" / "corresponding author" + mailto pattern
 # (added 2026-05-07). Catches Russian Perm State (`<strong>Author for
 # correspondence.</strong>...mailto:aluchnikov@yandex.ru`) and similar.
@@ -428,6 +451,44 @@ def _last_name_from_email_localpart(local: str) -> str:
         return ""
     m = re.search(r'[A-Za-z]{3,}$', local)
     return m.group(0).lower() if m else ""
+
+
+# NMJI (Indian medical) abstract backfill (added 2026-05-07).
+# NMJI ships no `citation_abstract` and only the title in og:description.
+# Body text is concatenated into a single `<p id="-1">` inside `<main><div
+# class="body">`. Worked example: 10.25259/nmji_377_2024 — single-p length
+# 1740 chars matches gold (1645) at Levenshtein 0.88.
+_NMJI_BODY_RE = re.compile(
+    r'<main>\s*<div\s+class="body"[^>]*>\s*<p[^>]*\bid="-1"[^>]*>(.+?)</p>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _is_nmji_page(html: str, doi: str) -> bool:
+    if (doi or "").lower().startswith("10.25259/nmji"):
+        return True
+    return 'nmji.in' in (html or "").lower()
+
+
+def _maybe_backfill_abstract_from_nmji(extraction: dict, html: str, doi: str) -> bool:
+    """Per-publisher NMJI abstract backfill. Fires only when the page is
+    NMJI AND the LLM-extracted abstract is empty/short. Pulls the single
+    body paragraph at <main><div class='body'><p id='-1'>."""
+    if not _is_nmji_page(html, doi):
+        return False
+    cur = (extraction.get("Abstract") or "").strip()
+    if cur and len(cur) >= 200:
+        return False
+    m = _NMJI_BODY_RE.search(html)
+    if not m:
+        return False
+    text = re.sub(r'<[^>]+>', '', m.group(1))
+    text = " ".join(html_lib.unescape(text).split())
+    text = _fix_encoding(text)
+    if len(text) < 400:
+        return False
+    extraction["Abstract"] = text
+    return True
 
 
 # Relative PDF URL backfill (added 2026-05-07). Catches publishers that
@@ -549,10 +610,18 @@ def _maybe_backfill_ca_from_oup_email(authors: list[dict], html: str) -> bool:
     Conservative: only fires when no author is currently flagged CA."""
     if not authors or any(a.get("corresponding_author") for a in authors):
         return False
+    # Try email-based pattern first (specific). Then name-after-label.
     m = _OUP_CA_EMAIL_RE.search(html) or _GENERIC_CA_LABEL_EMAIL_RE.search(html)
-    if not m:
-        return False
-    candidate = _last_name_from_email_localpart(m.group(1))
+    if m:
+        candidate = _last_name_from_email_localpart(m.group(1))
+    else:
+        # Name-after-label fallback: extract last token of the matched name.
+        name_candidate = _extract_ca_name_candidate(html)
+        if not name_candidate:
+            return False
+        # Last token (drop trailing punctuation) as the surname signal.
+        last_tok = re.sub(r'[^A-Za-z]', '', name_candidate.split()[-1]).lower()
+        candidate = last_tok if len(last_tok) >= 3 else ""
     if not candidate:
         return False
     # Match by ANY token of the candidate appearing in the author's name

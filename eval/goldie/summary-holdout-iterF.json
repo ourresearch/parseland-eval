@@ -1,0 +1,13 @@
+{
+  "n_rows": 50,
+  "n_human_only": [],
+  "n_ai_only": [],
+  "per_field": {
+    "authors": 96.0,
+    "rases": 92.0,
+    "corresponding": 92.0,
+    "abstract": 98.0,
+    "pdf_url": 94.0
+  },
+  "overall": 82.0
+}
