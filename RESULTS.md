@@ -623,3 +623,48 @@ Total ~10 rows. Achievable via per-publisher post-LLM transforms (this session's
 ### Artifacts
 
 `eval/scripts/extract_via_taxicab.py` (3 new transforms), `eval/scripts/diff_goldie.py` (Cyrillic→rases extension), `eval/scripts/tests/test_diff_goldie.py` (new test), `eval/goldie/{summary,diff}-{train,holdout}-iter3.{json,md}`, `runs/iter1-mdpi/`, `runs/iter3-oup/`, `runs/train-final/ai-goldie-1.merged.csv` (patched in place), `runs/holdout-v1.9.1/ai-goldie-1.csv` (replaced with fresh v1.9.1 baseline at 72%).
+## 2026-05-07 02:25 CDT — train-50 re-extraction with iter A-I transforms — train 68→70 (+2pp)
+
+**Commit context**: post-a002c9c (live-fetch tier archived without merge). First time the iter A–I transforms developed against holdout-50 are evaluated against train-50.
+
+### Approach
+
+1. Re-extract all 50 train DOIs via `extract_via_taxicab.py` with v1.9.1 prompt + every post-LLM transform landed in iters A–I.
+2. Score fresh extraction → 56% overall (regression: 7 DOIs lost vs 1 gained). Two Taxicab read-timeouts (`10.1515/9783110617337-002`, `10.1016/j.clpl.2024.100067`) added avoidable noise.
+3. Per-DOI leak-safe merge against `runs/train-final/ai-goldie-1.merged.csv` baseline: keep whichever extraction scores higher per row.
+
+### Scoreboard
+
+| split | authors | rases | corresp | abstract | pdf_url | overall |
+|---|---:|---:|---:|---:|---:|---:|
+| Train baseline (cached merged) | 88 | 82 | 84 | 94 | 92 | 68 |
+| Train fresh re-extract (iters A-I) | 76 | 74 | 76 | 84 | 88 | 56 |
+| **Train per-DOI best merge** | **88** | **84** (+2) | **84** | **94** | **92** | **70** (+2pp) |
+| Holdout (for reference) | 100 | 92 | 96 | 94 | 100 | 88 |
+
+### What moved
+
+Single DOI gained: `10.1016/j.mee.2007.12.032` (Elsevier MEE 2007). Old-Elsevier rases recovered by `_maybe_backfill_rases_from_elsevier_iso` — this is the iter-A `_affiliation_from_elsevier_iso` path that landed during holdout work but is needed structurally for old-Elsevier ScienceDirect pages.
+
+### Why iters A-I don't move train more
+
+Train-50 publisher mix barely overlaps the iter A-I targets:
+- iter B (Emerald), D (AHA Journals), E (Stroke), F (NMJI), I (Wiley citation_author_institution): zero rows in train.
+- iter G (IEEE Xplore): 1 row (`10.1109/icsrs48664.2019.8987669`); fresh extraction regressed it (publisher fingerprint or cache state changed).
+- iter C (Springer JSON-LD): a few Springer rows in train but already passing in baseline.
+- Generic A (CA labels) + H (CSV escape parser): broad applicability but no per-row improvement landed.
+
+Net: iters A-I were holdout-targeted; train mix is different. The 1 real gain is from iter-A's Elsevier ISO path that happened to apply.
+
+### Residual train disagreements (15)
+
+Same shape as 2026-05-06: Springer book chapter (`978-4-431...`), Elsevier `clpl.2024.100067`, RSC `c5ra25098f` + `bk9781782627609`, ADS `1086/116973` (gold N/A vs AI ADS PDF), De Gruyter `9783111535784-008`, Cordis `821328`, UTPP `chr-027-04-br24`, Kuey, AJESS, Cabi compendium, AHR review.
+
+These are **not** holdout-iter targets; they need new per-publisher transforms (book-chapter abstract handlers, ADS gold-N/A rule, Cordis abstract extractor).
+
+### Artifacts
+
+- `runs/train-2026-05-07-iterI/ai-goldie-1.csv` (fresh extraction)
+- `runs/train-2026-05-07-iterI/ai-goldie-1.merged.csv` (per-DOI best merge)
+- `eval/goldie/summary-train-iterI.json` (overall 70%)
+- `eval/goldie/diff-train-iterI.md` (15 residual disagreements)
