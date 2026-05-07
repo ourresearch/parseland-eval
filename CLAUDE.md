@@ -6,6 +6,10 @@ Conventions for contributors — human or AI — working in this repo.
 
 `parseland-eval` is the **sole deployment source** for the Parseland evaluation dashboard. The Heroku app at <https://openalex-parseland-dashboard-fe36c419013c.herokuapp.com/> auto-deploys from `main`. Do not re-route deployment elsewhere without explicit sign-off from Casey.
 
+## Disagreement learnings
+
+[`LEARNING.md`](LEARNING.md) at repo root is the canonical AI-vs-gold disagreement registry. Before chasing any disagreement: (1) check `LEARNING.md` for an existing entry, (2) if novel, fetch the landing-page HTML via Taxicab live-fetch (`eval/scripts/extract_via_taxicab.py` or `eval/scripts/live_fetch_empty.py`) and compare to AI output before assuming gold is wrong, (3) record the new pattern in `LEARNING.md` as part of the same commit. Universal rule: **the truth is on the page; AI's cached parser path missed it ~70% of the time.**
+
 ## What this repo is not
 
 - It is **not** a copy of `parseland-lib/eval/` or `parseland-lib/dashboard/`. Those directories still exist inside the `parseland-lib` repo but their GitHub Actions deploy workflow was renamed to `deploy-dashboard.yml.disabled` on 2026-04-20. Edits there will not ship.
