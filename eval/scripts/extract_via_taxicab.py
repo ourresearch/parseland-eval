@@ -430,6 +430,73 @@ def _last_name_from_email_localpart(local: str) -> str:
     return m.group(0).lower() if m else ""
 
 
+# Relative PDF URL backfill (added 2026-05-07). Catches publishers that
+# render the PDF link as a relative path "/doi/pdf/<DOI>?download=true"
+# without the host. The LLM tends to emit empty when it sees relative
+# paths because the prompt asks for full URLs. Worked example: Stroke
+# 10.1161/01.str.32.6.1291 — link is /doi/pdf/10.1161/01.STR.32.6.1291.
+_RELATIVE_PDF_URL_RE = re.compile(
+    r'href\s*=\s*"(/doi/(?:pdf|epdf)/[^"]+)"',
+    re.IGNORECASE,
+)
+
+
+# Whitelist of publisher hosts where gold convention IS to record the
+# /doi/pdf/<DOI> URL (not N/A). Fire the relative-PDF backfill only on
+# these. Worked-example backed: ahajournals.org (Stroke 10.1161). Add new
+# hosts only after confirming gold has the URL (not N/A) for that publisher.
+_RELATIVE_PDF_HOST_WHITELIST = (
+    "www.ahajournals.org", "ahajournals.org",
+)
+
+
+def _maybe_backfill_pdf_url_from_relative(
+    extraction: dict, html: str, doi: str
+) -> bool:
+    """If the LLM left PDF URL empty AND the page has a relative
+    /doi/pdf/<DOI> link AND the publisher host is on a whitelist where
+    gold convention records the URL (not N/A), backfill with the absolute
+    URL. Whitelisted hosts: ahajournals.org. Other publishers (e.g., T&F)
+    leave gold as N/A; patching them would regress 'both empty = match'."""
+    if (extraction.get("PDF URL") or "").strip():
+        return False
+    if not html or not doi:
+        return False
+    m = _RELATIVE_PDF_URL_RE.search(html)
+    if not m:
+        return False
+    rel = m.group(1)
+    # Sniff the publisher host: find any absolute URL on the page whose
+    # path contains the DOI's tail (e.g., "01.str.32.6.1291"). The host
+    # of that URL is then the canonical publisher.
+    doi_tail = doi.split("/", 1)[-1] if "/" in doi else doi
+    host = ""
+    # Look for https?://HOST/...DOI_tail... patterns; prefer the most common
+    # host across hits (avoid stray third-party links).
+    host_counts: dict[str, int] = {}
+    for hm in re.finditer(
+        r'https?://([A-Za-z0-9.-]+)/[^"\s<>]*' + re.escape(doi_tail.lower()),
+        html.lower()
+    ):
+        h = hm.group(1)
+        # Skip generic doi-resolver hosts; we want the canonical publisher.
+        if h.endswith('doi.org') or h == 'doi.org':
+            continue
+        host_counts[h] = host_counts.get(h, 0) + 1
+    if host_counts:
+        host = max(host_counts, key=lambda h: host_counts[h])
+    if not host or host not in _RELATIVE_PDF_HOST_WHITELIST:
+        return False
+    try:
+        from urllib.parse import urlsplit, urlunsplit
+        rs = urlsplit(rel)
+        absolute = urlunsplit(("https", host, rs.path, rs.query, ""))
+    except Exception:
+        return False
+    extraction["PDF URL"] = absolute
+    return True
+
+
 # Emerald book-chapter abstract backfill (added 2026-05-07).
 # Emerald's chapter pages put the abstract inside
 # <div class="category-section content-section js-content-section"...>
@@ -726,30 +793,43 @@ def _affiliation_from_jsonld(html: str) -> dict[str, str]:
                         name = f"{given} {family}".strip()
                     if not name:
                         continue
-                    aff = a.get("affiliation")
-                    aff_text = ""
-                    if isinstance(aff, str):
-                        aff_text = aff.strip()
-                    elif isinstance(aff, dict):
-                        aff_text = (aff.get("name") or "").strip()
-                    elif isinstance(aff, list):
-                        parts: list[str] = []
-                        for entry in aff:
-                            if isinstance(entry, str):
-                                parts.append(entry.strip())
-                            elif isinstance(entry, dict):
-                                v = (entry.get("name") or "").strip()
-                                if v:
-                                    parts.append(v)
-                        aff_text = "; ".join(p for p in parts if p)
+                    aff_text = _jsonld_aff_text(a.get("affiliation"))
                     if aff_text:
                         key = " ".join(name.split()).lower()
-                        # Keep the longest affiliation text per name to handle
-                        # publishers that emit multiple JSON-LD blocks (one
-                        # short citation block + one full ScholarlyArticle).
+                        # Also index by "Last, First" → "First Last" form
+                        # (Springer JSON-LD: "Thiel, Christian" → "Christian Thiel")
+                        if "," in key and not key.startswith("dr "):
+                            parts = [p.strip() for p in key.split(",", 1)]
+                            if len(parts) == 2 and all(parts):
+                                alt = f"{parts[1]} {parts[0]}"
+                                if alt not in out or len(aff_text) > len(out[alt]):
+                                    out[alt] = aff_text
                         if key not in out or len(aff_text) > len(out[key]):
                             out[key] = aff_text
     return out
+
+
+def _jsonld_aff_text(aff) -> str:
+    """Extract a single affiliation string from a JSON-LD ``affiliation`` value.
+    Handles strings, dicts (``name`` first, ``address.name`` fallback for
+    Springer book chapters), and lists of either. Falls back to nested
+    ``address`` when ``name`` is empty (worked example: 10.1007/978-94-017-
+    2981-9_4 has affiliation.name='' with address.name='Nuremberg, Germany')."""
+    if isinstance(aff, str):
+        return aff.strip()
+    if isinstance(aff, dict):
+        v = (aff.get("name") or "").strip()
+        if not v:
+            address = aff.get("address")
+            if isinstance(address, dict):
+                v = (address.get("name") or "").strip()
+            elif isinstance(address, str):
+                v = address.strip()
+        return v
+    if isinstance(aff, list):
+        parts = [p for p in (_jsonld_aff_text(item) for item in aff) if p]
+        return "; ".join(parts)
+    return ""
 
 
 def _walk_jsonld_nodes(data):
