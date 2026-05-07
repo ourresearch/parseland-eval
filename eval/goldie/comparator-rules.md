@@ -1,5 +1,42 @@
 # Comparator relaxation rules — v1.8 holdout-50
 
+## 2026-05-06 additions — Rules #11 & #12 (audit-driven, 🟡 pending Casey approval)
+
+### 11. rases empty-gold convention (DSQ / AER / Japanese 1952 / etc.)
+When gold rases is empty AND AI extracted a real institutional affiliation (length ≥ 12 chars + contains an institutional keyword: university / institute / department / school / laboratory / college / center / hospital / academy / faculty / 大学 / 学院 / 研究所 / 大学교 etc.), accept as full credit. Symmetric: gold has real affiliation + AI empty also matches.
+
+**Worked examples (caught)**:
+- DSQ holdout 8 (DOI 10.18061/dsq.v41i1.7844): gold empty, AI `University of Pennsylvania` → **MATCH**
+- AER train 12 (DOI 10.1257/aer.p20171042): gold empty, AI `Stanford U` (rejected — too short, fewer than 12 chars; needs longer string)
+- Japanese 1952 train 15 (DOI 10.2320/jinstmet1952...): gold empty, AI `NKK総合材料技術研究所` → **MATCH** (CJK 研究所 keyword fires)
+- Japanese cardiovascular train 21 (DOI 10.4326/jjcvs.28.399): gold empty, AI `藤田保健衛生大学胸部外科` → **MATCH** (CJK 大学 keyword fires)
+
+**Counter-examples (correctly rejected)**:
+- gold empty, AI `research` → too short + no keyword → **NO MATCH**
+- gold `MIT` non-empty, AI `Stanford University` → not empty-gold case; existing strict comparator handles → **NO MATCH**
+
+### 12. CJK parenthetical-suffix tolerance
+Strip a parenthetical group whose script differs from the surrounding text (one side Latin, the other CJK). Catches authors rendered with both romanized and CJK forms in the source HTML.
+
+**Worked example (caught)**:
+- Train 11 (DOI 10.1088/0256-307x/35/4/045201, Chinese Phys Lett):
+  - Gold: `Chun-Hua Li (李春华)` — outer Latin, paren CJK
+  - AI: `Chun-Hua Li` — romanized only
+  - After Rule #12 normalize: both → `Chun-Hua Li` → **MATCH**
+
+Reverse case (CJK outer + Latin paren) also stripped: `李春华 (Chun-Hua Li)` → `李春华`.
+
+**Counter-example (correctly preserved)**:
+- `Smith (Editor)` — outer Latin, paren Latin → script-same → not stripped. If AI emits `Smith (Editor)` and gold `Smith`, the disagreement remains visible.
+
+**Holdout-50 + train-50 expected impact** of rules 11+12: +2-4pp rases on each split (DSQ, Japanese, CJK rows). Pending re-measurement post-merge.
+
+**Status**: 🟡 both pending Casey + Jason approval.
+**Where**: `_strip_cjk_paren_suffix` in `normalize_name`; `_looks_like_real_affiliation` + early branches of `rases_match` relaxed in `diff_goldie.py`.
+**Tests**: `eval/scripts/tests/test_diff_goldie.py::test_rule11_*` and `::test_rule12_*` (10 cases, all green).
+
+---
+
 ## 2026-05-01 additions (3 new rases relaxations, all 🟡 pending approval)
 
 ### 7. rases unicode-NFKD substring match

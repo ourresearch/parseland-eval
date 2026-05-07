@@ -91,6 +91,82 @@ def test_rases_both_empty_is_match():
     assert rases_match([], []) is True
 
 
+# ---- Rule #11: empty-rases convention --------------------------------------
+
+def test_rule11_empty_gold_real_affiliation_passes_relaxed():
+    # DSQ holdout 8: gold empty, AI 'University of Pennsylvania' → match (relaxed).
+    h = [{"name": "Amanda DiLodovico", "rasses": ""}]
+    a = [{"name": "Amanda DiLodovico", "rasses": "University of Pennsylvania"}]
+    assert rases_match(h, a, relaxed=True) is True
+
+
+def test_rule11_empty_gold_short_or_generic_fails_relaxed():
+    # Generic word without institutional keyword → no false positive.
+    h = [{"name": "Alice", "rasses": ""}]
+    a = [{"name": "Alice", "rasses": "research"}]
+    assert rases_match(h, a, relaxed=True) is False
+
+
+def test_rule11_empty_gold_does_not_pass_strict():
+    # Strict mode (relaxed=False): empty-vs-real still mismatches.
+    h = [{"name": "Alice", "rasses": ""}]
+    a = [{"name": "Alice", "rasses": "Stanford University"}]
+    assert rases_match(h, a, relaxed=False) is False
+
+
+def test_rule11_japanese_real_affiliation_passes():
+    # Japanese Inst of Metals 1952 series — '大学' / '研究所' suffix triggers whitelist.
+    h = [{"name": "高木 真一", "rasses": ""}]
+    a = [{"name": "高木 真一", "rasses": "NKK総合材料技術研究所"}]
+    assert rases_match(h, a, relaxed=True) is True
+
+
+def test_rule11_does_not_match_unrelated_strings():
+    # Negative guard: Rule #11 must not bridge two completely different
+    # affiliations even when both are real-looking. Rule #11 only fires when
+    # one side is truly empty.
+    h = [{"name": "Alice", "rasses": "Massachusetts Institute of Technology"}]
+    a = [{"name": "Alice", "rasses": "Stanford University"}]
+    assert rases_match(h, a, relaxed=True) is False
+
+
+# ---- Rule #12: CJK parenthetical-suffix tolerance --------------------------
+
+def test_rule12_cjk_paren_suffix_stripped_latin_outer():
+    # Chinese Phys Lett train 11: AI emits romanized only; gold has both forms.
+    h = [{"name": "Chun-Hua Li (李春华)", "rasses": "Hefei University"}]
+    a = [{"name": "Chun-Hua Li", "rasses": "Hefei University"}]
+    assert authors_match(h, a) is True
+
+
+def test_rule12_cjk_paren_suffix_stripped_cjk_outer():
+    # Reverse: outer CJK, parenthetical Latin.
+    h = [{"name": "李春华 (Chun-Hua Li)", "rasses": "Hefei University"}]
+    a = [{"name": "李春华", "rasses": "Hefei University"}]
+    assert authors_match(h, a) is True
+
+
+def test_rule12_same_script_paren_preserved():
+    # Latin paren on Latin name (e.g., academic title) is NOT stripped — both
+    # gold and AI carry it the same way.
+    h = [{"name": "Smith (Editor)", "rasses": "MIT"}]
+    a = [{"name": "Smith (Editor)", "rasses": "MIT"}]
+    assert authors_match(h, a) is True
+    # And asymmetric same-script paren still mismatches.
+    h2 = [{"name": "Smith (Editor)", "rasses": "MIT"}]
+    a2 = [{"name": "Smith", "rasses": "MIT"}]
+    assert authors_match(h2, a2) is False
+
+
+def test_rule12_rases_match_works_when_names_use_cjk_paren():
+    # rases_match uses _name_to_author which calls normalize_name → CJK
+    # paren stripping carries through, so the per-author rases comparison
+    # finds the shared author even across the suffix difference.
+    h = [{"name": "Chun-Hua Li (李春华)", "rasses": "Hefei University"}]
+    a = [{"name": "Chun-Hua Li", "rasses": "Hefei University"}]
+    assert rases_match(h, a) is True
+
+
 # ---- corresponding_match (3 cases) ----------------------------------------
 
 def test_corresponding_match_when_flags_agree():
