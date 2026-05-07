@@ -1,0 +1,4 @@
+{"no": 26, "doi": "10.1253/circj.cj-12-0636", "tier": "failed", "duration_s": 0.86, "cost_usd": null, "error": "LLM disabled or no API key", "usage": {}, "resolved_url": "https://www.jstage.jst.go.jp/article/circj/76/8/76_CJ-12-0636/_article"}
+{"no": 45, "doi": "10.3390/antibiotics9030101", "tier": "failed", "duration_s": 0.94, "cost_usd": null, "error": "LLM disabled or no API key", "usage": {}, "resolved_url": "https://www.mdpi.com/2079-6382/9/3/101"}
+{"no": 26, "doi": "10.1253/circj.cj-12-0636", "tier": "claude", "duration_s": 5.39, "cost_usd": 0.0796, "error": null, "usage": {"input_tokens": 21292, "output_tokens": 164}, "resolved_url": "https://www.jstage.jst.go.jp/article/circj/76/8/76_CJ-12-0636/_article"}
+{"no": 45, "doi": "10.3390/antibiotics9030101", "tier": "claude", "duration_s": 14.85, "cost_usd": 0.0975, "error": null, "usage": {"input_tokens": 23939, "output_tokens": 630}, "resolved_url": "https://www.mdpi.com/2079-6382/9/3/101"}

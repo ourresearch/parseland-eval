@@ -454,3 +454,56 @@ Path C (OJS view↔download / subset comparator): +4pp candidate, most train-sha
 Train-50 now at 50% — half the 95% bar. Gap to holdout (72%) is 22pp, down from 28.
 
 Artifacts: `eval/scripts/diff_goldie.py` (rule #10 extension), `eval/goldie/{disagreements,summary}-train-final-livefetch.{md,json}` (re-scored).
+
+---
+
+## 2026-05-06 EOD — audit-driven cycle: gold refresh + comparator rules #11/#12/#15 + LEARNING.md
+
+Cycle scope per the 2026-05-06 plan (`/Users/shubh-trips/.claude/plans/train-5-25-10-1016-s0378-1097-99-00346-harmonic-zebra.md`): 25 train + 14 holdout AI-vs-gold disagreements were audited DOI-by-DOI; user updated `eval/human-goldie.csv` (379+/270- lines, 3 DOI swaps); two comparator rules (#11, #12) and one runner-side metric (#15) shipped; AI baseline re-extracted for the 3 newly-added DOIs via Taxicab+Claude with v1.9.1 prompt.
+
+Commits this cycle: `de4bb8c` (gold refresh + JSON prune) → `d5e4064` (LEARNING.md + CLAUDE.md pointer) → `2345d52` (comparator rules #11, #12) → `6ac7e3d` (rule #15: CA flag scoring runner-side, default-on).
+
+### Train-50 scoreboard
+
+| Field bar | authors | rases | corresp | abstract | pdf_url | overall (5/5) |
+|-----------|---------|-------|---------|----------|---------|---------------|
+| Prev (`bdb1931`, 2026-05-06 21:30) | 84 | 76 | 64 | 88 | 84 | 50 |
+| **This entry** | **88** | **80** | **76** | **94** | **92** | **60** |
+| Δ pp | +4 | +4 | +12 | +6 | +8 | **+10** |
+
+### Holdout-50 scoreboard
+
+| Field bar | authors | rases | corresp | abstract | pdf_url | overall (5/5) |
+|-----------|---------|-------|---------|----------|---------|---------------|
+| Prev (`bdb1931`, 2026-05-06 morning) | 96 | 90 | 86 | 96 | 82 | 66 |
+| **This entry** | **94** | **88** | **82** | **88** | **88** | **66** |
+| Δ pp | -2 | -2 | -4 | -8 | +6 | **0** |
+
+### What moved
+
+- **Train +10pp overall, driven mostly by corresp (+12) and pdf_url (+8).** The CA gain comes partly from gold-side fixes (row 4 author replaced; rasses added on row 6 / row 21 etc., which lets the matched-pair count rise). The pdf_url gain reflects gold's URL cleanup on row 1 + row 7 (S3 signed → canonical sciencedirect / cell.com forms).
+- **Holdout flat overall, with internal moves.** abstract -8pp and corresp -4pp from gold quality changes around row 67 (Polish AH replaced — see DOI swaps below) and from rule #15 making previously-silent CA mismatches count. pdf_url +6pp because row 1 (gastrojournal) and row 7 (Stroke) gold URLs now match via existing rules.
+- **Comparator rules #11 (empty-rasses convention) and #12 (CJK paren suffix) are landed but minimal-impact this cycle** — most of their leverage requires live-fetch (Phase C) DOIs to be re-extracted with v1.9.1 prompt + visible Chrome. Live-fetch is deferred to next cycle (requires interactive Chrome instance over CDP).
+- **Rule #15 (CA flag scoring runner-side) activated default-on.** Adds `corresponding_precision / _recall / _f1` to summary JSONs (all `.optional()` in dashboard schema for back-compat). The diff_goldie.py side already counts `corresponding_match` as one of the 5 fields; the activation here is the *runner / dashboard* side. Headline overall % may shift on next dashboard run; this is a measurement visibility change, not a regression.
+
+### DOI swaps in human-goldie.csv
+
+Train: removed `10.3724/sp.j.1123.2014.10009` (broken SSL chrom-china) + `10.5603/ah.2015.0003` (AI mis-transcoded Polish ń → "ri"). Added `10.1253/circj.cj-12-0636` + `10.3390/antibiotics9030101`.
+
+Holdout: removed `10.18041/0124-0021/dialogos.52.2020.8807` (sub-section/comment author bug). Added `10.3389/fcimb.2020.00307`.
+
+AI baseline re-extracted for the 3 added DOIs via `eval/scripts/extract_via_taxicab.py` with `eval/prompts/ai-goldie-v1.9.1.md`. Cost: $0.27 total ($0.18 train + $0.09 holdout). Results merged into `runs/train-final/ai-goldie-1.merged.csv` and `runs/holdout-v1.9.1/ai-goldie-1.csv`.
+
+### Deferred to next cycle (requires interactive Chrome)
+
+Phase C live-fetch tier expansion. The audit identified 12 train + 10 holdout DOIs where the landing-page HTML carries the truth that the cached parser missed (MDPI affiliation gap, old-Elsevier-OUP-redirect CA markers, Russian Perm CA, NMJI CA, masharif CA, Stroke CA, Beihang aff strings, RSC book-chapter abstracts, etc.). Recovery via `eval/scripts/live_fetch_empty.py` requires a visible Chrome over CDP — per `project_livefetch_tier.md` "NEVER headless." This is the next cycle's primary lever per the plan's user-confirmed Decision 1.
+
+Expected lift from live-fetch (back-of-envelope, per-DOI HTML probes in `LEARNING.md`): train +6-10pp on rases / corresp; holdout +4-8pp on the same. Comparator rules #11/#12 will compound once the v1.9.1 prompt has live-fetch DOM access.
+
+### Discipline check
+
+- 95% bar still distant. Train at 60, holdout at 66. Path: live-fetch tier (Phase C) is the largest remaining lever, then per-publisher adapters.
+- 🟡 rules #11, #12, #15 pending Casey approval per "no silent comparator changes." Documented with worked examples in `eval/goldie/comparator-rules.md`.
+- LEARNING.md is now the canonical disagreement registry. Future sessions check it before re-investigating known patterns. CLAUDE.md "Disagreement learnings" section institutionalizes the routing.
+
+Artifacts: `LEARNING.md` (new), `eval/goldie/comparator-rules.md` (rules 11+12), `eval/parseland_eval/score/authors.py` (score_corresponding), `eval/parseland_eval/score/aggregate.py` (corresp keys), `dashboard/src/lib/schema.ts` (3 optional keys), `eval/goldie/{summary,diff}-train-2026-05-06.{json,md}`, `eval/goldie/{summary,diff}-holdout-2026-05-06.{json,md}`, `runs/audit-2026-05-06/{train,holdout}-new/`.

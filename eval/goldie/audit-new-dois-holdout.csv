@@ -1,0 +1,28 @@
+No,DOI,Link,resolved_links,Authors,Abstract,PDF URL,Status,Notes,Has Bot Check,Resolves To PDF,broken_doi,no english
+58,10.3389/fcimb.2020.00307,https://doi.org/10.3389/fcimb.2020.00307,https://revistas.unilibre.edu.co/index.php/dialogos/article/view/8807,"[
+  {
+    ""name"": ""Megha Budhwani"",
+    ""rasses"": ""Diamantina Institute, Translational Research Institute, The University of Queensland, Woolloongabba, QLD, Australia"",
+    ""corresponding_author"": false
+  },
+  {
+    ""name"": ""Samuel W. Lukowski"",
+    ""rasses"": ""Institute for Molecular Bioscience, The University of Queensland, St Lucia, QLD, Australia"",
+    ""corresponding_author"": false
+  },
+  {
+    ""name"": ""Sandro V. Porceddu"",
+    ""rasses"": ""Cancer Services, Princess Alexandra Hospital, Woolloongabba, QLD, Australia; Faculty of Medicine, The University of Queensland, Brisbane, QLD, Australia"",
+    ""corresponding_author"": false
+  },
+  {
+    ""name"": ""Ian H. Frazer"",
+    ""rasses"": ""Diamantina Institute, Translational Research Institute, The University of Queensland, Woolloongabba, QLD, Australia"",
+    ""corresponding_author"": false
+  },
+  {
+    ""name"": ""Janin Chandra"",
+    ""rasses"": ""Diamantina Institute, Translational Research Institute, The University of Queensland, Woolloongabba, QLD, Australia"",
+    ""corresponding_author"": true
+  }
+]","Human papillomavirus (HPV) infection is associated with a range of malignancies that affect anogenital and oropharyngeal sites. α-HPVs dominantly infect basal epithelial cells of mucosal tissues, where they dysregulate cell division and local immunity. The cervix is one of the mucosal sites most susceptible to HPV infections. It consists of anatomically diverse regions, and the majority of cervical intraepithelial neoplasia and cancers arise within the cervical squamo-columnar junction where undifferentiated basal progenitor cells with stem cell properties are found. The cancer stem cell theory particularly associates tumorigenesis, invasion, dissemination, and metastasis with cancer cells exhibiting stem cell properties. In this perspective, we discuss evidence of a cervical cancer stem cell niche and explore the association of stemness related genes with 5-year survival using a publicly available transcriptomic dataset of a cervical cancer cohort. We report that poor prognosis in this cohort correlates with overexpression of a subset of stemness pathway genes, a majority of which regulate the central Focal Adhesion pathway, and are also found to be enriched in the HPV infection pathway. These observations support therapeutic targeting of stemness genes overexpressed by mucosal cells infected with high-risk HPVs.",https://www.frontiersin.org/journals/cellular-and-infection-microbiology/articles/10.3389/fcimb.2020.00307/pdf,FALSE,,FALSE,FALSE,TRUE,FALSE
