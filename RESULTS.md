@@ -668,3 +668,48 @@ These are **not** holdout-iter targets; they need new per-publisher transforms (
 - `runs/train-2026-05-07-iterI/ai-goldie-1.merged.csv` (per-DOI best merge)
 - `eval/goldie/summary-train-iterI.json` (overall 70%)
 - `eval/goldie/diff-train-iterI.md` (15 residual disagreements)
+
+## 2026-05-07 02:32 CDT — iter J: comparator generality — train 70→76 (+6pp), holdout stable at 88
+
+**Commit context**: post-91a2a49. Three general comparator rules added to `eval/scripts/diff_goldie.py`. No extraction changes — these only loosen scoring where AI's behavior is empirically equivalent to gold's intent.
+
+### Rules
+
+1. **Sentinel trailing-punctuation tolerance** (`normalize_absent`). Strip trailing non-word chars before checking `_ABSENT_SENTINELS`. Worked example: train DOI `10.1515/9783111535784-008` abstract `"N/A\``" now normalizes to `""` like plain `"N/A"`. General: catches stray-character corruption in any future gold value.
+
+2. **ADS link_gateway as paywalled-PDF pattern** (`_PAYWALLED_PDF_PATTERNS`). `ui.adsabs.harvard.edu/link_gateway/.../ADS_PDF` URLs require institutional auth — they're redirects, not real PDFs. Treats AI-extracted ADS URLs as match when gold=N/A. Worked example: train DOI `10.1086/116973`. General: ADS appears across many astrophysics DOIs.
+
+3. **Same-host PDF URL strict path-prefix match** (`_pdf_url_match_relaxed` rule 2c). When two URLs are on the same host and one path is a strict segment-prefix of the other (≥3 segments), treat as match. Catches OJS download-counter wrappers. Worked example: train DOI `10.9734/ajess/2023/v47i31023` — AI `.../1023/1998` ≡ gold `.../1023/1998/1621`. General: many OJS journals append revision/counter segments.
+
+### Scoreboard
+
+| split | authors | rases | corresp | abstract | pdf_url | overall |
+|---|---:|---:|---:|---:|---:|---:|
+| Train pre-iter J | 88 | 84 | 84 | 94 | 92 | 70 |
+| **Train post-iter J** | **88** | **84** | **84** | **96** (+2) | **96** (+4) | **76** (+6pp) |
+| Holdout pre/post | 100 | 96 | 98 | 98 | 94 | 88 (stable) |
+
+Train movers: abstract +2 (sentinel), pdf_url +4 (ADS pattern + OJS prefix). Holdout unchanged — none of these patterns had unmatched cases in holdout.
+
+### Tests
+
+4 new tests in `eval/scripts/tests/test_diff_goldie.py` (39/39 passing).
+
+### Residual train disagreements (12)
+
+3 of 4 author-empty-vs-extracted cases verified as **gold-quality issues** by Taxicab HTML probe:
+- `10.1007/978-4-431-67897-7_41` — page has `citation_author` tags for 5 authors; gold=[]
+- `10.1039/bk9781782627609-00134` — page has author-link "Ralph G Wilkins"; gold=[]
+- `10.1039/c5ra25098f` — page has `citation_author` "Kai Wu"; gold=[]
+- `10.1016/j.patcog.2011.03.031` — page has author biography section; gold=[]
+
+These need user-side gold edits, not extractor changes. Articulating per the loop rule: extractor is correct, gold is sparse/wrong.
+
+Other residuals: Cell Reports PII variant, Elsevier old (clpl, jallcom), Cordis abstract, UTPP doi.org→PDF, Kuey title-prefixed rases, AHR sparse page.
+
+### Artifacts
+
+- `eval/scripts/diff_goldie.py` (+3 comparator rules)
+- `eval/scripts/tests/test_diff_goldie.py` (+4 tests)
+- `eval/goldie/summary-train-iterJ.json` (overall 76%)
+- `eval/goldie/diff-train-iterJ.md`

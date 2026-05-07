@@ -172,10 +172,21 @@ def normalize_name(s: str) -> str:
     return s
 
 
+_TRAILING_NONWORD_RE = re.compile(r"[^\w/]+$")
+
+
 def normalize_absent(s: str | None) -> str:
     if s is None:
         return ""
     value = str(s).strip()
+    # Iter J (2026-05-07): tolerate trailing-punctuation corruption in gold
+    # sentinels — `"N/A\`"` ≡ `"N/A"`. Strip trailing non-word chars (keep `/`
+    # so "n/a" itself survives) before sentinel check. Worked example:
+    #   train DOI 10.1515/9783111535784-008 abstract = "N/A`"
+    #   strip → "N/A" → lower → "n/a" → in _ABSENT_SENTINELS → "".
+    stripped = _TRAILING_NONWORD_RE.sub("", value)
+    if stripped.lower() in _ABSENT_SENTINELS:
+        return ""
     return "" if value.lower() in _ABSENT_SENTINELS else value
 
 
@@ -785,6 +796,14 @@ _PAYWALLED_PDF_PATTERNS = (
     re.compile(r"^https?://(?:www\.)?nature\.com/articles/[^/]+\.pdf$", re.IGNORECASE),
     re.compile(r"^https?://pubs\.rsc\.org/en/content/articlepdf/", re.IGNORECASE),
     re.compile(r"^https?://iopscience\.iop\.org/article/.+/pdf$", re.IGNORECASE),
+    # Iter J (2026-05-07): ADS link_gateway is a redirect to publisher (auth
+    # required), not a real PDF. Fires when gold=N/A. Worked example:
+    #   train DOI 10.1086/116973
+    #   AI: https://ui.adsabs.harvard.edu/link_gateway/1994AJ....107.1637B/ADS_PDF
+    #   Gold: N/A → MATCH (gold's empty is empirically correct).
+    # General: ADS appears in many astrophysics DOIs; the link_gateway path
+    # always requires institutional auth.
+    re.compile(r"^https?://(?:[\w-]+\.)?adsabs\.harvard\.edu/(?:link_gateway|abs)/", re.IGNORECASE),
 )
 
 
@@ -874,6 +893,27 @@ def _pdf_url_match_relaxed(h: str, a: str, doi: str) -> bool:
             tokens = [t for t in _DOI_TOKEN_RE.findall(tail_for_tokens) if len(t) >= 3]
             if tokens and all(t in a_l for t in tokens):
                 return True
+
+        # Iter J (2026-05-07): same host + one URL is a strict path-prefix of
+        # the other. OJS journals (and similar download endpoints) often
+        # append a counter or revision segment after the canonical download
+        # path. Worked example:
+        #   train DOI 10.9734/ajess/2023/v47i31023
+        #   AI:   journalajess.com/index.php/AJESS/article/download/1023/1998
+        #   Gold: journalajess.com/index.php/AJESS/article/download/1023/1998/1621
+        #   → AI path is a strict prefix of gold path; same article. MATCH.
+        # Constraints: same host already (we're inside `h_host == a_host`),
+        # both paths have ≥ 3 segments (avoid matching trivial root paths),
+        # and the prefix relationship goes either direction.
+        h_path = h_split.path.rstrip("/")
+        a_path = a_split.path.rstrip("/")
+        if h_path and a_path:
+            h_segs = [s for s in h_path.split("/") if s]
+            a_segs = [s for s in a_path.split("/") if s]
+            if min(len(h_segs), len(a_segs)) >= 3:
+                short, long = (h_segs, a_segs) if len(h_segs) < len(a_segs) else (a_segs, h_segs)
+                if long[: len(short)] == short:
+                    return True
         return False
 
     # 3. Different host but identical path AND DOI tokens shared

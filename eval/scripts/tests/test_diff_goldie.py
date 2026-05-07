@@ -268,3 +268,41 @@ def test_canonicalize_url_drops_fragment_and_lowers_host():
 
 def test_canonicalize_url_treats_na_as_absent():
     assert canonicalize_url("N/A") == ""
+
+
+# ---- iter J (2026-05-07) comparator generality ----------------------------
+
+def test_normalize_absent_strips_trailing_punctuation_corruption():
+    """Train DOI 10.1515/9783111535784-008 abstract = 'N/A`' should normalize."""
+    assert normalize_absent("N/A`") == ""
+    assert normalize_absent("N/A.") == ""
+    assert normalize_absent("none ") == ""
+    # Real values with trailing punct must NOT be flattened
+    assert normalize_absent("real value!") == "real value!"
+
+
+def test_pdf_url_match_relaxed_ads_link_gateway_treated_as_paywalled():
+    """Train DOI 10.1086/116973 — ADS link_gateway is a redirect, not a PDF."""
+    from diff_goldie import _pdf_url_match_relaxed
+    h = "N/A"
+    a = "https://ui.adsabs.harvard.edu/link_gateway/1994AJ....107.1637B/ADS_PDF"
+    assert _pdf_url_match_relaxed(h, a, "10.1086/116973") is True
+
+
+def test_pdf_url_match_relaxed_same_host_path_prefix():
+    """Train DOI 10.9734/ajess/2023/v47i31023 — OJS download path with extra
+    counter segment."""
+    from diff_goldie import _pdf_url_match_relaxed
+    h = "https://journalajess.com/index.php/AJESS/article/download/1023/1998/1621"
+    a = "https://journalajess.com/index.php/AJESS/article/download/1023/1998"
+    assert _pdf_url_match_relaxed(h, a, "10.9734/ajess/2023/v47i31023") is True
+    # Same in reverse
+    assert _pdf_url_match_relaxed(a, h, "10.9734/ajess/2023/v47i31023") is True
+
+
+def test_pdf_url_match_relaxed_same_host_no_prefix_no_match():
+    """Don't accept arbitrary same-host URLs as matches; require strict prefix."""
+    from diff_goldie import _pdf_url_match_relaxed
+    h = "https://example.com/articles/a/b/c"
+    a = "https://example.com/articles/x/y/z"  # different paths, not prefix
+    assert _pdf_url_match_relaxed(h, a, "10.1234/foo") is False
