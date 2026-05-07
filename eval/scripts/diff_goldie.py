@@ -638,8 +638,11 @@ _TRAILING_COMMA_RE = re.compile(r",\s*([\]}])")
 
 def _load_authors_tolerant(raw: str) -> list[dict]:
     """Parse the Authors JSON cell. Tolerant of trailing commas before
-    ``]``/``}`` (common in hand-edited gold rows) and of unquoted JSON
-    fragments. Falls back to ``[]`` on hard parse failure."""
+    ``]``/``}`` (common in hand-edited gold rows), of unquoted JSON
+    fragments, and of CSV double-quote-escaped cells where the JSON has
+    been wrapped in literal outer quotes with doubled inner quotes (a
+    Google-Sheets-CSV-export artifact). Falls back to ``[]`` on hard
+    parse failure."""
     s = raw.strip()
     if not s:
         return []
@@ -653,7 +656,19 @@ def _load_authors_tolerant(raw: str) -> list[dict]:
         out = json.loads(cleaned)
         return out if isinstance(out, list) else []
     except json.JSONDecodeError:
-        return []
+        pass
+    # CSV double-quote-escape: cell wrapped in literal outer quotes with
+    # all inner quotes doubled (e.g. `"[\n  {\n    ""name"": ""..."" ...]"`).
+    # Worked example: holdout 10.1109/icelmach.2018.8507065 — gold cell
+    # has this exact shape; without unwrapping the comparator sees [].
+    if cleaned.startswith('"') and cleaned.endswith('"'):
+        unwrapped = cleaned[1:-1].replace('""', '"')
+        try:
+            out = json.loads(unwrapped)
+            return out if isinstance(out, list) else []
+        except json.JSONDecodeError:
+            pass
+    return []
 
 
 def _load_human(path: Path) -> dict[str, dict]:
