@@ -407,6 +407,17 @@ _OUP_CA_EMAIL_RE = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 
+# Generic "author for correspondence" / "corresponding author" + mailto pattern
+# (added 2026-05-07). Catches Russian Perm State (`<strong>Author for
+# correspondence.</strong>...mailto:aluchnikov@yandex.ru`) and similar.
+# Window allows inline tags between the label and the mailto.
+_GENERIC_CA_LABEL_EMAIL_RE = re.compile(
+    r'(?:Author\s+for\s+correspondence|Corresponding\s+author|Correspondence\s+to)'
+    r'.{0,500}?'
+    r'<a[^>]*href\s*=\s*"mailto:([^"@]+)@[^"]+"',
+    re.IGNORECASE | re.DOTALL,
+)
+
 
 def _last_name_from_email_localpart(local: str) -> str:
     """Extract a last-name candidate from an email local-part. Strategy: take
@@ -419,14 +430,59 @@ def _last_name_from_email_localpart(local: str) -> str:
     return m.group(0).lower() if m else ""
 
 
+# Emerald book-chapter abstract backfill (added 2026-05-07).
+# Emerald's chapter pages put the abstract inside
+# <div class="category-section content-section js-content-section"...>
+# with NO 'Abstract' heading. The LLM emits empty because it can't tell that
+# unlabeled paragraph is the abstract. Worked example: 10.1108/978-1-64802-
+# 637-920251008 — text starts "Picture this: 30 educators...".
+_EMERALD_ABSTRACT_RE = re.compile(
+    r'<div[^>]*class\s*=\s*"[^"]*category-section\s+content-section[^"]*"[^>]*>'
+    r'\s*<p[^>]*>(.+?)</p>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _is_emerald_page(html: str, doi: str) -> bool:
+    if (doi or "").lower().startswith("10.1108/"):
+        return True
+    return 'emerald.com/' in (html or "").lower()
+
+
+def _maybe_backfill_abstract_from_emerald(extraction: dict, html: str, doi: str) -> bool:
+    """Per-publisher Emerald abstract backfill. Fires only when the page is
+    Emerald AND the LLM-extracted abstract is empty/short. Pulls the first
+    <p> inside <div class="category-section content-section">."""
+    if not _is_emerald_page(html, doi):
+        return False
+    cur = (extraction.get("Abstract") or "").strip()
+    if cur and len(cur) >= 200:
+        return False
+    m = _EMERALD_ABSTRACT_RE.search(html)
+    if not m:
+        return False
+    text = re.sub(r'<[^>]+>', '', m.group(1))  # strip nested tags
+    text = " ".join(html_lib.unescape(text).split())
+    text = _fix_encoding(text)
+    if len(text) < 200:
+        return False
+    extraction["Abstract"] = text
+    return True
+
+
 def _maybe_backfill_ca_from_oup_email(authors: list[dict], html: str) -> bool:
-    """When the page has an OUP-redirect ``info-author-correspondence`` block
-    with a mailto link, set ``corresponding_author=True`` on the author
-    whose name's last token matches the email's local-part trailing alpha
-    run. Conservative: only fires when no author is currently flagged CA."""
+    """Set ``corresponding_author=True`` on the author whose name matches an
+    email's local-part trailing alpha run, when the page has either:
+      - the OUP-redirect ``info-author-correspondence`` block + mailto, OR
+      - the generic "Author for correspondence" / "Corresponding author"
+        label + mailto pattern (worked example: Russian Perm State
+        10.31857/s2587556623070105 — "Author for correspondence... mailto:
+        aluchnikov@..." → matches A. S. Luchnikov).
+
+    Conservative: only fires when no author is currently flagged CA."""
     if not authors or any(a.get("corresponding_author") for a in authors):
         return False
-    m = _OUP_CA_EMAIL_RE.search(html)
+    m = _OUP_CA_EMAIL_RE.search(html) or _GENERIC_CA_LABEL_EMAIL_RE.search(html)
     if not m:
         return False
     candidate = _last_name_from_email_localpart(m.group(1))
@@ -435,10 +491,16 @@ def _maybe_backfill_ca_from_oup_email(authors: list[dict], html: str) -> bool:
     # Match by ANY token of the candidate appearing in the author's name
     # (lowercased). Catches "A.P.vanDam" → "vandam" → matches "van Dam"
     # because "vandam" appears in "van dam"-after-whitespace-strip.
+    # Also catches "aluchnikov" → matches "A. S. Luchnikov" (drop the leading
+    # initial via substring match: "luchnikov" appears in "a s luchnikov").
     for a in authors:
         nm = " ".join(str(a.get("name") or "").split()).lower()
-        nm_compact = nm.replace(" ", "")
-        if candidate and (candidate in nm_compact):
+        nm_compact = nm.replace(" ", "").replace(".", "")
+        if candidate in nm_compact:
+            a["corresponding_author"] = True
+            return True
+        # Also try shorter suffix (drop leading initial-letter from email)
+        if len(candidate) > 4 and candidate[1:] in nm_compact:
             a["corresponding_author"] = True
             return True
     return False
@@ -1140,6 +1202,12 @@ def run_doi(
     # affiliations (Frontiers, PLOS, some OUP). Conservative: only fills empty
     # per-author rasses. No-op on publishers that don't ship JSON-LD (MDPI etc).
     _maybe_backfill_rases_from_jsonld(authors, html)
+
+    # Emerald book-chapter abstract backfill (added 2026-05-07).
+    # Emerald wraps the abstract in <div class="category-section content-section">
+    # without an explicit 'Abstract' heading; the LLM can't tell what to grab.
+    # Worked example: 10.1108/978-1-64802-637-920251008.
+    _maybe_backfill_abstract_from_emerald(extraction, html, doi)
 
     # Old-Elsevier OUP-redirect CA flag backfill (added 2026-05-07).
     # Detects info-author-correspondence + mailto pattern (where the existing
