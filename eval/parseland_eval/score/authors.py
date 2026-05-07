@@ -35,6 +35,31 @@ class AuthorResult:
     f1_soft: float
 
 
+@dataclass(frozen=True)
+class CorrespondingResult:
+    """Per-row precision / recall / F1 over the corresponding-author flag.
+
+    Counted over matched author pairs (output of `score_authors`):
+      - tp: gold marks CA, parsed marks CA on the same matched author pair
+      - fp: parsed marks CA where gold does not (on a matched pair, or any
+            parsed author marked CA whose gold counterpart is missing —
+            those become fp because we can't verify the truth)
+      - fn: gold marks CA where parsed does not (on a matched pair, or any
+            gold CA whose parsed counterpart is missing)
+
+    Rule #15 (2026-05-06). Activated default-on; baseline-shift call-out
+    in RESULTS.md per the audit-cycle plan.
+    """
+    tp: int
+    fp: int
+    fn: int
+    precision: float
+    recall: float
+    f1: float
+    gold_total_ca: int
+    parsed_total_ca: int
+
+
 def _name_key(name: str) -> tuple[str, str]:
     if not name:
         return ("", "")
@@ -126,4 +151,71 @@ def score_authors(
         precision_soft=p_soft,
         recall_soft=r_soft,
         f1_soft=f_soft,
+    )
+
+
+def _is_corresponding(author: Any) -> bool:
+    """Read the corresponding-author flag from gold or parsed author objects.
+    Tolerates both ``is_corresponding`` and ``corresponding_author`` keys
+    so the same helper works for GoldAuthor instances (attribute access)
+    and parsed dict authors."""
+    if author is None:
+        return False
+    if isinstance(author, dict):
+        v = author.get("corresponding_author")
+        if v is None:
+            v = author.get("is_corresponding")
+    else:
+        v = getattr(author, "is_corresponding", None)
+        if v is None:
+            v = getattr(author, "corresponding_author", None)
+    return bool(v)
+
+
+def score_corresponding(
+    gold_authors: list[Any],
+    parsed_authors: list[Any],
+    matched: tuple[AuthorMatch, ...],
+) -> CorrespondingResult:
+    """Score the corresponding-author flag using the matched author pairs.
+
+    Rule #15 (2026-05-06): activated default-on. Per the 2026-05-06 audit,
+    Stroke / NMJI / Russian-Perm / masharif / old-Elsevier-OUP-redirect
+    disagreements all hinge on the CA flag; without scoring them they were
+    invisible. Headline overall % may appear to drop one cycle as
+    previously-silent CA mismatches start counting; this is a measurement
+    visibility change, not a regression. Documented in RESULTS.md.
+    """
+    matched_g = {m.gold_index for m in matched}
+    matched_p = {m.parsed_index for m in matched}
+
+    gold_ca_total = sum(1 for a in gold_authors if _is_corresponding(a))
+    parsed_ca_total = sum(1 for a in parsed_authors if _is_corresponding(a))
+
+    tp = fp = fn = 0
+    for m in matched:
+        g_ca = _is_corresponding(gold_authors[m.gold_index]) if m.gold_index < len(gold_authors) else False
+        p_ca = _is_corresponding(parsed_authors[m.parsed_index]) if m.parsed_index < len(parsed_authors) else False
+        if g_ca and p_ca:
+            tp += 1
+        elif p_ca and not g_ca:
+            fp += 1
+        elif g_ca and not p_ca:
+            fn += 1
+    # Unmatched-author CA flags also count: a gold CA whose author wasn't
+    # matched in parsed is a recall miss (fn); a parsed CA whose author
+    # wasn't matched in gold is a precision miss (fp).
+    for gi, a in enumerate(gold_authors):
+        if gi not in matched_g and _is_corresponding(a):
+            fn += 1
+    for pi, a in enumerate(parsed_authors):
+        if pi not in matched_p and _is_corresponding(a):
+            fp += 1
+
+    p, r, f = _f1(tp, fp, fn)
+    return CorrespondingResult(
+        tp=tp, fp=fp, fn=fn,
+        precision=p, recall=r, f1=f,
+        gold_total_ca=gold_ca_total,
+        parsed_total_ca=parsed_ca_total,
     )

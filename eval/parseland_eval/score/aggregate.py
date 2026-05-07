@@ -14,7 +14,12 @@ from parseland_eval.score.abstract import (
     score_abstract,
 )
 from parseland_eval.score.affiliations import AffiliationResult, score_affiliations
-from parseland_eval.score.authors import AuthorResult, score_authors
+from parseland_eval.score.authors import (
+    AuthorResult,
+    CorrespondingResult,
+    score_authors,
+    score_corresponding,
+)
 from parseland_eval.score.pdf_url import PdfUrlResult, score_pdf_url
 
 
@@ -34,6 +39,10 @@ class RowScore:
     abstract: AbstractResult
     pdf_url: PdfUrlResult
     bot_check_flag: bool  # from fetch layer, if available (None → False here)
+    # Rule #15 (2026-05-06): defaulted to None to preserve back-compat with
+    # legacy tests / runs that construct RowScore positionally without the
+    # CA field. New scoring path always passes a CorrespondingResult.
+    corresponding: CorrespondingResult | None = None
 
 
 def _parser_name(run: ParserRun) -> str | None:
@@ -81,6 +90,16 @@ def score_row(gold: GoldRow, run: ParserRun) -> RowScore:
     abs_res = score_abstract(gold.abstract, parsed.get("abstract"))
     pdf_res = score_pdf_url(gold.pdf_url, parsed)
     aff_res = _aff_for_row(gold, run, authors_result)
+    # Rule #15 (2026-05-06): CA flag scoring activated default-on. Computed
+    # only when authors were scored — same gating as affiliations.
+    if authors_result is not None:
+        corresp_result = score_corresponding(
+            list(gold.authors),
+            parsed.get("authors") or [],
+            authors_result.matched,
+        )
+    else:
+        corresp_result = None
 
     return RowScore(
         doi=gold.doi,
@@ -97,6 +116,7 @@ def score_row(gold: GoldRow, run: ParserRun) -> RowScore:
         abstract=abs_res,
         pdf_url=pdf_res,
         bot_check_flag=bool(gold.has_bot_check),
+        corresponding=corresp_result,
     )
 
 
@@ -136,10 +156,31 @@ def _abstract_match_rate(rs: list[RowScore]) -> float:
     return _mean_f1(rs, lambda s: 1.0 if s.abstract.match_at_threshold else 0.0)
 
 
+def _corresponding_micro_pr_f1(rs: list[RowScore]) -> tuple[float, float, float]:
+    """Micro-aggregated CA precision/recall/F1 across rows.
+
+    Sums tp/fp/fn over every row that has a CorrespondingResult, then
+    computes p/r/f1 once. Mirrors the PDF-URL micro convention to avoid
+    over-weighting rows where neither system marked any author CA.
+    """
+    tp = fp = fn = 0
+    for s in rs:
+        if s.corresponding is None:
+            continue
+        tp += s.corresponding.tp
+        fp += s.corresponding.fp
+        fn += s.corresponding.fn
+    p = tp / (tp + fp) if (tp + fp) else 0.0
+    r = tp / (tp + fn) if (tp + fn) else 0.0
+    f = 2 * p * r / (p + r) if (p + r) else 0.0
+    return p, r, f
+
+
 def summarize(scores: list[RowScore]) -> dict[str, Any]:
     authors_rows = [s for s in scores if s.authors is not None]
     aff_rows = [s for s in scores if s.affiliations is not None]
     pdf_p, pdf_r = _pdf_micro_pr(scores)
+    corresp_p, corresp_r, corresp_f1 = _corresponding_micro_pr_f1(scores)
 
     overall = {
         "rows": len(scores),
@@ -169,6 +210,12 @@ def summarize(scores: list[RowScore]) -> dict[str, Any]:
         "pdf_url_divergence_rate": _mean_f1(scores, lambda s: 1.0 if s.pdf_url.divergent else 0.0),
         "pdf_url_precision": pdf_p,
         "pdf_url_recall": pdf_r,
+        # Rule #15 (2026-05-06): corresponding-author flag scoring activated
+        # default-on. All keys are back-compat optional per CLAUDE.md
+        # non-negotiable #3 — older run JSONs must still render in dashboard.
+        "corresponding_precision": corresp_p,
+        "corresponding_recall": corresp_r,
+        "corresponding_f1": corresp_f1,
         "errors": sum(1 for s in scores if s.error),
         "duration_ms_mean": _mean_f1(scores, lambda s: s.duration_ms),
     }
@@ -181,6 +228,7 @@ def summarize(scores: list[RowScore]) -> dict[str, Any]:
         rs_authors = [r for r in rs if r.authors]
         rs_aff = [r for r in rs if r.affiliations]
         p_pub, r_pub = _pdf_micro_pr(rs)
+        ca_p_pub, ca_r_pub, ca_f1_pub = _corresponding_micro_pr_f1(rs)
         per_publisher[domain] = {
             "rows": len(rs),
             "authors_f1_soft": _mean_f1(rs_authors, lambda s: s.authors.f1_soft if s.authors else None),
@@ -194,6 +242,9 @@ def summarize(scores: list[RowScore]) -> dict[str, Any]:
             "pdf_url_accuracy": _mean_f1(rs, lambda s: 1.0 if s.pdf_url.strict_match else 0.0),
             "pdf_url_precision": p_pub,
             "pdf_url_recall": r_pub,
+            "corresponding_precision": ca_p_pub,
+            "corresponding_recall": ca_r_pub,
+            "corresponding_f1": ca_f1_pub,
             "errors": sum(1 for r in rs if r.error),
         }
 

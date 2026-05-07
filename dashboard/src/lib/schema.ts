@@ -137,6 +137,11 @@ export const OverallSchema = z.object({
   pdf_url_divergence_rate: z.number(),
   pdf_url_precision: z.number().optional(),
   pdf_url_recall: z.number().optional(),
+  // Rule #15 (2026-05-06): corresponding-author flag scoring. Optional to
+  // preserve back-compat with run JSONs from before this rule landed.
+  corresponding_precision: z.number().optional(),
+  corresponding_recall: z.number().optional(),
+  corresponding_f1: z.number().optional(),
   errors: z.number(),
   duration_ms_mean: z.number(),
 });
@@ -154,6 +159,9 @@ export const PerPublisherEntrySchema = z.object({
   pdf_url_accuracy: z.number(),
   pdf_url_precision: z.number().optional(),
   pdf_url_recall: z.number().optional(),
+  corresponding_precision: z.number().optional(),
+  corresponding_recall: z.number().optional(),
+  corresponding_f1: z.number().optional(),
   errors: z.number(),
 });
 
@@ -167,6 +175,9 @@ export const PerFailureModeEntrySchema = z.object({
   pdf_url_accuracy: z.number(),
   pdf_url_precision: z.number().optional(),
   pdf_url_recall: z.number().optional(),
+  corresponding_precision: z.number().optional(),
+  corresponding_recall: z.number().optional(),
+  corresponding_f1: z.number().optional(),
 });
 
 export const RunSchema = z.object({
