@@ -32,7 +32,7 @@ from pydantic import BaseModel, Field
 EVAL_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(EVAL_DIR / "scripts"))
 
-DEFAULT_CDP = "http://localhost:9222"
+DEFAULT_CDP = os.environ.get("CDP_URL", "http://localhost:9222")
 DEFAULT_MODEL = "claude-sonnet-4-5"  # browser-use's id for Sonnet 4.6
 DEFAULT_MAX_STEPS = 18
 

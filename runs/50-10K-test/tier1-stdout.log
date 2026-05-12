@@ -1,0 +1,104 @@
+12:59:07 prompt eval/prompts/ai-goldie-v1.9.1.md (version=v1.9.1, 11495 chars)
+12:59:07 rows to process: 50
+12:59:12 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:12 [1/50] No=30 10.1016/j.dam.2007.03.013 tier=claude 4.7s cost=$0.018
+12:59:13 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:13 [2/50] No=50 10.1002/3527601759.index tier=claude 5.9s cost=$0.072
+12:59:14 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:14 [3/50] No=36 10.1080/08912963.2023.2258891 tier=claude 7.3s cost=$0.081
+12:59:16 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:16 [4/50] No=23 10.4028/www.scientific.net/amr.765-767.1299 tier=claude 9.3s cost=$0.059
+12:59:21 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:21 [5/50] No=4 10.1016/s1098-3015(10)73112-0 tier=claude 7.9s cost=$0.173
+12:59:21 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:21 [6/50] No=44 10.23887/ijnse.v1i1.12437 tier=claude 6.6s cost=$0.052
+12:59:23 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:23 [7/50] No=16 10.1016/s1464-391x(08)70169-7 tier=claude 11.5s cost=$0.061
+12:59:24 taxicab: no harvested html for doi=10.5840/zfs19354333
+12:59:24 [8/50] No=17 10.5840/zfs19354333 tier=failed 0.1s (free)
+12:59:24 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:24 [9/50] No=43 10.1111/jcmm.13148 tier=claude 16.4s cost=$0.109
+12:59:26 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:26 [10/50] No=31 10.1002/anie.198812001 tier=claude 4.9s cost=$0.075
+12:59:30 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:30 [11/50] No=24 10.1289/isee.2022.p-0608 tier=claude 9.0s cost=$0.064
+12:59:31 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:31 [12/50] No=5 10.1007/s00038-016-0901-1 tier=claude 7.7s cost=$0.088
+12:59:31 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:31 [13/50] No=45 10.1515/jbnst-1990-0108 tier=claude 5.6s cost=$0.072
+12:59:34 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:34 [14/50] No=10 10.1177/102490790501200402 tier=claude 10.3s cost=$0.099
+12:59:37 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:37 [15/50] No=37 10.1002/jbm.820280108 tier=claude 20.5s cost=$0.102
+12:59:39 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:39 [16/50] No=25 10.1080/03079459808419348 tier=claude 7.7s cost=$0.083
+12:59:40 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:40 [17/50] No=18 10.3102/01623737017003280 tier=claude 6.3s cost=$0.094
+12:59:40 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:40 [18/50] No=32 10.24297/ijct.v15i2.569 tier=claude 9.2s cost=$0.059
+12:59:44 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:44 [19/50] No=38 10.1016/j.jfa.2017.10.020 tier=claude 13.8s cost=$0.093
+12:59:49 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:49 [20/50] No=33 10.1103/physrev.88.1433 tier=claude 5.1s cost=$0.049
+12:59:54 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:54 [21/50] No=26 10.70675/d49f50e4z0a1ez4d31z88c7zce445b43f421 tier=claude 5.0s cost=$0.042
+12:59:56 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:56 [22/50] No=39 10.1016/j.chaos.2024.115380 tier=claude 15.5s cost=$0.109
+12:59:59 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:59 [23/50] No=46 10.3389/fpls.2025.1613503 tier=claude 18.5s cost=$0.118
+12:59:59 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+12:59:59 [24/50] No=11 10.1159/000527973 tier=claude 22.2s cost=$0.105
+13:00:00 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:00 [25/50] No=19 10.1088/0370-1298/69/11/410 tier=claude 5.7s cost=$0.077
+13:00:03 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:03 [26/50] No=6 10.2218/ls.v2i1.2016.1429 tier=claude 23.6s cost=$0.065
+13:00:03 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:03 [27/50] No=12 10.1177/0304375418761514 tier=claude 6.9s cost=$0.094
+13:00:04 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:04 [28/50] No=1 10.4324/9781003331100-8 tier=claude 5.2s cost=$0.041
+13:00:05 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:05 [29/50] No=47 10.36015/cambios.v19.n1.2020.601 tier=claude 5.6s cost=$0.020
+13:00:08 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:08 [30/50] No=27 10.2307/j.ctv17mrtwk.12 tier=claude 3.8s cost=$0.025
+13:00:10 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:10 [31/50] No=34 10.1016/j.camwa.2011.12.003 tier=claude 7.3s cost=$0.073
+13:00:11 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:11 [32/50] No=20 10.1515/9780791478912-030 tier=claude 5.6s cost=$0.077
+13:00:12 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:12 [33/50] No=7 10.4314/bcse.v33i2.14 tier=claude 13.2s cost=$0.070
+13:00:12 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:12 [34/50] No=13 10.1016/s0165-2478(97)86989-1 tier=claude 4.0s cost=$0.036
+13:00:13 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:13 [35/50] No=40 10.1103/physreve.57.r1223 tier=claude 10.6s cost=$0.058
+13:00:16 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:16 [36/50] No=41 10.5860/choice.47-0928 tier=claude 4.5s cost=$0.055
+13:00:17 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:17 [37/50] No=48 10.1007/bf00204239 tier=claude 5.7s cost=$0.069
+13:00:18 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:18 [38/50] No=35 10.2753/ced1061-1932230286 tier=claude 6.1s cost=$0.083
+13:00:22 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:22 [39/50] No=14 10.36229/978-85-7042-159-3.cap.17 tier=claude 5.2s cost=$0.180
+13:00:23 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:23 [40/50] No=8 10.1093/bioinformatics/btt612 tier=claude 13.1s cost=$0.092
+13:00:24 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:24 [41/50] No=28 10.1016/j.egypro.2016.11.273 tier=claude 10.6s cost=$0.080
+13:00:25 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:25 [42/50] No=49 10.1109/tns.1981.4331808 tier=claude 3.6s cost=$0.028
+13:00:25 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:25 [43/50] No=2 10.53347/rid-28402 tier=claude 7.0s cost=$0.062
+13:00:31 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:31 [44/50] No=21 10.1080/24725854.2018.1536304 tier=claude 14.4s cost=$0.102
+13:00:32 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:32 [45/50] No=42 10.1016/j.jfa.2024.110656 tier=claude 8.6s cost=$0.108
+13:00:32 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:32 [46/50] No=22 10.1055/sos-sd-004-00378 tier=claude 6.5s cost=$0.043
+13:00:33 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:33 [47/50] No=29 10.1016/j.wneu.2022.04.091 tier=claude 9.0s cost=$0.090
+13:00:44 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:44 [48/50] No=3 10.1609/aaai.v40i11.37882 tier=claude 11.8s cost=$0.062
+13:00:50 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:50 [49/50] No=9 10.5194/egusphere-egu24-12548 tier=claude 19.2s cost=$0.096
+13:00:50 HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+13:00:50 [50/50] No=15 10.1007/978-3-642-03085-7_117 tier=claude 24.9s cost=$0.102
+13:00:50 DONE — meta-tag: 0 / claude: 49 / failed: 1 / total cost: $3.77
+13:00:50 CSV: runs/50-10K-test/ai-goldie-1.csv

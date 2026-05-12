@@ -1,0 +1,52 @@
+ No DOI                                                 A Ab PDF  resolved_links                                           iter-R label
+--- --------------------------------------------------  - -- ---  -------------------------------------------------------  ------------
+  1 10.4324/9781003331100-8                             Y Y .   https://www.taylorfrancis.com/chapters/oa-mono/10.4324/  iter-R:extraction-miss
+  2 10.53347/rid-28402                                  Y Y .   https://radiopaedia.org/articles/28402                   iter-R:extraction-miss
+  3 10.1609/aaai.v40i11.37882                           Y Y Y   https://ojs.aaai.org/index.php/AAAI/article/view/37882   
+  4 10.1016/s1098-3015(10)73112-0                       Y . .   https://linkinghub.elsevier.com/retrieve/pii/S109830151  iter-R:paywalled=elsevier
+  5 10.1007/s00038-016-0901-1                           Y . Y   https://link.springer.com/article/10.1007/s00038-016-09  iter-R:paywalled=springer
+  6 10.2218/ls.v2i1.2016.1429                           Y Y Y   https://journals.ed.ac.uk/lifespansstyles/article/view/  
+  7 10.4314/bcse.v33i2.14                               Y Y Y   https://www.ajol.info/index.php/bcse/article/view/18815  
+  8 10.1093/bioinformatics/btt612                       Y Y Y   https://academic.oup.com/bioinformatics/article/30/6/89  iter-R:paywalled=oup
+  9 10.5194/egusphere-egu24-12548                       Y Y .   https://meetingorganizer.copernicus.org/EGU24/EGU24-125  iter-R:extraction-miss
+ 10 10.1177/102490790501200402                          Y Y .   https://journals.sagepub.com/doi/10.1177/10249079050120  iter-R:paywalled=sage
+ 11 10.1159/000527973                                   Y Y Y   https://karger.com/article/doi/10.1159/000527973         iter-R:paywalled=karger
+ 12 10.1177/0304375418761514                            Y Y .   https://journals.sagepub.com/doi/10.1177/03043754187615  iter-R:paywalled=sage
+ 13 10.1016/s0165-2478(97)86989-1                       . . .   https://linkinghub.elsevier.com/retrieve/pii/S016524789  iter-R:bot-check
+ 14 10.36229/978-85-7042-159-3.cap.17                   . . Y   https://livros.poisson.com.br/geografia/seculo/volume5/  iter-R:pdf-redirect
+ 15 10.1007/978-3-642-03085-7_117                       Y Y Y   https://link.springer.com/chapter/10.1007/978-3-642-030  iter-R:paywalled=springer
+ 16 10.1016/s1464-391x(08)70169-7                       . . .   https://linkinghub.elsevier.com/retrieve/pii/S1464391X0  iter-R:bot-check
+ 17 10.5840/zfs19354333                                 Y . Y   https://www.pdcnet.org/collection-anonymous/search?q=+%  iter-R:extraction-miss
+ 18 10.3102/01623737017003280                           Y Y .   https://journals.sagepub.com/doi/10.3102/01623737017003  iter-R:paywalled=sage
+ 19 10.1088/0370-1298/69/11/410                         Y . Y   https://validate.perfdrive.com/fb803c746e9148689b3984a3  iter-R:bot-check:perimeterx
+ 20 10.1515/9780791478912-030                           . . .   https://www.degruyterbrill.com:443/document/doi/10.1515  iter-R:bot-check
+ 21 10.1080/24725854.2018.1536304                       Y Y .   https://www.tandfonline.com/doi/full/10.1080/24725854.2  iter-R:paywalled=taylor-francis
+ 22 10.1055/sos-sd-004-00378                            Y . Y   https://science-of-synthesis.thieme.com/ebooks/cs_26196  iter-R:paywalled=thieme
+ 23 10.4028/www.scientific.net/amr.765-767.1299         Y Y Y   https://www.scientific.net/AMR.765-767.1299              
+ 24 10.1289/isee.2022.p-0608                            Y Y .   (error)                                                  iter-R:resolve-error->iter-R:extraction-miss
+ 25 10.1080/03079459808419348                           Y Y .   https://www.tandfonline.com/doi/full/10.1080/0307945980  iter-R:paywalled=taylor-francis
+ 26 10.70675/d49f50e4z0a1ez4d31z88c7zce445b43f421       Y Y Y   https://theses.fr/2024LYO10010                           
+ 27 10.2307/j.ctv17mrtwk.12                             . . .   https://www.jstor.org/stable/10.2307/j.ctv17mrtwk.12     iter-R:bot-check
+ 28 10.1016/j.egypro.2016.11.273                        Y Y .   https://linkinghub.elsevier.com/retrieve/pii/S187661021  iter-R:paywalled=elsevier
+ 29 10.1016/j.wneu.2022.04.091                          Y . .   https://linkinghub.elsevier.com/retrieve/pii/S187887502  iter-R:paywalled=elsevier
+ 30 10.1016/j.dam.2007.03.013                           . . .   https://linkinghub.elsevier.com/retrieve/pii/S0166218X0  iter-R:bot-check
+ 31 10.1002/anie.198812001                              . . Y   https://onlinelibrary.wiley.com/doi/10.1002/anie.198812  iter-R:paywalled=wiley
+ 32 10.24297/ijct.v15i2.569                             Y Y Y   (error)                                                  iter-R:resolve-error
+ 33 10.1103/physrev.88.1433                             Y . Y   https://link.aps.org/doi/10.1103/PhysRev.88.1433         iter-R:paywalled=aps
+ 34 10.1016/j.camwa.2011.12.003                         Y Y .   https://linkinghub.elsevier.com/retrieve/pii/S089812211  iter-R:paywalled=elsevier
+ 35 10.2753/ced1061-1932230286                          Y Y .   https://www.tandfonline.com/doi/full/10.2753/CED1061-19  iter-R:paywalled=taylor-francis
+ 36 10.1080/08912963.2023.2258891                       Y Y .   https://www.tandfonline.com/doi/full/10.1080/08912963.2  iter-R:paywalled=taylor-francis
+ 37 10.1002/jbm.820280108                               Y Y Y   https://onlinelibrary.wiley.com/doi/10.1002/jbm.8202801  iter-R:paywalled=wiley
+ 38 10.1016/j.jfa.2017.10.020                           Y Y .   https://linkinghub.elsevier.com/retrieve/pii/S002212361  iter-R:paywalled=elsevier
+ 39 10.1016/j.chaos.2024.115380                         Y Y .   https://linkinghub.elsevier.com/retrieve/pii/S096007792  iter-R:paywalled=elsevier
+ 40 10.1103/physreve.57.r1223                           Y Y Y   https://link.aps.org/doi/10.1103/PhysRevE.57.R1223       iter-R:paywalled=aps
+ 41 10.5860/choice.47-0928                              . . .   http://choicereviews.org/login                           iter-R:bot-check
+ 42 10.1016/j.jfa.2024.110656                           Y Y .   https://linkinghub.elsevier.com/retrieve/pii/S002212362  iter-R:paywalled=elsevier
+ 43 10.1111/jcmm.13148                                  Y Y Y   https://onlinelibrary.wiley.com/doi/10.1111/jcmm.13148   iter-R:paywalled=wiley
+ 44 10.23887/ijnse.v1i1.12437                           Y Y Y   https://ejournal.undiksha.ac.id/index.php/IJNSE/article  
+ 45 10.1515/jbnst-1990-0108                             Y . .   https://www.degruyterbrill.com:443/document/doi/10.1515  iter-R:extraction-miss
+ 46 10.3389/fpls.2025.1613503                           Y Y Y   https://www.frontiersin.org/journals/plant-science/arti  
+ 47 10.36015/cambios.v19.n1.2020.601                    Y Y Y   https://revistahcam.iess.gob.ec/index.php/cambios/artic  
+ 48 10.1007/bf00204239                                  Y . Y   https://link.springer.com/article/10.1007/BF00204239     iter-R:paywalled=springer
+ 49 10.1109/tns.1981.4331808                            . . Y   https://ieeexplore.ieee.org/document/4331808/            iter-R:paywalled=ieee
+ 50 10.1002/3527601759.index                            Y . Y   https://onlinelibrary.wiley.com/doi/10.1002/3527601759.  iter-R:paywalled=wiley

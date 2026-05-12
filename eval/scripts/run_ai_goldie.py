@@ -48,7 +48,7 @@ DEFAULT_PROMPT = EVAL_DIR / "prompts" / "ai-goldie-v1.md"
 DEFAULT_INPUT = EVAL_DIR / "goldie" / "train-50.csv"
 DEFAULT_OUTPUT_DIR = REPO_DIR / "runs"
 DEFAULT_MODEL = "claude-sonnet-4-5"
-DEFAULT_CDP = "http://localhost:9222"
+DEFAULT_CDP = os.environ.get("CDP_URL", "http://localhost:9222")
 DEFAULT_MAX_STEPS = 18
 
 log = logging.getLogger("ai-goldie")

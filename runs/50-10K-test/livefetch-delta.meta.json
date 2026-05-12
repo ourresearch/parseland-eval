@@ -1,0 +1,77 @@
+{
+  "n_targets": 12,
+  "results": [
+    {
+      "doi": "10.70675/d49f50e4z0a1ez4d31z88c7zce445b43f421",
+      "steps": 10,
+      "duration_s": 387.9,
+      "error": null
+    },
+    {
+      "doi": "10.36015/cambios.v19.n1.2020.601",
+      "steps": 12,
+      "duration_s": 397.63,
+      "error": null
+    },
+    {
+      "doi": "10.1016/s1464-391x(08)70169-7",
+      "steps": 2,
+      "duration_s": 57.26,
+      "error": null
+    },
+    {
+      "doi": "10.1016/s0165-2478(97)86989-1",
+      "steps": 3,
+      "duration_s": 81.87,
+      "error": null
+    },
+    {
+      "doi": "10.5860/choice.47-0928",
+      "steps": 1,
+      "duration_s": 42.7,
+      "error": null
+    },
+    {
+      "doi": "10.1016/j.dam.2007.03.013",
+      "steps": 2,
+      "duration_s": 60.89,
+      "error": null
+    },
+    {
+      "doi": "10.1515/9780791478912-030",
+      "steps": 1,
+      "duration_s": 35.91,
+      "error": null
+    },
+    {
+      "doi": "10.2307/j.ctv17mrtwk.12",
+      "steps": 6,
+      "duration_s": 152.67,
+      "error": null
+    },
+    {
+      "doi": "10.1109/tns.1981.4331808",
+      "steps": 14,
+      "duration_s": 418.55,
+      "error": null
+    },
+    {
+      "doi": "10.36229/978-85-7042-159-3.cap.17",
+      "steps": 10,
+      "duration_s": 286.65,
+      "error": null
+    },
+    {
+      "doi": "10.5840/zfs19354333",
+      "steps": 3,
+      "duration_s": 112.81,
+      "error": null
+    },
+    {
+      "doi": "10.1002/anie.198812001",
+      "steps": 7,
+      "duration_s": 221.09,
+      "error": null
+    }
+  ]
+}

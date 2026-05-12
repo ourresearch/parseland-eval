@@ -1,0 +1,62 @@
+[
+  {
+    "doi": "10.1016/s0165-2478(97)86989-1",
+    "link": "https://doi.org/10.1016/s0165-2478(97)86989-1",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.36229/978-85-7042-159-3.cap.17",
+    "link": "https://doi.org/10.36229/978-85-7042-159-3.cap.17",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.1016/s1464-391x(08)70169-7",
+    "link": "https://doi.org/10.1016/s1464-391x(08)70169-7",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.5840/zfs19354333",
+    "link": "https://doi.org/10.5840/zfs19354333",
+    "reason": "tier=failed,empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.1515/9780791478912-030",
+    "link": "https://doi.org/10.1515/9780791478912-030",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.70675/d49f50e4z0a1ez4d31z88c7zce445b43f421",
+    "link": "https://doi.org/10.70675/d49f50e4z0a1ez4d31z88c7zce445b43f421",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.2307/j.ctv17mrtwk.12",
+    "link": "https://doi.org/10.2307/j.ctv17mrtwk.12",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.1016/j.dam.2007.03.013",
+    "link": "https://doi.org/10.1016/j.dam.2007.03.013",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.1002/anie.198812001",
+    "link": "https://doi.org/10.1002/anie.198812001",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.5860/choice.47-0928",
+    "link": "https://doi.org/10.5860/choice.47-0928",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.36015/cambios.v19.n1.2020.601",
+    "link": "https://doi.org/10.36015/cambios.v19.n1.2020.601",
+    "reason": "empty=authors,empty=abstract"
+  },
+  {
+    "doi": "10.1109/tns.1981.4331808",
+    "link": "https://doi.org/10.1109/tns.1981.4331808",
+    "reason": "empty=authors,empty=abstract"
+  }
+]

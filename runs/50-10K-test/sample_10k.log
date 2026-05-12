@@ -1,0 +1,26 @@
+loaded 100 DOIs from gold standard (eval/human-goldie.csv)
+resuming with 0 DOIs from ai-goldie-source-10k.csv.partial.jsonl
+  537/10000 accepted | api=6 dup_drop=0 type_drop=63
+  1068/10000 accepted | api=12 dup_drop=0 type_drop=132
+  1613/10000 accepted | api=18 dup_drop=0 type_drop=187
+  2169/10000 accepted | api=24 dup_drop=0 type_drop=231
+  2716/10000 accepted | api=30 dup_drop=0 type_drop=284
+  3251/10000 accepted | api=36 dup_drop=0 type_drop=349
+  3793/10000 accepted | api=42 dup_drop=0 type_drop=407
+  4342/10000 accepted | api=48 dup_drop=0 type_drop=458
+  4879/10000 accepted | api=54 dup_drop=0 type_drop=521
+  5418/10000 accepted | api=60 dup_drop=0 type_drop=582
+  5955/10000 accepted | api=66 dup_drop=0 type_drop=645
+  6488/10000 accepted | api=72 dup_drop=0 type_drop=712
+  7017/10000 accepted | api=78 dup_drop=0 type_drop=783
+  7560/10000 accepted | api=84 dup_drop=0 type_drop=840
+  8111/10000 accepted | api=90 dup_drop=0 type_drop=889
+  8649/10000 accepted | api=96 dup_drop=0 type_drop=951
+  9188/10000 accepted | api=102 dup_drop=0 type_drop=1012
+  9728/10000 accepted | api=108 dup_drop=0 type_drop=1072
+  10000/10000 accepted | api=111 dup_drop=0 type_drop=1100
+wrote 10000 unique DOIs to eval/data/ai-goldie-source-10k.csv
+  api calls: 111
+  duplicates dropped: 0
+  non-article types dropped: 1100
+  resume file: eval/data/ai-goldie-source-10k.csv.partial.jsonl
