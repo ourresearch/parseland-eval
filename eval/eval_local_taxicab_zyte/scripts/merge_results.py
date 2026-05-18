@@ -138,6 +138,12 @@ def merge(
         int(r.get("No") or 0), r.get("DOI") or "",
     ))
 
+    # Renumber `No` 1..N globally — input CSVs carried per-batch No values
+    # that collide across the three sources (each 1..100 repeated). Make
+    # the merged file's No column a unique sequential row index.
+    for i, r in enumerate(final_rows, start=1):
+        r["No"] = str(i)
+
     out_csv = output_dir / "merged-FINAL.csv"
     tmp = out_csv.with_suffix(".csv.tmp")
     with tmp.open("w", encoding="utf-8", newline="") as f:
