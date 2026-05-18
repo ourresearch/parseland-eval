@@ -1,0 +1,18 @@
+{
+  "label": "prod",
+  "input_csv": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/eval/eval_local_taxicab_zyte/data/rerun-no-authors.csv",
+  "rows_processed": 1619,
+  "total_cost_usd": 345.2722,
+  "closed_by_tier": {
+    "tier_a_reharvest": 1111,
+    "tier_b_local_chrome": 236,
+    "tier_c_zyte": 224,
+    "terminal": 48
+  },
+  "concurrency": 4,
+  "extractor_model": "claude-sonnet-4-5",
+  "max_retries": 2,
+  "cdp_url": "http://localhost:9222",
+  "prompt": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/eval/prompts/ai-goldie-v1.9.2.md",
+  "prompt_version": "v1.9.2"
+}
