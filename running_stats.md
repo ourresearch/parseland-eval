@@ -150,3 +150,41 @@ overlooked one.
 
 - Schema-key consistency scan across all 9,996 records (canonical key set)
 - Per-artifact sha256 in `manifest.json` (currently only source CSV is hashed)
+
+## Parseland diff rounds
+
+Append-only per-round log. Older rows do not get edited.
+
+### Round 1 — 2026-05-20 — Elsevier iter 1 (oxjob #202)
+
+| Item | Value |
+|---|---|
+| Publisher | Elsevier (DOI prefix 10.1016) |
+| Gold source | `human-goldie.csv` Elsevier slice (13 rows) |
+| Rows scored | 11 of 13 (2 deferred: 1 transient Taxicab no-harvest, 1 R2 returned a 174-byte resolves-to-pdf stub) |
+| parseland-lib commit | `fa98bf1` (push to `main`, ECS deploy verified) |
+
+Pre-push state on prod parseland: `POST /parseland` returned **HTTP 500 on every request** due to a pre-existing `UnboundLocalError` in `parse_page()` when `namespace` was anything other than `"doi"` or `"pmh"` (default `None` from raw-HTML callers hit the unbound `fulltext_location` branch). No Elsevier rows could be measured through `POST` against prod before this iteration.
+
+Post-push state on prod parseland (verified `POST` returns 200 on `mee.2007.12.032`, full authors+affiliations+abstract+pdf_url):
+
+| Field | Metric | Value | Notes |
+|---|---|---|---|
+| Authors | mean F1_soft (parseland-eval scorer) | **1.000** | 7 of 11 rows had at least one parsed author; the other 4 are empty-gold + parser-empty matches |
+| Affiliations | mean F1_soft on matched author pairs | **0.988** | byte-perfect on every row where authors matched |
+| Abstract | match rate @ 0.74 threshold | **9 / 11 (81.8%)** | 2 misses are `s0378-1097` (cross-registrar OUP markup) and `jallcom.2006.06.063` (R2 HTML was a "Redirecting" stub at scoring time) |
+| PDF URL | strict match after canonicalization | **1 / 2 gold-truthed** | the celrep miss is a URL representation difference, not a parser miss (same PII, different path style) |
+| Corresponding author | micro F1 over matched pairs | **0.824** | P=1.000, R=0.700, tp/fp/fn = 7/0/3 |
+
+Two further small improvements landed alongside the parser fix:
+
+- `POST /parseland` now accepts optional `namespace` and `resolved_url` fields in the body. Backward compatible. With these populated, callers exercise the publisher parser path instead of the generic fallback — large lift on every per-row metric above.
+- The 4 bot-check-flagged rows in gold were re-fetched via Taxicab POST + Zyte on 2026-05-20. `clpl.2024.100067` recovered fully (1.86 MB real article). `jallcom` Zyte fetch timed out (504, transient — older 2006 article, retry tomorrow). `epsl` and `patcog` already had clean cached HTML despite the bot-check flag in gold; the flag is a stale annotator hint, not a perfect proxy for "R2 holds a captcha".
+
+Deferred to iter 2:
+
+- Per-DOI `test_cases` expansion in `parseland_lib/publisher/parsers/elsevier_bv.py`. The 13-row snapshot was captured (artifact at `parseland-lib/tests/fixtures/elsevier-test-cases-snapshot.py.fragment`) but cannot be added as-is — direct `ElsevierBV.parse()` returns 0 authors on many real Elsevier pages because `authors_found()` returns `False` on their markup variants. The live `POST /parseland` dispatcher routes those pages to a generic citation_author-meta fallback parser. Encoding the dispatcher's output as `ElsevierBV.test_cases` entries would fail the strict-author-count assertion in `tests/test_parsers.py`. Iter 2 needs to either expand ElsevierBV's selectors to cover those variants, or run the per-DOI tests through the dispatcher rather than the parser class directly.
+- Merged-10K secondary gold diff (1,459 Elsevier rows) — pending approval after primary gold improves.
+- URL canonicalization tweak in `score_pdf_url` so `cell.com/article/PII/pdf` vs `cell.com/cell-reports/pdf/PII.pdf` register as equivalent.
+
+Slack thread: <https://impactstory.slack.com/archives/C0AU0BLM50V/p1779303688458089> (today's earlier dataset-shape framing thread).
