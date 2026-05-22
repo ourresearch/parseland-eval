@@ -188,3 +188,23 @@ Deferred to iter 2:
 - URL canonicalization tweak in `score_pdf_url` so `cell.com/article/PII/pdf` vs `cell.com/cell-reports/pdf/PII.pdf` register as equivalent.
 
 Slack thread: <https://impactstory.slack.com/archives/C0AU0BLM50V/p1779303688458089> (today's earlier dataset-shape framing thread).
+
+---
+
+## Parseland diff round — Elsevier iter 2 (modern markup author extraction)
+
+|---|---|
+| Round | parseland-elsevier-iter2 (#203) |
+| Date | 2026-05-21 |
+| parseland-lib commit | `b92a94e` (push to `main`, ECS task definition rev 46) |
+| Patch | `_parse_modern_author_group()` added to `parseland_lib/publisher/parsers/elsevier_bv.py` — handles the React-based ScienceDirect `<div class="author-group">` markup. `authors_found()` also matches it. |
+| Scale | 1,142 of 1,459 Elsevier rows from `merged-FINAL.csv` (10K secondary gold). 317 deferred at resolve-UUID stage (Taxicab harvest gap). |
+
+| Field | Before (iter 1) | After (iter 2) | Δ |
+|---|---:|---:|---|
+| Authors mean F1_soft | 0.000 | **0.808** | +80.8pp |
+| Affiliations mean soft_f1 | 0.000 | 0.390 | +39.0pp (note: 66% of zero-bucket is gold-quality noise per follow-up grounding survey) |
+| Corresponding micro F1 | 0.000 | **0.822** | +82.2pp |
+| Zero parser exceptions across all 1,142 rows |
+
+Followup iters 3–8 (2026-05-21 → 2026-05-22) layered additional changes — see oxjobs #246 (abstract), #247 (authors-meta), #248 (corresp partial). Per-iter LEARNING.md files in those job directories carry the full delta tables and observational proofs.
