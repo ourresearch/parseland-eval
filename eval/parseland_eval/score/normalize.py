@@ -17,6 +17,9 @@ _TRACKING_PARAMS = frozenset(
     {
         "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
         "gclid", "fbclid", "mc_cid", "mc_eid",
+        # ScienceDirect anti-hotlink session tokens — change per request, do
+        # not identify the underlying PDF resource.
+        "md5", "pid", "_user", "_origin", "rdoc", "ts",
     }
 )
 
@@ -52,7 +55,17 @@ def normalize_alpha(text: str | None) -> str:
 
 
 def canonicalize_url(url: str | None) -> str:
-    """Lowercase scheme+host, strip tracking params, drop trailing slash."""
+    """Lowercase scheme+host, strip tracking + session params, drop trailing
+    slash, and apply publisher-specific path equivalences.
+
+    ScienceDirect serves the same article PDF resource at both
+    ``/science/article/pii/<PII>/pdf`` (the canonical landing URL) and
+    ``/science/article/pii/<PII>/pdfft?md5=...&pid=...`` (the time-bound,
+    anti-hotlink signed variant). Treating these as different URLs in strict
+    matching punishes parseland for emitting the clean canonical form when
+    gold happened to have the signed form (or vice versa). Equivalent on the
+    open web: ``/pdfft`` is just ``/pdf`` with a signing wrapper.
+    """
     if not url:
         return ""
     try:
@@ -64,6 +77,11 @@ def canonicalize_url(url: str | None) -> str:
     query_pairs = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True) if k not in _TRACKING_PARAMS]
     query = urlencode(query_pairs)
     path = parts.path.rstrip("/") or "/"
+    # ScienceDirect /pdf ↔ /pdfft equivalence — same resource, different
+    # signing wrapper. Apply only on the ScienceDirect host so we don't
+    # accidentally collapse paths on unrelated sites.
+    if host == "sciencedirect.com" and path.endswith("/pdfft"):
+        path = path[: -len("/pdfft")] + "/pdf"
     return urlunsplit((scheme, host, path, query, ""))
 
 
