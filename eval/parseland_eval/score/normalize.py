@@ -75,8 +75,16 @@ def canonicalize_url(url: str | None) -> str:
     scheme = parts.scheme.lower() or "https"
     host = parts.netloc.lower().removeprefix("www.")
     query_pairs = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True) if k not in _TRACKING_PARAMS]
-    query = urlencode(query_pairs)
     path = parts.path.rstrip("/") or "/"
+    # Lippincott / Wolters Kluwer (journals.lww.com) downloadpdf.aspx: the an=
+    # (article number) is the sole resource identifier. Gold rows carry varied
+    # and sometimes corrupted tracking-param names for the same PDF —
+    # "trckng_src_pg", the misspelling "trcking_src_pg", a missing-underscore
+    # "trckngsrc_pg", even a stray non-ASCII char injected mid-name. None of
+    # them identify the PDF, so keep only an= and drop the rest.
+    if host.endswith("journals.lww.com") and "downloadpdf.aspx" in path.lower():
+        query_pairs = [(k, v) for k, v in query_pairs if k == "an"]
+    query = urlencode(query_pairs)
     # ScienceDirect /pdf ↔ /pdfft equivalence — same resource, different
     # signing wrapper. Apply only on the ScienceDirect host so we don't
     # accidentally collapse paths on unrelated sites.

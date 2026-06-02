@@ -47,6 +47,52 @@ class TestCanonicalizeUrl:
         u = canonicalize_url("https://x.com/a?utm_source=foo&keep=1")
         assert u == "https://x.com/a?keep=1"
 
+    def test_strips_lww_trckng_src_pg(self) -> None:
+        # journals.lww.com downloadpdf.aspx: trckng_src_pg varies (Other /
+        # ArticleViewer / absent) for the same article; the an= param is the
+        # stable resource identifier. The two variants must canonicalize equal.
+        base = (
+            "https://journals.lww.com/j/_layouts/15/oaks.journals/"
+            "downloadpdf.aspx?trckng_src_pg={src}&an=00005131-199004030-00010"
+        )
+        other = canonicalize_url(base.format(src="Other"))
+        article_viewer = canonicalize_url(base.format(src="ArticleViewer"))
+        assert other == article_viewer
+        assert "trckng_src_pg" not in other
+        assert "an=00005131-199004030-00010" in other
+
+    def test_lww_downloadpdf_keeps_only_an(self) -> None:
+        # journals.lww.com downloadpdf.aspx: only an= identifies the PDF. The
+        # page/parser emits the correct "trckng_src_pg"; gold rows carry varied
+        # and even corrupted tracking-param names for the same article. All
+        # must canonicalize to the same an=-only URL.
+        page = canonicalize_url(
+            "https://journals.lww.com/j/_layouts/15/oaks.journals/"
+            "downloadpdf.aspx?trckng_src_pg=Other&an=00005373-199506000-00005"
+        )
+        variants = [
+            # missing 'n'
+            "downloadpdf.aspx?trcking_src_pg=ArticleViewer&an=00005373-199506000-00005",
+            # missing underscore
+            "downloadpdf.aspx?trckngsrc_pg=ArticleViewer&an=00005373-199506000-00005",
+            # stray non-ASCII char injected mid-name (real gold corruption)
+            "downloadpdf.aspx?trcknג_src_pg=ArticleViewer&an=00005373-199506000-00005",
+            # no tracking param at all
+            "downloadpdf.aspx?an=00005373-199506000-00005",
+        ]
+        for v in variants:
+            got = canonicalize_url(
+                "https://journals.lww.com/j/_layouts/15/oaks.journals/" + v
+            )
+            assert got == page, v
+        assert "an=00005373-199506000-00005" in page
+        assert "src_pg" not in page
+
+    def test_lww_an_only_does_not_affect_other_hosts(self) -> None:
+        # The an=-only rule is scoped to journals.lww.com downloadpdf.aspx.
+        u = canonicalize_url("https://example.com/x?an=1&keep=2")
+        assert "keep=2" in u and "an=1" in u
+
 
 class TestNormalizeDoi:
     def test_strips_scheme(self) -> None:
