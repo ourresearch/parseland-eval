@@ -60,9 +60,24 @@ def _extract_affs(author: Any) -> list[str]:
             name = item.get("name") or item.get("raw_string") or ""
         else:
             name = str(item)
-        name = str(name).strip()
-        if name:
-            out.append(name)
+        # Gold stores multiple affiliations per author as one semicolon-joined
+        # rasses string ("aff1; aff2"); parsers return them as separate list
+        # items. Split on ';' so the two representations compare per-affiliation.
+        # Applied symmetrically (gold AND parsed go through here), so a parser
+        # that itself semicolon-joins is normalised the same way and is NOT
+        # penalised — there is no list-vs-joined regression.
+        for part in str(name).split(";"):
+            part = part.strip()
+            if not part:
+                continue
+            # Gold sometimes ';'-appends an email/URL to an affiliation
+            # ("...University; name@x.edu"); that trailing fragment is not a
+            # separate affiliation, so skip parts that are only an email/URL
+            # (otherwise the split invents a spurious gold affiliation and
+            # drops recall on rows the parser scored perfectly).
+            if not _EMAIL.sub("", _URL.sub("", part)).strip(" .,"):
+                continue
+            out.append(part)
     return out
 
 
