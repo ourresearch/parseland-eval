@@ -93,6 +93,25 @@ class TestCanonicalizeUrl:
         u = canonicalize_url("https://example.com/x?an=1&keep=2")
         assert "keep=2" in u and "an=1" in u
 
+    def test_acs_epdf_pdf_and_ref_equivalence(self) -> None:
+        # pubs.acs.org: /doi/epdf/ == /doi/pdf/ (same resource) and
+        # ?ref=article_openPDF is a tracking param. All forms collapse equal.
+        canon = "https://pubs.acs.org/doi/pdf/10.1021/ja076898a"
+        forms = [
+            "https://pubs.acs.org/doi/pdf/10.1021/ja076898a",
+            "https://pubs.acs.org/doi/epdf/10.1021/ja076898a",
+            "https://pubs.acs.org/doi/pdf/10.1021/ja076898a?ref=article_openPDF",
+            "https://pubs.acs.org/doi/epdf/10.1021/ja076898a?ref=article_openPDF",
+        ]
+        for f in forms:
+            assert canonicalize_url(f) == canon, f
+
+    def test_acs_rule_scoped_to_pubs_acs_org(self) -> None:
+        # /doi/epdf/ on a non-ACS host must NOT be rewritten, and a non-ACS
+        # ref param is preserved.
+        u = canonicalize_url("https://example.com/doi/epdf/10.1/x?ref=keep")
+        assert "/doi/epdf/" in u and "ref=keep" in u
+
 
 class TestNormalizeDoi:
     def test_strips_scheme(self) -> None:

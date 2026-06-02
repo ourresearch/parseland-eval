@@ -84,6 +84,13 @@ def canonicalize_url(url: str | None) -> str:
     # them identify the PDF, so keep only an= and drop the rest.
     if host.endswith("journals.lww.com") and "downloadpdf.aspx" in path.lower():
         query_pairs = [(k, v) for k, v in query_pairs if k == "an"]
+    # ACS (pubs.acs.org): /doi/epdf/ is the enhanced-PDF viewer wrapper for the
+    # same resource as /doi/pdf/ (parseland's clean_pdf_url already canonicalizes
+    # to /doi/pdf/; gold sometimes keeps /doi/epdf/). "ref=article_openPDF" is a
+    # tracking param the viewer appends. Host-scoped so other sites are untouched.
+    if host == "pubs.acs.org":
+        path = path.replace("/doi/epdf/", "/doi/pdf/")
+        query_pairs = [(k, v) for k, v in query_pairs if k != "ref"]
     query = urlencode(query_pairs)
     # ScienceDirect /pdf ↔ /pdfft equivalence — same resource, different
     # signing wrapper. Apply only on the ScienceDirect host so we don't
