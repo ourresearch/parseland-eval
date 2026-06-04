@@ -91,6 +91,16 @@ def canonicalize_url(url: str | None) -> str:
     if host == "pubs.acs.org":
         path = path.replace("/doi/epdf/", "/doi/pdf/")
         query_pairs = [(k, v) for k, v in query_pairs if k != "ref"]
+    # Wiley (onlinelibrary.wiley.com): /doi/pdfdirect/, /doi/epdf/, and /doi/pdf/
+    # all serve the same article PDF. parseland's transform_pdf_url enforces
+    # /pdfdirect/ via deliberate rewrite; tests/fixtures/wiley-gold.ndjson
+    # follows that convention. The merged-FINAL.csv 10K corpus uses /doi/pdf/
+    # — the more common user-facing form. Without this equivalence, 216 of
+    # 221 Wiley pdf-present rows in the corpus mismatch on path alone.
+    # Host-scoped so non-Wiley sites are untouched.
+    if host == "onlinelibrary.wiley.com":
+        path = path.replace("/doi/pdfdirect/", "/doi/pdf/")
+        path = path.replace("/doi/epdf/", "/doi/pdf/")
     query = urlencode(query_pairs)
     # ScienceDirect /pdf ↔ /pdfft equivalence — same resource, different
     # signing wrapper. Apply only on the ScienceDirect host so we don't

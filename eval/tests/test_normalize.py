@@ -112,6 +112,34 @@ class TestCanonicalizeUrl:
         u = canonicalize_url("https://example.com/doi/epdf/10.1/x?ref=keep")
         assert "/doi/epdf/" in u and "ref=keep" in u
 
+    def test_wiley_pdfdirect_pdf_equivalence(self) -> None:
+        # onlinelibrary.wiley.com: /doi/pdfdirect/ and /doi/pdf/ both serve
+        # the same article PDF. parseland's transform_pdf_url deliberately
+        # rewrites /pdf/ -> /pdfdirect/, but merged-FINAL.csv gold uses
+        # /pdf/ — they must canonicalize equal.
+        canon = "https://onlinelibrary.wiley.com/doi/pdf/10.1002/chin.198035056"
+        forms = [
+            "https://onlinelibrary.wiley.com/doi/pdf/10.1002/chin.198035056",
+            "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/chin.198035056",
+            "https://onlinelibrary.wiley.com/doi/epdf/10.1002/chin.198035056",
+        ]
+        for f in forms:
+            assert canonicalize_url(f) == canon, f
+
+    def test_wiley_rule_scoped_to_onlinelibrary_wiley_com(self) -> None:
+        # /doi/pdfdirect/ on a non-Wiley host must NOT be rewritten.
+        u = canonicalize_url("https://example.com/doi/pdfdirect/10.1/foo")
+        assert "/doi/pdfdirect/" in u
+        v = canonicalize_url("https://example.com/doi/epdf/10.1/foo")
+        assert "/doi/epdf/" in v
+
+    def test_wiley_preserves_different_dois(self) -> None:
+        # Distinct DOIs must remain distinct after canonicalization, even
+        # under the same Wiley equivalence rule.
+        a = canonicalize_url("https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/foo")
+        b = canonicalize_url("https://onlinelibrary.wiley.com/doi/pdf/10.1002/bar")
+        assert a != b
+
 
 class TestNormalizeDoi:
     def test_strips_scheme(self) -> None:
