@@ -140,6 +140,42 @@ class TestCanonicalizeUrl:
         b = canonicalize_url("https://onlinelibrary.wiley.com/doi/pdf/10.1002/bar")
         assert a != b
 
+    def test_sage_download_param_dropped(self) -> None:
+        # SAGE page anchor: /doi/pdf/X?download=true. Gold drops the param.
+        canon = "https://journals.sagepub.com/doi/pdf/10.1177/0021934716658862"
+        forms = [
+            "https://journals.sagepub.com/doi/pdf/10.1177/0021934716658862",
+            "https://journals.sagepub.com/doi/pdf/10.1177/0021934716658862?download=true",
+        ]
+        for f in forms:
+            assert canonicalize_url(f) == canon, f
+
+    def test_sage_rule_scoped(self) -> None:
+        # download= on a non-SAGE host is preserved.
+        u = canonicalize_url("https://example.com/x?download=true")
+        assert "download=true" in u
+
+    def test_taylor_epdf_pdf_and_needaccess_equivalence(self) -> None:
+        # tandfonline.com: /doi/epdf/ == /doi/pdf/; needAccess and role are
+        # page-state tracking params, not URL identity.
+        canon = "https://tandfonline.com/doi/pdf/10.1080/00046973.1970.9676590"
+        forms = [
+            "https://www.tandfonline.com/doi/pdf/10.1080/00046973.1970.9676590",
+            "https://www.tandfonline.com/doi/epdf/10.1080/00046973.1970.9676590",
+            "https://www.tandfonline.com/doi/epdf/10.1080/00046973.1970.9676590?needAccess=true",
+            "https://www.tandfonline.com/doi/pdf/10.1080/00046973.1970.9676590?needAccess=true&role=button",
+        ]
+        for f in forms:
+            assert canonicalize_url(f) == canon, f
+
+    def test_taylor_rule_scoped(self) -> None:
+        # needAccess on a non-Taylor host is preserved; /doi/epdf/ on a
+        # non-Taylor host is preserved.
+        u = canonicalize_url("https://example.com/x?needAccess=true")
+        assert "needAccess=true" in u
+        v = canonicalize_url("https://example.com/doi/epdf/10.1/foo")
+        assert "/doi/epdf/" in v
+
 
 class TestNormalizeDoi:
     def test_strips_scheme(self) -> None:

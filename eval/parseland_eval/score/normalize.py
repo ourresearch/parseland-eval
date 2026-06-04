@@ -101,6 +101,18 @@ def canonicalize_url(url: str | None) -> str:
     if host == "onlinelibrary.wiley.com":
         path = path.replace("/doi/pdfdirect/", "/doi/pdf/")
         path = path.replace("/doi/epdf/", "/doi/pdf/")
+    # SAGE (journals.sagepub.com): the page emits a /doi/pdf/X anchor with a
+    # ?download=true tracking param. Gold drops it. They identify the same PDF.
+    if host == "journals.sagepub.com":
+        query_pairs = [(k, v) for k, v in query_pairs if k != "download"]
+    # Taylor & Francis (tandfonline.com): /doi/epdf/ and /doi/pdf/ both serve
+    # the same article PDF (Taylor's clean_pdf_url already collapses /epdf/ →
+    # /pdf/ for the parser path; gold sometimes keeps /epdf/). needAccess and
+    # role are state tracking params the page appends, not part of the URL
+    # identity.
+    if host.endswith("tandfonline.com"):
+        path = path.replace("/doi/epdf/", "/doi/pdf/")
+        query_pairs = [(k, v) for k, v in query_pairs if k not in ("needAccess", "role")]
     query = urlencode(query_pairs)
     # ScienceDirect /pdf ↔ /pdfft equivalence — same resource, different
     # signing wrapper. Apply only on the ScienceDirect host so we don't
