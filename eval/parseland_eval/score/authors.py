@@ -11,7 +11,7 @@ from typing import Any, Iterable
 from nameparser import HumanName  # type: ignore[import-untyped]
 from rapidfuzz import fuzz  # type: ignore[import-untyped]
 
-from parseland_eval.score.normalize import normalize_alpha
+from parseland_eval.score.normalize import is_empty_value, normalize_alpha
 
 
 @dataclass(frozen=True)
@@ -75,6 +75,8 @@ def _name_full(name: str) -> str:
 
 
 def _extract_names(authors: Iterable[Any]) -> list[str]:
+    if is_empty_value(authors):
+        return []
     names: list[str] = []
     for a in authors:
         if isinstance(a, dict):
@@ -99,6 +101,19 @@ def score_authors(
 ) -> AuthorResult:
     gold_names = _extract_names(gold_authors)
     parsed_names = _extract_names(parsed_authors)
+
+    if not gold_names and not parsed_names:
+        return AuthorResult(
+            matched=(),
+            gold_unmatched=(),
+            parsed_unmatched=(),
+            precision=1.0,
+            recall=1.0,
+            f1=1.0,
+            precision_soft=1.0,
+            recall_soft=1.0,
+            f1_soft=1.0,
+        )
 
     gold_keys = [_name_key(n) for n in gold_names]
     parsed_keys = [_name_key(n) for n in parsed_names]

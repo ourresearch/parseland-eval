@@ -8,8 +8,8 @@ def _mk(name: str, ca: bool = False) -> dict:
 class TestAuthorMatching:
     def test_empty_inputs(self) -> None:
         r = score_authors([], [])
-        assert r.f1 == 0.0
-        assert r.f1_soft == 0.0
+        assert r.f1 == 1.0
+        assert r.f1_soft == 1.0
 
     def test_perfect_match_exact(self) -> None:
         gold = [_mk("Jane Doe"), _mk("John Smith")]

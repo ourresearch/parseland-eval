@@ -7,12 +7,14 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from collections.abc import Mapping, Sequence
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from unidecode import unidecode  # type: ignore[import-untyped]
 
 _WHITESPACE = re.compile(r"\s+")
 _PUNCT = re.compile(r"[^\w\s]+", flags=re.UNICODE)
+_EMPTY_STRINGS = {"", "na", "n/a", "null", "[]", "{}"}
 _TRACKING_PARAMS = frozenset(
     {
         "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
@@ -22,6 +24,19 @@ _TRACKING_PARAMS = frozenset(
         "md5", "pid", "_user", "_origin", "rdoc", "ts",
     }
 )
+
+
+def is_empty_value(value: object) -> bool:
+    """Return True for values that should score as an empty field."""
+    if value is None:
+        return True
+    if isinstance(value, str):
+        return normalize_text(value) in _EMPTY_STRINGS
+    if isinstance(value, Mapping):
+        return len(value) == 0
+    if isinstance(value, Sequence) and not isinstance(value, (bytes, bytearray, str)):
+        return len(value) == 0
+    return False
 
 
 def strip_diacritics(text: str) -> str:
