@@ -1,0 +1,3 @@
+12:01:14 INFO sampling 10000 DOIs from Crossref (excluding 100 gold, resuming 0 accepted)
+sampled 10000 corpus DOIs → runs/goldie-10k-20260605T160114Z/source.csv
+resume file: runs/goldie-10k-20260605T160114Z/source.csv.partial.jsonl

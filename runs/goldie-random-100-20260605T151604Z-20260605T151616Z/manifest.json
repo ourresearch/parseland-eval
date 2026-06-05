@@ -1,0 +1,66 @@
+{
+  "corpus": "goldie-random-100-20260605T151604Z",
+  "model": "claude-sonnet-4-6",
+  "tiers": [
+    "cached"
+  ],
+  "concurrency": 200,
+  "batch_concurrency": 4,
+  "max_cost_usd": null,
+  "batches": 1,
+  "rows": 100,
+  "landed": 100,
+  "failed": 1,
+  "cost_usd": 14.9012,
+  "taxicab_reharvest": {
+    "refreshed": 60,
+    "post-timeout": 2,
+    "unchanged": 9
+  },
+  "events": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-random-100-20260605T151604Z-20260605T151616Z/logs/live-agent-events.ndjson",
+  "live_html": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-random-100-20260605T151604Z-20260605T151616Z/live.html",
+  "status": "complete",
+  "merged_csv": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-random-100-20260605T151604Z-20260605T151616Z/merged.csv",
+  "tier1_landed": 100,
+  "tier1_failed": 1,
+  "fallback": {
+    "tier": "cloud",
+    "enabled": true,
+    "status": "complete",
+    "cost_usd": 23.3703,
+    "fallback_attempted": 82,
+    "fallback_returned": 82,
+    "fallback_used": 32,
+    "fallback_noop_returned": 50,
+    "fallback_filled_fields": {
+      "rases": 19,
+      "abstract": 5,
+      "ca": 7,
+      "authors": 5,
+      "broken_doi": 5,
+      "pdf_url": 3
+    },
+    "labels": {
+      "iter-R:extraction-miss": 15,
+      "iter-R:paywalled=taylor-francis": 3,
+      "iter-R:paywalled=elsevier": 8,
+      "iter-R:terminal:broken_doi": 4,
+      "iter-R:terminal:no_english": 5,
+      "iter-R:paywalled=springer": 3,
+      "iter-R:paywalled=degruyter": 2,
+      "iter-R:pdf-redirect": 1,
+      "iter-R:paywalled=ieee": 1,
+      "iter-R:paywalled=sage": 1,
+      "iter-R:router-only=elsevier-linkinghub": 1,
+      "iter-R:paywalled=oup": 1,
+      "iter-R:paywalled=wiley": 2,
+      "iter-R:paywalled=jstor": 1
+    }
+  },
+  "final_status": {
+    "true": 99,
+    "false": 1,
+    "other": 0
+  },
+  "total_cost_usd": 38.2715
+}

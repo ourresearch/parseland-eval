@@ -1,0 +1,3026 @@
+{
+  "type": "summary",
+  "rows": 100,
+  "fetch_ok_rows": 99,
+  "fetch_ok_rate": 0.99,
+  "field_presence": {
+    "rases": {
+      "present": 67,
+      "rows": 100
+    },
+    "pdf_url": {
+      "present": 66,
+      "rows": 100
+    },
+    "ca": {
+      "present": 39,
+      "rows": 100
+    },
+    "abstract": {
+      "present": 83,
+      "rows": 100
+    },
+    "authors": {
+      "present": 89,
+      "rows": 100
+    }
+  },
+  "field_missing": {
+    "rases": {
+      "missing": 33,
+      "rows": 100
+    },
+    "pdf_url": {
+      "missing": 34,
+      "rows": 100
+    },
+    "ca": {
+      "missing": 61,
+      "rows": 100
+    },
+    "abstract": {
+      "missing": 17,
+      "rows": 100
+    },
+    "authors": {
+      "missing": 11,
+      "rows": 100
+    }
+  },
+  "missing_field_combinations": [
+    [
+      "ca",
+      23
+    ],
+    [
+      "rases,pdf_url,ca",
+      10
+    ],
+    [
+      "pdf_url",
+      9
+    ],
+    [
+      "rases,pdf_url,ca,abstract,authors",
+      6
+    ],
+    [
+      "rases,ca",
+      5
+    ],
+    [
+      "pdf_url,ca",
+      4
+    ],
+    [
+      "rases",
+      3
+    ],
+    [
+      "rases,ca,abstract",
+      3
+    ],
+    [
+      "pdf_url,ca,abstract",
+      2
+    ],
+    [
+      "rases,ca,abstract,authors",
+      2
+    ],
+    [
+      "rases,pdf_url,ca,authors",
+      2
+    ],
+    [
+      "ca,abstract",
+      2
+    ],
+    [
+      "rases,pdf_url,ca,abstract",
+      1
+    ],
+    [
+      "rases,ca,authors",
+      1
+    ],
+    [
+      "abstract",
+      1
+    ]
+  ],
+  "extraction_miss": 15,
+  "top_labels": [
+    [
+      "taxicab-reharvest:refreshed",
+      60
+    ],
+    [
+      "iter-R:extraction-miss",
+      15
+    ],
+    [
+      "taxicab-reharvest:unchanged",
+      9
+    ],
+    [
+      "iter-R:paywalled=elsevier",
+      8
+    ],
+    [
+      "iter-R:terminal:no_english",
+      5
+    ],
+    [
+      "iter-R:terminal:broken_doi",
+      4
+    ],
+    [
+      "iter-R:paywalled=taylor-francis",
+      3
+    ],
+    [
+      "iter-R:paywalled=springer",
+      3
+    ],
+    [
+      "taxicab-reharvest:post-timeout",
+      2
+    ],
+    [
+      "iter-R:paywalled=degruyter",
+      2
+    ],
+    [
+      "iter-R:paywalled=wiley",
+      2
+    ],
+    [
+      "iter-R:pdf-redirect",
+      1
+    ],
+    [
+      "iter-R:paywalled=ieee",
+      1
+    ],
+    [
+      "iter-R:paywalled=sage",
+      1
+    ],
+    [
+      "iter-R:router-only=elsevier-linkinghub",
+      1
+    ],
+    [
+      "iter-R:paywalled=oup",
+      1
+    ],
+    [
+      "iter-R:paywalled=jstor",
+      1
+    ]
+  ],
+  "quality_focus": {
+    "limit": 20,
+    "counts": {
+      "all_core_empty": 6,
+      "terminal_flagged_empty": 5,
+      "bot_check_empty": 0,
+      "unresolved_all_core_empty": 0,
+      "ca_only_missing": 23,
+      "ca_convention_candidates": 5,
+      "ca_needs_evidence_audit": 18,
+      "ca_live_no_marker": 0,
+      "ca_live_marker_candidates": 0,
+      "ca_live_blocked": 0,
+      "ca_page_no_marker": 0,
+      "ca_page_marker_candidates": 0,
+      "extraction_miss": 15,
+      "page_checked_residual_missing": 0,
+      "multi_priority_missing": 27
+    },
+    "ca_triage_counts": {
+      "needs_explicit_ca_evidence_audit": 18,
+      "book_chapter_or_ebook": 2,
+      "conference_or_proceedings": 2,
+      "known_ca_thin_prefix": 1
+    },
+    "all_core_empty": [
+      {
+        "no": "23",
+        "doi": "10.4324/9781315684840-28",
+        "link": "https://doi.org/10.4324/9781315684840-28",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 60.47,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/63637a4d-5e6d-4cc9-b664-13996560e6f6",
+          "browser_screenshot_present": true,
+          "browser_step_count": 9,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "38",
+        "doi": "10.1016/s1569-9048(21)00072-0",
+        "link": "https://doi.org/10.1016/s1569-9048(21)00072-0",
+        "status": "FALSE",
+        "fetch_ok": false,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:paywalled=elsevier"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:paywalled=elsevier",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 27.55,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/a13a906a-925a-456b-9493-8e6ad7dcf434",
+          "browser_screenshot_present": true,
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "44",
+        "doi": "10.22533/at.ed.0011809122",
+        "link": "https://doi.org/10.22533/at.ed.0011809122",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:pdf-redirect"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:pdf-redirect",
+        "terminal_flags": {
+          "resolves_to_pdf": true,
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "js_or_static_incomplete",
+            "duration_s": 60.38,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/68ad965c-9cc9-4e5e-b4a2-bf030fdbe857",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "46",
+        "doi": "10.5117/9789053563083",
+        "link": "https://doi.org/10.5117/9789053563083",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "tiny_html",
+            "duration_s": 61.43,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/0a595de0-7ccd-4e04-a38d-4ed3458451c0",
+          "browser_screenshot_present": true,
+          "browser_step_count": 11,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "78",
+        "doi": "10.2478/vzoo-2013-0010",
+        "link": "https://doi.org/10.2478/vzoo-2013-0010",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 61.82,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/544969e4-09b5-4743-93da-ff8582fe132e",
+          "browser_screenshot_present": true,
+          "browser_step_count": 33,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "92",
+        "doi": "10.58749/skd.ps.2024.rpc.c1.126031",
+        "link": "https://doi.org/10.58749/skd.ps.2024.rpc.c1.126031",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 61.05,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/374ca919-d9fe-4eef-b022-ef5d082fb81a",
+          "browser_screenshot_present": true,
+          "browser_step_count": 6,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      }
+    ],
+    "terminal_flagged_empty": [
+      {
+        "no": "23",
+        "doi": "10.4324/9781315684840-28",
+        "link": "https://doi.org/10.4324/9781315684840-28",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 60.47,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/63637a4d-5e6d-4cc9-b664-13996560e6f6",
+          "browser_screenshot_present": true,
+          "browser_step_count": 9,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "44",
+        "doi": "10.22533/at.ed.0011809122",
+        "link": "https://doi.org/10.22533/at.ed.0011809122",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:pdf-redirect"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:pdf-redirect",
+        "terminal_flags": {
+          "resolves_to_pdf": true,
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "js_or_static_incomplete",
+            "duration_s": 60.38,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/68ad965c-9cc9-4e5e-b4a2-bf030fdbe857",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "46",
+        "doi": "10.5117/9789053563083",
+        "link": "https://doi.org/10.5117/9789053563083",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "tiny_html",
+            "duration_s": 61.43,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/0a595de0-7ccd-4e04-a38d-4ed3458451c0",
+          "browser_screenshot_present": true,
+          "browser_step_count": 11,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "78",
+        "doi": "10.2478/vzoo-2013-0010",
+        "link": "https://doi.org/10.2478/vzoo-2013-0010",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 61.82,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/544969e4-09b5-4743-93da-ff8582fe132e",
+          "browser_screenshot_present": true,
+          "browser_step_count": 33,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "92",
+        "doi": "10.58749/skd.ps.2024.rpc.c1.126031",
+        "link": "https://doi.org/10.58749/skd.ps.2024.rpc.c1.126031",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 61.05,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/374ca919-d9fe-4eef-b022-ef5d082fb81a",
+          "browser_screenshot_present": true,
+          "browser_step_count": 6,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      }
+    ],
+    "bot_check_empty": [],
+    "unresolved_all_core_empty": [],
+    "ca_only_missing": [
+      {
+        "no": "2",
+        "doi": "10.52780/res.v28i00.17379",
+        "link": "https://doi.org/10.52780/res.v28i00.17379",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/bc553c6b-726d-4d24-ae21-308bbb2f9056",
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "6",
+        "doi": "10.11003/jpnt.2016.5.3.109",
+        "link": "https://doi.org/10.11003/jpnt.2016.5.3.109",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:post-timeout"
+        ],
+        "notes": "taxicab-reharvest:post-timeout",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "post-timeout",
+            "reason": "wall_marker",
+            "duration_s": 61.78,
+            "http_status_post": "timeout",
+            "http_status_get": 200,
+            "error": "HTTPConnectionPool(host='harvester-load-balancer-366186003.us-east-1.elb.amazonaws.com', port=80): Read timed out. (read timeout=30)"
+          },
+          "browser_live_url": "https://live.browser-use.com/session/b2c9705b-09a8-4102-86f1-6b16bb82e655",
+          "browser_screenshot_present": true,
+          "browser_step_count": 19,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "13",
+        "doi": "10.1061/jeegav.0000956",
+        "link": "https://doi.org/10.1061/jeegav.0000956",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/b494a6ac-fe63-47e0-b245-31ad0f2147e9",
+          "browser_step_count": 11,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "16",
+        "doi": "10.1080/09670878909371316",
+        "link": "https://doi.org/10.1080/09670878909371316",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 2.15,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/60e42963-5426-4f3e-bba8-6df06e8332c5",
+          "browser_screenshot_present": true,
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "25",
+        "doi": "10.1007/978-3-642-13018-2_20",
+        "link": "https://doi.org/10.1007/978-3-642-13018-2_20",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "iter-R:terminal:no_english",
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "iter-R:terminal:no_english | taxicab-reharvest:refreshed",
+        "terminal_flags": {
+          "no_english": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 4.09,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/a09554a1-1cb2-4b92-93e8-cf9a6fef62c8",
+          "browser_screenshot_present": true,
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "book_chapter_or_ebook",
+          "note": "DOI suffix looks like an ISBN/eBook chapter; CA is often absent from landing-page metadata."
+        }
+      },
+      {
+        "no": "27",
+        "doi": "10.1109/tvt.2022.3164935",
+        "link": "https://doi.org/10.1109/tvt.2022.3164935",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 5.49,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/8b6c0758-1fc3-435f-9b86-15f50d1a84d0",
+          "browser_screenshot_present": true,
+          "browser_step_count": 10,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "conference_or_proceedings",
+          "note": "Conference/proceedings pages often omit explicit corresponding-author markers."
+        }
+      },
+      {
+        "no": "34",
+        "doi": "10.26418/jp.v8i1.50702",
+        "link": "https://doi.org/10.26418/jp.v8i1.50702",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "iter-R:terminal:no_english"
+        ],
+        "notes": "iter-R:terminal:no_english",
+        "terminal_flags": {
+          "no_english": true
+        },
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/e778affc-24a7-46fd-ab99-b121c6d2c132",
+          "browser_screenshot_present": true,
+          "browser_step_count": 5,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "41",
+        "doi": "10.26740/tc.v8i2.60372",
+        "link": "https://doi.org/10.26740/tc.v8i2.60372",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/8627e9b2-06b6-4102-8143-9b4f6f9e0c36",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "45",
+        "doi": "10.9771/cp.v13i4.30450",
+        "link": "https://doi.org/10.9771/cp.v13i4.30450",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 4.04,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/5b0e9534-12fb-4819-81d0-d72223ba317b",
+          "browser_screenshot_present": true,
+          "browser_step_count": 5,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "53",
+        "doi": "10.1093/ndt/gfae069.694",
+        "link": "https://doi.org/10.1093/ndt/gfae069.694",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/857c56d3-48a5-45a0-b68b-bf599e19efd7",
+          "browser_screenshot_present": true,
+          "browser_step_count": 13,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: abstract_text = abstract_html.replace...",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "58",
+        "doi": "10.1007/978-1-4757-3497-3_3",
+        "link": "https://doi.org/10.1007/978-1-4757-3497-3_3",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 3.42,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/279c18d3-ab75-44d6-a2ad-79fb33fede65",
+          "browser_screenshot_present": true,
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "book_chapter_or_ebook",
+          "note": "DOI suffix looks like an ISBN/eBook chapter; CA is often absent from landing-page metadata."
+        }
+      },
+      {
+        "no": "59",
+        "doi": "10.26754/cinaic.2021.0047",
+        "link": "https://doi.org/10.26754/cinaic.2021.0047",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/ea50f54b-8903-4ef3-9a47-0188126acd74",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "60",
+        "doi": "10.25267/periferica.2018.i19.27",
+        "link": "https://doi.org/10.25267/periferica.2018.i19.27",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 2.8,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/3b0e6c52-3ecb-4679-a305-57b724e08b34",
+          "browser_step_count": 3,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "64",
+        "doi": "10.1017/s2475262200007784",
+        "link": "https://doi.org/10.1017/s2475262200007784",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/c2902919-5ad9-49ca-82cf-aa38c5653043",
+          "browser_step_count": 17,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "known_ca_thin_prefix",
+          "note": "Cambridge UP — only ~14/143 gold rows mark a CA (G-010)"
+        }
+      },
+      {
+        "no": "66",
+        "doi": "10.1177/152574018701000201",
+        "link": "https://doi.org/10.1177/152574018701000201",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 19.84,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/4ccbb9a8-401b-489f-8e30-1c16e1f2d32e",
+          "browser_screenshot_present": true,
+          "browser_step_count": 13,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "72",
+        "doi": "10.2208/jscej.2001.682_57",
+        "link": "https://doi.org/10.2208/jscej.2001.682_57",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/e712d28d-2704-4390-92fc-770115a6e1d1",
+          "browser_step_count": 13,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "75",
+        "doi": "10.5796/electrochemistry.84.854",
+        "link": "https://doi.org/10.5796/electrochemistry.84.854",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 3.1,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/f2b74c91-a9ee-4efd-9ae2-93eb929ef0fe",
+          "browser_step_count": 2,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "81",
+        "doi": "10.21837/pmjournal.v16.i6.473",
+        "link": "https://doi.org/10.21837/pmjournal.v16.i6.473",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 8.14,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/3bc634ae-e99e-46be-a319-0c68d89adfa8",
+          "browser_screenshot_present": true,
+          "browser_step_count": 7,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "86",
+        "doi": "10.11150/kansenshogakuzasshi.84.727",
+        "link": "https://doi.org/10.11150/kansenshogakuzasshi.84.727",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "iter-R:terminal:no_english"
+        ],
+        "notes": "iter-R:terminal:no_english",
+        "terminal_flags": {
+          "no_english": true
+        },
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/49fb1999-b244-4e55-ac49-ac3c5f82f00b",
+          "browser_step_count": 11,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "88",
+        "doi": "10.1159/000335761",
+        "link": "https://doi.org/10.1159/000335761",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/ce96d6f7-5b51-44af-be99-efc10e4e9556",
+          "browser_screenshot_present": true,
+          "browser_step_count": 24,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      }
+    ],
+    "ca_convention_candidates": [
+      {
+        "no": "25",
+        "doi": "10.1007/978-3-642-13018-2_20",
+        "link": "https://doi.org/10.1007/978-3-642-13018-2_20",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "iter-R:terminal:no_english",
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "iter-R:terminal:no_english | taxicab-reharvest:refreshed",
+        "terminal_flags": {
+          "no_english": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 4.09,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/a09554a1-1cb2-4b92-93e8-cf9a6fef62c8",
+          "browser_screenshot_present": true,
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "book_chapter_or_ebook",
+          "note": "DOI suffix looks like an ISBN/eBook chapter; CA is often absent from landing-page metadata."
+        }
+      },
+      {
+        "no": "27",
+        "doi": "10.1109/tvt.2022.3164935",
+        "link": "https://doi.org/10.1109/tvt.2022.3164935",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 5.49,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/8b6c0758-1fc3-435f-9b86-15f50d1a84d0",
+          "browser_screenshot_present": true,
+          "browser_step_count": 10,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "conference_or_proceedings",
+          "note": "Conference/proceedings pages often omit explicit corresponding-author markers."
+        }
+      },
+      {
+        "no": "58",
+        "doi": "10.1007/978-1-4757-3497-3_3",
+        "link": "https://doi.org/10.1007/978-1-4757-3497-3_3",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 3.42,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/279c18d3-ab75-44d6-a2ad-79fb33fede65",
+          "browser_screenshot_present": true,
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "book_chapter_or_ebook",
+          "note": "DOI suffix looks like an ISBN/eBook chapter; CA is often absent from landing-page metadata."
+        }
+      },
+      {
+        "no": "64",
+        "doi": "10.1017/s2475262200007784",
+        "link": "https://doi.org/10.1017/s2475262200007784",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/c2902919-5ad9-49ca-82cf-aa38c5653043",
+          "browser_step_count": 17,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "known_ca_thin_prefix",
+          "note": "Cambridge UP — only ~14/143 gold rows mark a CA (G-010)"
+        }
+      },
+      {
+        "no": "95",
+        "doi": "10.1063/1.530264",
+        "link": "https://doi.org/10.1063/1.530264",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:abstract",
+            "duration_s": 22.17,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/28f3d41b-ed04-4e52-b579-2b083850a625",
+          "browser_screenshot_present": true,
+          "browser_step_count": 14,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "conference_or_proceedings",
+          "note": "Conference/proceedings pages often omit explicit corresponding-author markers."
+        }
+      }
+    ],
+    "ca_needs_evidence_audit": [
+      {
+        "no": "2",
+        "doi": "10.52780/res.v28i00.17379",
+        "link": "https://doi.org/10.52780/res.v28i00.17379",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/bc553c6b-726d-4d24-ae21-308bbb2f9056",
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "6",
+        "doi": "10.11003/jpnt.2016.5.3.109",
+        "link": "https://doi.org/10.11003/jpnt.2016.5.3.109",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:post-timeout"
+        ],
+        "notes": "taxicab-reharvest:post-timeout",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "post-timeout",
+            "reason": "wall_marker",
+            "duration_s": 61.78,
+            "http_status_post": "timeout",
+            "http_status_get": 200,
+            "error": "HTTPConnectionPool(host='harvester-load-balancer-366186003.us-east-1.elb.amazonaws.com', port=80): Read timed out. (read timeout=30)"
+          },
+          "browser_live_url": "https://live.browser-use.com/session/b2c9705b-09a8-4102-86f1-6b16bb82e655",
+          "browser_screenshot_present": true,
+          "browser_step_count": 19,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "13",
+        "doi": "10.1061/jeegav.0000956",
+        "link": "https://doi.org/10.1061/jeegav.0000956",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/b494a6ac-fe63-47e0-b245-31ad0f2147e9",
+          "browser_step_count": 11,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "16",
+        "doi": "10.1080/09670878909371316",
+        "link": "https://doi.org/10.1080/09670878909371316",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 2.15,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/60e42963-5426-4f3e-bba8-6df06e8332c5",
+          "browser_screenshot_present": true,
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "34",
+        "doi": "10.26418/jp.v8i1.50702",
+        "link": "https://doi.org/10.26418/jp.v8i1.50702",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "iter-R:terminal:no_english"
+        ],
+        "notes": "iter-R:terminal:no_english",
+        "terminal_flags": {
+          "no_english": true
+        },
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/e778affc-24a7-46fd-ab99-b121c6d2c132",
+          "browser_screenshot_present": true,
+          "browser_step_count": 5,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "41",
+        "doi": "10.26740/tc.v8i2.60372",
+        "link": "https://doi.org/10.26740/tc.v8i2.60372",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/8627e9b2-06b6-4102-8143-9b4f6f9e0c36",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "45",
+        "doi": "10.9771/cp.v13i4.30450",
+        "link": "https://doi.org/10.9771/cp.v13i4.30450",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 4.04,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/5b0e9534-12fb-4819-81d0-d72223ba317b",
+          "browser_screenshot_present": true,
+          "browser_step_count": 5,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "53",
+        "doi": "10.1093/ndt/gfae069.694",
+        "link": "https://doi.org/10.1093/ndt/gfae069.694",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/857c56d3-48a5-45a0-b68b-bf599e19efd7",
+          "browser_screenshot_present": true,
+          "browser_step_count": 13,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: abstract_text = abstract_html.replace...",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "59",
+        "doi": "10.26754/cinaic.2021.0047",
+        "link": "https://doi.org/10.26754/cinaic.2021.0047",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/ea50f54b-8903-4ef3-9a47-0188126acd74",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "60",
+        "doi": "10.25267/periferica.2018.i19.27",
+        "link": "https://doi.org/10.25267/periferica.2018.i19.27",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 2.8,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/3b0e6c52-3ecb-4679-a305-57b724e08b34",
+          "browser_step_count": 3,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "66",
+        "doi": "10.1177/152574018701000201",
+        "link": "https://doi.org/10.1177/152574018701000201",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 19.84,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/4ccbb9a8-401b-489f-8e30-1c16e1f2d32e",
+          "browser_screenshot_present": true,
+          "browser_step_count": 13,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "72",
+        "doi": "10.2208/jscej.2001.682_57",
+        "link": "https://doi.org/10.2208/jscej.2001.682_57",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/e712d28d-2704-4390-92fc-770115a6e1d1",
+          "browser_step_count": 13,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "75",
+        "doi": "10.5796/electrochemistry.84.854",
+        "link": "https://doi.org/10.5796/electrochemistry.84.854",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 3.1,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/f2b74c91-a9ee-4efd-9ae2-93eb929ef0fe",
+          "browser_step_count": 2,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "81",
+        "doi": "10.21837/pmjournal.v16.i6.473",
+        "link": "https://doi.org/10.21837/pmjournal.v16.i6.473",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed"
+        ],
+        "notes": "taxicab-reharvest:refreshed",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 8.14,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/3bc634ae-e99e-46be-a319-0c68d89adfa8",
+          "browser_screenshot_present": true,
+          "browser_step_count": 7,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "86",
+        "doi": "10.11150/kansenshogakuzasshi.84.727",
+        "link": "https://doi.org/10.11150/kansenshogakuzasshi.84.727",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [
+          "iter-R:terminal:no_english"
+        ],
+        "notes": "iter-R:terminal:no_english",
+        "terminal_flags": {
+          "no_english": true
+        },
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/49fb1999-b244-4e55-ac49-ac3c5f82f00b",
+          "browser_step_count": 11,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "88",
+        "doi": "10.1159/000335761",
+        "link": "https://doi.org/10.1159/000335761",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/ce96d6f7-5b51-44af-be99-efc10e4e9556",
+          "browser_screenshot_present": true,
+          "browser_step_count": 24,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "91",
+        "doi": "10.2530/jslsm1980.5.3_137",
+        "link": "https://doi.org/10.2530/jslsm1980.5.3_137",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/837d215a-0328-448d-b2d8-8bd3095dc397",
+          "browser_step_count": 6,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      },
+      {
+        "no": "96",
+        "doi": "10.3130/aija.67.123_2",
+        "link": "https://doi.org/10.3130/aija.67.123_2",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca"
+        ],
+        "labels": [],
+        "event": {
+          "browser_live_url": "https://live.browser-use.com/session/81858c82-0a62-4b81-bcf6-930299616650",
+          "browser_step_count": 3,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        },
+        "ca_triage": {
+          "reason": "needs_explicit_ca_evidence_audit",
+          "note": "Authors/rases/abstract/pdf are present, but no explicit page-evidence CA marker was found."
+        }
+      }
+    ],
+    "ca_live_no_marker": [],
+    "ca_live_marker_candidates": [],
+    "ca_live_blocked": [],
+    "ca_page_no_marker": [],
+    "ca_page_marker_candidates": [],
+    "extraction_miss": [
+      {
+        "no": "7",
+        "doi": "10.4324/9780429030772-16",
+        "link": "https://doi.org/10.4324/9780429030772-16",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 11.84,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/f1d30319-2e86-4dc8-bf03-2b741e0f9cde",
+          "browser_screenshot_present": true,
+          "browser_step_count": 9,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: output = {",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "12",
+        "doi": "10.1097/rhu.0b013e318258b725",
+        "link": "https://doi.org/10.1097/rhu.0b013e318258b725",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:abstract,pdf_url",
+            "duration_s": 3.26,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/45fad033-69e0-4904-8e50-5f9b8fa5a787",
+          "browser_screenshot_present": true,
+          "browser_step_count": 9,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "19",
+        "doi": "10.1109/glocom.1999.830134",
+        "link": "https://doi.org/10.1109/glocom.1999.830134",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 1.88,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/6a28d040-3907-422d-86b0-24eb8d9e8501",
+          "browser_screenshot_present": true,
+          "browser_step_count": 6,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "20",
+        "doi": "10.1525/9780520318212-014",
+        "link": "https://doi.org/10.1525/9780520318212-014",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:abstract,pdf_url",
+            "duration_s": 60.62,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/1e55e4fe-1c57-4a8e-a617-fbb7c3fd084c",
+          "browser_screenshot_present": true,
+          "browser_step_count": 5,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "21",
+        "doi": "10.1183/13993003.congress-2021.pa1735",
+        "link": "https://doi.org/10.1183/13993003.congress-2021.pa1735",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "pdf_url"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 36.72,
+            "http_status_post": "timeout",
+            "http_status_get": 200,
+            "error": "HTTPConnectionPool(host='harvester-load-balancer-366186003.us-east-1.elb.amazonaws.com', port=80): Read timed out. (read timeout=30)"
+          },
+          "browser_live_url": "https://live.browser-use.com/session/34ea4057-3c26-4504-a788-4e9a9f0df2c4",
+          "browser_screenshot_present": true,
+          "browser_step_count": 7,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "26",
+        "doi": "10.1016/s0262-4079(17)30640-1",
+        "link": "https://doi.org/10.1016/s0262-4079(17)30640-1",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "pdf_url",
+          "ca",
+          "abstract"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:abstract,pdf_url",
+            "duration_s": 21.03,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/bff5ed97-46da-436e-87d5-66afbf3c1fc0",
+          "browser_screenshot_present": true,
+          "browser_step_count": 12,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "31",
+        "doi": "10.70675/633795e0z2e97z4b33z97ecz148423a66bfc",
+        "link": "https://doi.org/10.70675/633795e0z2e97z4b33z97ecz148423a66bfc",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 3.03,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/fdedd35f-f110-4996-b13e-1b4720bc10fa",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "35",
+        "doi": "10.59646/sm/277",
+        "link": "https://doi.org/10.59646/sm/277",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 8.07,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/1cc5d751-3195-42d3-ae88-ea918b0b9216",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "40",
+        "doi": "10.3138/guthrie.51.1.007",
+        "link": "https://doi.org/10.3138/guthrie.51.1.007",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "ca",
+          "abstract"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 15.13,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/80e31843-3cd2-462c-8581-d8793ccc07b0",
+          "browser_screenshot_present": true,
+          "browser_step_count": 8,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "42",
+        "doi": "10.1016/j.optlastec.2016.01.039",
+        "link": "https://doi.org/10.1016/j.optlastec.2016.01.039",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "pdf_url"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 20.97,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/f07e4bed-5ef9-462b-b35a-d308b89ca19b",
+          "browser_screenshot_present": true,
+          "browser_step_count": 13,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "48",
+        "doi": "10.1016/b978-0-08-102713-4.00016-5",
+        "link": "https://doi.org/10.1016/b978-0-08-102713-4.00016-5",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 24.83,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/4cf8876e-2a85-45ff-8f90-247080e24a44",
+          "browser_screenshot_present": true,
+          "browser_step_count": 15,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "54",
+        "doi": "10.46316/1676-004-016-023",
+        "link": "https://doi.org/10.46316/1676-004-016-023",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 2.45,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/e7b71432-7af8-481e-a696-a5dd067c109e",
+          "browser_screenshot_present": true,
+          "browser_step_count": 15,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "61",
+        "doi": "10.1001/jama.1903.04480020022007",
+        "link": "https://doi.org/10.1001/jama.1903.04480020022007",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "ca",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 23.72,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/42e01ed6-20a6-4de6-84a8-8a0721b76509",
+          "browser_screenshot_present": true,
+          "browser_step_count": 12,
+          "browser_last_step": "Python: import html as htmllib",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "74",
+        "doi": "10.7476/9788578794866.0013",
+        "link": "https://doi.org/10.7476/9788578794866.0013",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "ca",
+          "abstract"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "raw_notes": "taxicab: no harvested html | taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "taxicab_error",
+            "duration_s": 3.21,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/485264fd-0a3e-405d-bd3b-bfbeaca8374f",
+          "browser_screenshot_present": true,
+          "browser_step_count": 12,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "90",
+        "doi": "10.1086/174912",
+        "link": "https://doi.org/10.1086/174912",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 62.07,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/d543ceb7-9cb2-4c8c-b53e-ce305fb1c170",
+          "browser_screenshot_present": true,
+          "browser_step_count": 5,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      }
+    ],
+    "page_checked_residual_missing": [],
+    "multi_priority_missing": [
+      {
+        "no": "7",
+        "doi": "10.4324/9780429030772-16",
+        "link": "https://doi.org/10.4324/9780429030772-16",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 11.84,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/f1d30319-2e86-4dc8-bf03-2b741e0f9cde",
+          "browser_screenshot_present": true,
+          "browser_step_count": 9,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: output = {",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "12",
+        "doi": "10.1097/rhu.0b013e318258b725",
+        "link": "https://doi.org/10.1097/rhu.0b013e318258b725",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:abstract,pdf_url",
+            "duration_s": 3.26,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/45fad033-69e0-4904-8e50-5f9b8fa5a787",
+          "browser_screenshot_present": true,
+          "browser_step_count": 9,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "14",
+        "doi": "10.1080/00239707408557726",
+        "link": "https://doi.org/10.1080/00239707408557726",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "ca",
+          "abstract"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:paywalled=taylor-francis"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:paywalled=taylor-francis",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:abstract,pdf_url",
+            "duration_s": 2.83,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/cbf9c08e-91ab-4193-b423-294703473a1e",
+          "browser_screenshot_present": true,
+          "browser_step_count": 7,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "15",
+        "doi": "10.1016/0003-2697(63)90071-x",
+        "link": "https://doi.org/10.1016/0003-2697(63)90071-x",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:post-timeout",
+          "iter-R:paywalled=elsevier"
+        ],
+        "notes": "taxicab-reharvest:post-timeout | iter-R:paywalled=elsevier",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "post-timeout",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 61.88,
+            "http_status_post": "timeout",
+            "http_status_get": 200,
+            "error": "HTTPConnectionPool(host='harvester-load-balancer-366186003.us-east-1.elb.amazonaws.com', port=80): Read timed out. (read timeout=30)"
+          },
+          "browser_live_url": "https://live.browser-use.com/session/2fdde188-4d47-4432-84ff-167fa061447b",
+          "browser_screenshot_present": true,
+          "browser_step_count": 9,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "20",
+        "doi": "10.1525/9780520318212-014",
+        "link": "https://doi.org/10.1525/9780520318212-014",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:abstract,pdf_url",
+            "duration_s": 60.62,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/1e55e4fe-1c57-4a8e-a617-fbb7c3fd084c",
+          "browser_screenshot_present": true,
+          "browser_step_count": 5,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "23",
+        "doi": "10.4324/9781315684840-28",
+        "link": "https://doi.org/10.4324/9781315684840-28",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 60.47,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/63637a4d-5e6d-4cc9-b664-13996560e6f6",
+          "browser_screenshot_present": true,
+          "browser_step_count": 9,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "26",
+        "doi": "10.1016/s0262-4079(17)30640-1",
+        "link": "https://doi.org/10.1016/s0262-4079(17)30640-1",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "pdf_url",
+          "ca",
+          "abstract"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:abstract,pdf_url",
+            "duration_s": 21.03,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/bff5ed97-46da-436e-87d5-66afbf3c1fc0",
+          "browser_screenshot_present": true,
+          "browser_step_count": 12,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "28",
+        "doi": "10.1007/bf02968970",
+        "link": "https://doi.org/10.1007/bf02968970",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:paywalled=springer"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:paywalled=springer",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:authors,abstract",
+            "duration_s": 4.27,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/12afe52c-4206-4d8e-875f-c1a19c525e55",
+          "browser_screenshot_present": true,
+          "browser_step_count": 7,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "29",
+        "doi": "10.1515/dzph-2019-0033",
+        "link": "https://doi.org/10.1515/dzph-2019-0033",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:paywalled=degruyter"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:paywalled=degruyter",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 61.23,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/4f8c6dd9-9d03-4563-8275-17c8ac2091dc",
+          "browser_screenshot_present": true,
+          "browser_step_count": 6,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "31",
+        "doi": "10.70675/633795e0z2e97z4b33z97ecz148423a66bfc",
+        "link": "https://doi.org/10.70675/633795e0z2e97z4b33z97ecz148423a66bfc",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 3.03,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/fdedd35f-f110-4996-b13e-1b4720bc10fa",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "35",
+        "doi": "10.59646/sm/277",
+        "link": "https://doi.org/10.59646/sm/277",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:pdf_url",
+            "duration_s": 8.07,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/1cc5d751-3195-42d3-ae88-ea918b0b9216",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "38",
+        "doi": "10.1016/s1569-9048(21)00072-0",
+        "link": "https://doi.org/10.1016/s1569-9048(21)00072-0",
+        "status": "FALSE",
+        "fetch_ok": false,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:paywalled=elsevier"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:paywalled=elsevier",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 27.55,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/a13a906a-925a-456b-9493-8e6ad7dcf434",
+          "browser_screenshot_present": true,
+          "browser_step_count": 8,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "39",
+        "doi": "10.1007/978-3-540-72816-0_7513",
+        "link": "https://doi.org/10.1007/978-3-540-72816-0_7513",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:paywalled=springer"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:paywalled=springer",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:authors,pdf_url",
+            "duration_s": 3.21,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/cca49359-2c2a-4038-9ca6-01c5c9739c44",
+          "browser_screenshot_present": true,
+          "browser_step_count": 6,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "44",
+        "doi": "10.22533/at.ed.0011809122",
+        "link": "https://doi.org/10.22533/at.ed.0011809122",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:pdf-redirect"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:pdf-redirect",
+        "terminal_flags": {
+          "resolves_to_pdf": true,
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "js_or_static_incomplete",
+            "duration_s": 60.38,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/68ad965c-9cc9-4e5e-b4a2-bf030fdbe857",
+          "browser_step_count": 2,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "46",
+        "doi": "10.5117/9789053563083",
+        "link": "https://doi.org/10.5117/9789053563083",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "tiny_html",
+            "duration_s": 61.43,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/0a595de0-7ccd-4e04-a38d-4ed3458451c0",
+          "browser_screenshot_present": true,
+          "browser_step_count": 11,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "54",
+        "doi": "10.46316/1676-004-016-023",
+        "link": "https://doi.org/10.46316/1676-004-016-023",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 2.45,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/e7b71432-7af8-481e-a696-a5dd067c109e",
+          "browser_screenshot_present": true,
+          "browser_step_count": 15,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "55",
+        "doi": "10.1007/978-3-540-29925-7_1788",
+        "link": "https://doi.org/10.1007/978-3-540-29925-7_1788",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:paywalled=springer"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:paywalled=springer",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "thin_extraction:authors,pdf_url",
+            "duration_s": 3.44,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/0e069d27-d522-4ace-b2ad-8f4ae15196f6",
+          "browser_screenshot_present": true,
+          "browser_step_count": 7,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Running Python code",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "61",
+        "doi": "10.1001/jama.1903.04480020022007",
+        "link": "https://doi.org/10.1001/jama.1903.04480020022007",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "ca",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "wall_marker",
+            "duration_s": 23.72,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/42e01ed6-20a6-4de6-84a8-8a0721b76509",
+          "browser_screenshot_present": true,
+          "browser_step_count": 12,
+          "browser_last_step": "Python: import html as htmllib",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "74",
+        "doi": "10.7476/9788578794866.0013",
+        "link": "https://doi.org/10.7476/9788578794866.0013",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "ca",
+          "abstract"
+        ],
+        "labels": [
+          "taxicab-reharvest:refreshed",
+          "iter-R:extraction-miss"
+        ],
+        "notes": "taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "raw_notes": "taxicab: no harvested html | taxicab-reharvest:refreshed | iter-R:extraction-miss",
+        "event": {
+          "taxicab_reharvest": {
+            "status": "refreshed",
+            "reason": "taxicab_error",
+            "duration_s": 3.21,
+            "http_status_post": 201,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/485264fd-0a3e-405d-bd3b-bfbeaca8374f",
+          "browser_screenshot_present": true,
+          "browser_step_count": 12,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      },
+      {
+        "no": "78",
+        "doi": "10.2478/vzoo-2013-0010",
+        "link": "https://doi.org/10.2478/vzoo-2013-0010",
+        "status": "TRUE",
+        "fetch_ok": true,
+        "missing_fields": [
+          "rases",
+          "pdf_url",
+          "ca",
+          "abstract",
+          "authors"
+        ],
+        "labels": [
+          "taxicab-reharvest:unchanged",
+          "iter-R:terminal:broken_doi"
+        ],
+        "notes": "taxicab-reharvest:unchanged | iter-R:terminal:broken_doi",
+        "terminal_flags": {
+          "broken_doi": true
+        },
+        "event": {
+          "taxicab_reharvest": {
+            "status": "unchanged",
+            "reason": "thin_extraction:authors,abstract,pdf_url",
+            "duration_s": 61.82,
+            "http_status_post": 200,
+            "http_status_get": 200
+          },
+          "browser_live_url": "https://live.browser-use.com/session/544969e4-09b5-4743-93da-ff8582fe132e",
+          "browser_screenshot_present": true,
+          "browser_step_count": 33,
+          "browser_is_task_successful": true,
+          "browser_last_step": "Python: import json",
+          "fallback_returned": true
+        }
+      }
+    ],
+    "note": "Bounded DOI queues for manual/live-evidence quality follow-up; counts are full-run counts."
+  },
+  "taxicab_reharvest": {
+    "refreshed": 60,
+    "post-timeout": 2,
+    "unchanged": 9
+  },
+  "cost_usd": 14.9012,
+  "total_cost_usd": 38.2715,
+  "status": "complete",
+  "final_status": {
+    "true": 99,
+    "false": 1,
+    "other": 0
+  },
+  "tier1_landed": 100,
+  "tier1_failed": 1,
+  "fallback": {
+    "tier": "cloud",
+    "enabled": true,
+    "status": "complete",
+    "cost_usd": 23.3703,
+    "fallback_attempted": 82,
+    "fallback_returned": 82,
+    "fallback_used": 32,
+    "fallback_noop_returned": 50,
+    "fallback_filled_fields": {
+      "rases": 19,
+      "abstract": 5,
+      "ca": 7,
+      "authors": 5,
+      "broken_doi": 5,
+      "pdf_url": 3
+    },
+    "labels": {
+      "iter-R:extraction-miss": 15,
+      "iter-R:paywalled=taylor-francis": 3,
+      "iter-R:paywalled=elsevier": 8,
+      "iter-R:terminal:broken_doi": 4,
+      "iter-R:terminal:no_english": 5,
+      "iter-R:paywalled=springer": 3,
+      "iter-R:paywalled=degruyter": 2,
+      "iter-R:pdf-redirect": 1,
+      "iter-R:paywalled=ieee": 1,
+      "iter-R:paywalled=sage": 1,
+      "iter-R:router-only=elsevier-linkinghub": 1,
+      "iter-R:paywalled=oup": 1,
+      "iter-R:paywalled=wiley": 2,
+      "iter-R:paywalled=jstor": 1
+    }
+  },
+  "targeted_rerun": null,
+  "quality_probes": null,
+  "events": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-random-100-20260605T151604Z-20260605T151616Z/logs/live-agent-events.ndjson",
+  "live_html": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-random-100-20260605T151604Z-20260605T151616Z/live.html",
+  "note": "unscored summary — pass --holdout <gold.csv> to score against gold"
+}
