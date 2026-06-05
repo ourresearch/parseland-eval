@@ -9,6 +9,30 @@ Evaluation harness and dashboard for the deployed [Parseland](https://github.com
 - **`eval/`** — Python scoring harness (`parseland_eval` package), gold standard data, run artifacts, threshold-tuning tool.
 - **`dashboard/`** — React + Vite dashboard, deployed at <https://openalex-parseland-dashboard-fe36c419013c.herokuapp.com/>.
 
+## Goldie CLI
+
+Goldie CLI is the operator workflow for building random DOI extraction corpora. It samples
+random DOIs from Crossref, resolves them through DOI.org, extracts page-presented metadata
+from Taxicab/cache HTML plus rendered-browser fallback, and writes run manifests and
+operator reports. Crossref is sampling-only; field values must come from publisher page,
+Taxicab, or browser evidence.
+
+Start here:
+
+```bash
+uv run --project eval goldie --help
+uv run --project eval goldie random --count 100 --name goldie-random-100
+uv run --project eval goldie prepare --count 10000 --name goldie-10k
+uv run --project eval goldie resume --run runs/<run-dir>
+uv run --project eval goldie report --run runs/<run-dir> --operator
+```
+
+Goldie docs:
+
+- [`eval/docs/goldie/README.md`](eval/docs/goldie/README.md) — clone-to-run quickstart and command matrix.
+- [`eval/docs/goldie/HARNESS.md`](eval/docs/goldie/HARNESS.md) — data flow, tiers, manifests, checkpoints, and reports.
+- [`eval/docs/goldie/LEARNINGS.md`](eval/docs/goldie/LEARNINGS.md) — random-100 findings, 10K launch gate, and quality lessons.
+
 ## What it measures
 
 Per field, across the full gold corpus and per-publisher / per-failure-mode slices:
@@ -124,5 +148,6 @@ parseland-eval/
 ## Further reading
 
 - [`eval/README.md`](eval/README.md) — deeper scoring/normalization notes, gold-standard quirks.
+- [`eval/docs/goldie/README.md`](eval/docs/goldie/README.md) — Goldie CLI random DOI extraction workflow.
 - [`dashboard/README.md`](dashboard/README.md) — dashboard dev/build workflow.
 - [`CLAUDE.md`](CLAUDE.md) — conventions for contributors (human or agent).

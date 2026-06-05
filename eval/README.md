@@ -1,52 +1,76 @@
-# parseland-eval
+# eval
 
-Offline evaluation harness for `parseland-lib` against a 100-row hand-annotated gold standard.
+`eval/` contains two related but separate workflows.
 
-## Quickstart
+1. `parseland_eval`: the live Parseland evaluation harness that scores the deployed
+   Parseland service against the hand-annotated gold standard and feeds the dashboard.
+2. `goldie_cli`: the random DOI extraction harness used to build and inspect larger
+   Goldie corpora.
+
+Do not conflate them. The dashboard eval calls Taxicab and Parseland live services.
+Goldie CLI samples DOI corpora and runs a separate extraction/report workflow.
+
+## Live Parseland Eval
+
+Install from the repo root:
 
 ```bash
-cd eval
-python -m venv .venv && source .venv/bin/activate
-pip install -e '.[dev]'
-pip install -r ../parseland-lib/requirements.txt    # so parseland-lib's deps resolve
+uv run --project eval python -m parseland_eval --help
 ```
 
-Then:
+Run the full live eval:
 
 ```bash
-# 1. Cache raw HTML for every DOI (one-off, ~5 minutes).
-python -m parseland_eval fetch
-
-# 2. Run parseland-lib against cached HTML + score.
-python -m parseland_eval run --label baseline
+uv run --project eval python -m parseland_eval run --label <name>
 ```
 
-Output lands in `eval/runs/<label>-<timestamp>.json`. The `eval/runs/index.json` index file is regenerated after every run.
+Run a small dashboard smoke check:
 
-## What it measures
+```bash
+uv run --project eval python -m parseland_eval run --label smoke --limit 5
+```
 
-Per field, at three strictnesses (see `parseland_eval/score/`):
+Run artifacts land under `eval/runs/` and are consumed by the dashboard. The runner
+calls the live service through Taxicab and Parseland; it should fail loudly if those
+services are unavailable.
 
-| Field          | Strict                    | Soft                                | Fuzzy                           |
-|----------------|---------------------------|-------------------------------------|---------------------------------|
-| Authors        | last-name + first-initial | (same; no softer variant)           | rapidfuzz token_set_ratio ≥ 85 |
-| Affiliations   | exact string              | normalized string                   | token_set_ratio ≥ 85           |
-| Abstract       | exact string              | Levenshtein on normalized text      | Levenshtein on raw text        |
-| PDF URL        | canonicalized exact match | —                                    | —                               |
+## Goldie CLI
 
-Aggregated per row, per publisher domain, per failure mode (derived from gold `Notes`).
+Goldie CLI lives in `eval/goldie_cli/` and writes extraction artifacts under repo-root
+`runs/`. It is quality-first: Crossref is used only to sample random DOI strings, while
+field values must come from DOI.org-resolved pages, Taxicab/cache HTML, or rendered-browser
+evidence.
 
-## Known gold-standard quirks handled in adapter
+Quick commands:
 
-Source JSON is never mutated. Adapter in `parseland_eval/gold.py` handles:
+```bash
+uv run --project eval goldie --help
+uv run --project eval goldie random --count 100 --name goldie-random-100
+uv run --project eval goldie prepare --count 10000 --name goldie-10k
+uv run --project eval goldie resume --run runs/<run-dir>
+uv run --project eval goldie report --run runs/<run-dir> --operator
+```
 
-- `"N/A"` / `"N/A\`"` in Authors → `authors=[]` (expected-empty).
-- Row 5 journal title in Authors → `gold_quality="journal-title-leaked"`, skip Authors scoring.
-- Row 51 unparsed JSON string → retry; else `gold_quality="broken-json"`, skip Authors scoring.
-- `rasses` key accepted as alias for `affiliations`.
+Read the operator docs before launching a large run:
+
+- [`docs/goldie/README.md`](docs/goldie/README.md)
+- [`docs/goldie/HARNESS.md`](docs/goldie/HARNESS.md)
+- [`docs/goldie/LEARNINGS.md`](docs/goldie/LEARNINGS.md)
 
 ## Tests
 
 ```bash
-pytest
+uv run --project eval pytest
+uv run --project eval pytest eval/goldie_cli/tests -q
 ```
+
+For Goldie cleanup and extraction work, also verify:
+
+```bash
+git diff --check
+shasum -a 256 eval/data/merged-FINAL.csv
+```
+
+The protected `eval/data/merged-FINAL.csv` hash should remain
+`b33dfd256fddf44b32c5543e11d6997256efcb24deaf9dc9323188bd22adcc43` unless an explicit
+gold-data update is approved.

@@ -1,5 +1,14 @@
 # Goldie CLI 10K Runbook
 
+Current canonical Goldie CLI docs live here:
+
+- [`goldie/README.md`](goldie/README.md)
+- [`goldie/HARNESS.md`](goldie/HARNESS.md)
+- [`goldie/LEARNINGS.md`](goldie/LEARNINGS.md)
+
+This file remains as the expanded historical 10K runbook for operators who need the
+long-form command walkthrough.
+
 This is the operator guide for running Goldie CLI from a fresh clone. It covers
 sampling random Crossref DOIs, extracting page-presented metadata, monitoring long
 runs, resuming interrupted runs, and generating reports.
@@ -19,6 +28,9 @@ cd parseland-eval
 git checkout feat/goldie-cli
 
 uv run --project eval goldie --help
+uv run --project eval goldie random --help
+uv run --project eval goldie prepare --help
+uv run --project eval goldie resume --help
 ```
 
 If `uv` is not installed, install it first or use a Python 3.11 virtualenv with
@@ -86,7 +98,7 @@ Capture it for monitoring and reporting:
 
 ```bash
 RUN_DIR=$(ls -td "runs/${CORPUS}-"* | head -1)
-uv run --project eval goldie report --run "$RUN_DIR"
+uv run --project eval goldie report --run "$RUN_DIR" --operator
 ```
 
 ## Run 10K Random DOIs
@@ -125,7 +137,7 @@ uv run --project eval goldie monitor --run "$RUN_DIR" --watch
 Generate the final report:
 
 ```bash
-uv run --project eval goldie report --run "$RUN_DIR"
+uv run --project eval goldie report --run "$RUN_DIR" --operator
 ```
 
 ## Resume A Stopped Run
@@ -302,4 +314,3 @@ rm -f eval/uv.lock
 do not overwrite it, and do not use it as the random-100 or 10K output path.
 Use `runs/<corpus>/source.csv` for new source files and `runs/<corpus>-<UTC>/`
 for extraction artifacts.
-
