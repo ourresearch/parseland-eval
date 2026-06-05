@@ -98,6 +98,109 @@ def test_cmd_sample_rejects_holdout_that_consumes_target(tmp_path):
         raise AssertionError("expected holdout-size guard")
 
 
+def test_cmd_prepare_writes_named_source_and_prints_run_command(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(cli, "cmd_sample", lambda args, cfg: 0)
+    cfg = GoldieConfig(runs_dir=tmp_path / "runs")
+    args = argparse.Namespace(
+        count=10000,
+        name="goldie-10k",
+        out=str(tmp_path / "runs" / "goldie-10k-fixed" / "source.csv"),
+        gold=None,
+        holdout_size=0,
+        force=False,
+    )
+
+    assert cli.cmd_prepare(args, cfg) == 0
+    out = capsys.readouterr().out
+    assert "corpus=goldie-10k-fixed" in out
+    assert "goldie run --source" in out
+
+
+def test_cmd_resume_builds_run_args_from_manifest(tmp_path, monkeypatch):
+    source = _corpus(tmp_path, 1)
+    run = tmp_path / "runs" / "existing"
+    run.mkdir(parents=True)
+    (run / "manifest.json").write_text(json.dumps({
+        "source_csv": str(source),
+        "corpus": "existing-corpus",
+        "tier": "cached",
+        "fallback_tier": "cloud",
+    }), encoding="utf-8")
+    seen = {}
+
+    def fake_run(args, cfg):
+        seen.update(vars(args))
+        return 0
+
+    monkeypatch.setattr(cli, "cmd_run", fake_run)
+    args = argparse.Namespace(
+        run=str(run), tier=None, fallback_tier=None, model=None, prompt=None,
+        concurrency=None, batch_concurrency=None, max_cost_usd=None, holdout=None,
+    )
+
+    assert cli.cmd_resume(args, GoldieConfig()) == 0
+    assert seen["source"] == str(source)
+    assert seen["corpus"] == "existing-corpus"
+    assert seen["resume"] == str(run)
+    assert seen["fallback_tier"] == "cloud"
+
+
+def test_cmd_random_samples_runs_and_generates_operator_report(tmp_path, monkeypatch):
+    cfg = GoldieConfig(runs_dir=tmp_path / "runs")
+    calls = []
+
+    def fake_sample(args, _cfg):
+        calls.append(("sample", args.out, args.target))
+        source = tmp_path / "runs" / "goldie-random-fixed" / "source.csv"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text("No,DOI,Link\n1,10.1/a,https://doi.org/10.1/a\n", encoding="utf-8")
+        return 0
+
+    def fake_run(args, _cfg):
+        calls.append(("run", args.source, args.corpus, args.fallback_tier))
+        run = cfg.runs_dir / f"{args.corpus}-20260605T000000Z"
+        run.mkdir(parents=True)
+        (run / "manifest.json").write_text(json.dumps({"corpus": args.corpus}), encoding="utf-8")
+        return 0
+
+    def fake_report(args, _cfg):
+        calls.append(("report", args.run, args.operator))
+        return 0
+
+    monkeypatch.setattr(cli, "cmd_sample", fake_sample)
+    monkeypatch.setattr(cli, "cmd_run", fake_run)
+    monkeypatch.setattr(cli, "cmd_report", fake_report)
+    args = argparse.Namespace(
+        count=1,
+        name="goldie-random",
+        out=str(tmp_path / "runs" / "goldie-random-fixed" / "source.csv"),
+        gold=None,
+        holdout_size=0,
+        force=False,
+        tier="cached",
+        fallback_tier="cloud",
+        no_fallback=False,
+        model=None,
+        prompt=None,
+        concurrency=None,
+        batch_concurrency=None,
+        max_cost_usd=None,
+        holdout=None,
+        report_out=None,
+    )
+
+    assert cli.cmd_random(args, cfg) == 0
+    assert calls[0][0] == "sample"
+    assert calls[1] == (
+        "run",
+        str(tmp_path / "runs" / "goldie-random-fixed" / "source.csv"),
+        "goldie-random-fixed",
+        "cloud",
+    )
+    assert calls[2][0] == "report"
+    assert calls[2][2] is True
+
+
 def test_cmd_run_cascade_no_fallback_writes_all_artifacts(tmp_path, monkeypatch):
     monkeypatch.setattr(rundir_mod, "RUNS_DIR", tmp_path / "runs")
     monkeypatch.setattr(backends_mod, "get_backend", lambda name, **k: StubBackend())
@@ -119,6 +222,9 @@ def test_cmd_run_cascade_no_fallback_writes_all_artifacts(tmp_path, monkeypatch)
     man = json.loads((run_root / "manifest.json").read_text())
     assert man["fallback"]["enabled"] is False
     assert "cost_usd" in man
+    assert man["source_csv"].endswith("c.csv")
+    assert man["tier"] == "stub"
+    assert man["fallback_tier"] == "none"
 
 
 def test_cmd_run_resume_reuses_existing_run_dir(tmp_path, monkeypatch):
@@ -262,11 +368,17 @@ def test_cmd_report_without_holdout_rebuilds_summary(tmp_path, monkeypatch, caps
     assert cli.cmd_run(args, GoldieConfig()) == 0
     run_root = next((tmp_path / "runs").glob("rep-*"))
 
-    rc = cli.cmd_report(argparse.Namespace(run=str(run_root), holdout=None), GoldieConfig())
+    rc = cli.cmd_report(argparse.Namespace(
+        run=str(run_root), holdout=None, operator=True, out=str(run_root / "OPERATOR_REPORT.md"),
+    ), GoldieConfig())
 
     assert rc == 0
     out = capsys.readouterr().out
     assert "summary:" in out and "authors" in out
+    assert "operator report" in out
     rep = json.loads((run_root / "report.json").read_text())
     assert rep["type"] == "summary"
     assert "field_presence" in rep
+    assert (run_root / "OPERATOR_REPORT.md").exists()
+    man = json.loads((run_root / "manifest.json").read_text())
+    assert man["operator_report"].endswith("OPERATOR_REPORT.md")

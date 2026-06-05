@@ -46,6 +46,30 @@ def test_run_resume_parsing():
     assert ns.resume == "runs/goldie-existing"
 
 
+def test_operator_command_parsing():
+    p = build_parser()
+    prep = p.parse_args(["prepare", "--count", "10000", "--name", "goldie-10k"])
+    assert prep.command == "prepare"
+    assert prep.count == 10000
+    assert prep.gold == "eval/human-goldie.csv"
+
+    rand = p.parse_args([
+        "random", "--count", "100", "--name", "goldie-random-100",
+        "--fallback-tier", "cloud", "--report-out", "OPERATOR_REPORT.md",
+    ])
+    assert rand.command == "random"
+    assert rand.fallback_tier == "cloud"
+    assert rand.report_out == "OPERATOR_REPORT.md"
+
+    resume = p.parse_args(["resume", "--run", "runs/existing"])
+    assert resume.command == "resume"
+    assert resume.run == "runs/existing"
+
+    report = p.parse_args(["report", "--run", "runs/existing", "--operator", "--out", "out.md"])
+    assert report.operator is True
+    assert report.out == "out.md"
+
+
 def test_spike_subcommand_parsing():
     p = build_parser()
     ns = p.parse_args(["spike", "browserbase-fetch", "--sample-size", "50"])

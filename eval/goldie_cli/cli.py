@@ -1,6 +1,7 @@
 """``goldie`` command-line entry point.
 
-Subcommands: sample · split · extract · run · report · monitor · clean · migrate · spike.
+Subcommands: sample · prepare · random · split · extract · run · resume · report · monitor
+· clean · migrate · spike.
 Phase 1 wires the parser, env/credential handling, and dispatch; individual commands
 are filled in by later phases. Credentials are validated per command/tier only.
 """
@@ -9,8 +10,10 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
+import re
 import sys
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
@@ -27,6 +30,7 @@ from .config import (
 log = logging.getLogger("goldie")
 
 DEFAULT_PROMPT_NAME = "ai-goldie-v1.9.2.md"  # locked production prompt
+DEFAULT_GOLD_CSV = "eval/human-goldie.csv"
 
 # Tier-2 fallback choices for `goldie run`. "cloud" is browser-use Cloud v3 — the live,
 # JS-rendering quality tier; "local_cdp" is a local CDP-attached Chrome; "none" disables.
@@ -104,6 +108,50 @@ def _status_counts(rows: list[dict[str, Any]]) -> dict[str, int]:
         else:
             other += 1
     return {"true": true, "false": false, "other": other}
+
+
+def _utc_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def _safe_corpus_name(name: str) -> str:
+    cleaned = (name or "").strip()
+    from .config import ConfigError
+    if not cleaned:
+        raise ConfigError("--name must be non-empty")
+    if not re.fullmatch(r"[A-Za-z0-9._-]+", cleaned):
+        raise ConfigError("--name may contain only letters, numbers, '.', '_' and '-'")
+    return cleaned
+
+
+def _operator_source_path(args, cfg: GoldieConfig) -> tuple[Path, str]:
+    """Resolve the sample-only source path for `prepare` / `random`.
+
+    The extraction corpus includes the sample timestamp so `goldie run` still creates the
+    familiar `runs/<corpus>-<run-stamp>/` directory while the source lives beside it.
+    """
+    from .rundir import utc_stamp
+
+    if getattr(args, "out", None):
+        out = Path(args.out)
+        corpus = out.parent.name if out.name == "source.csv" else out.stem
+    else:
+        corpus = f"{_safe_corpus_name(args.name)}-{utc_stamp()}"
+        out = cfg.runs_dir / corpus / "source.csv"
+    return out, corpus
+
+
+def _default_gold_path(args) -> str | None:
+    return getattr(args, "gold", None) or DEFAULT_GOLD_CSV
+
+
+def _run_dir_from_corpus(corpus: str, cfg: GoldieConfig) -> Path | None:
+    cands = sorted(
+        cfg.runs_dir.glob(f"{corpus}-*/manifest.json"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    return cands[0].parent if cands else None
 
 
 def _make_fallback(
@@ -189,6 +237,7 @@ def _run_pipeline(args, cfg: GoldieConfig, *, single_batch: int | None,
 
     corpus = getattr(args, "corpus", None) or Path(args.source).stem
     resume = getattr(args, "resume", None)
+    started_at_utc = _utc_iso()
     if resume:
         resume_root = Path(resume)
         if not resume_root.exists():
@@ -219,6 +268,19 @@ def _run_pipeline(args, cfg: GoldieConfig, *, single_batch: int | None,
                 max_cost_usd=getattr(args, "max_cost_usd", None),
                 skip_meta_tags=False, shutdown_event=ev, event_writer=event_writer,
             )
+            manifest.update({
+                "source_csv": str(Path(args.source)),
+                "source_csv_abs": str(Path(args.source).resolve()),
+                "corpus": corpus,
+                "tier": tier,
+                "fallback_tier": fallback_tier,
+                "prompt_version": version,
+                "started_at_utc": started_at_utc,
+                "report_json": str(run_dir.report_path),
+                "command_argv": getattr(args, "command_argv", None),
+            })
+            if resume:
+                manifest["resume_run_dir"] = str(Path(resume))
             # Finalize cascade: tier-2 fallback over empty-field rows → merge/classify/cleanup.
             # fb.extract is None only when the tier is "none".
             from .events import load_resolved_urls
@@ -267,6 +329,7 @@ def _run_pipeline(args, cfg: GoldieConfig, *, single_batch: int | None,
                 "cost_usd": round(fb.cost_usd, 4), **fstats,
             }
             manifest["total_cost_usd"] = round(tier1_cost + fb.cost_usd, 4)
+            manifest["completed_at_utc"] = _utc_iso()
             event_writer.write("fallback_phase_complete", **manifest["fallback"])
             try:
                 _write_run_report(run_dir, finalized, manifest, holdout)
@@ -311,10 +374,124 @@ def _write_run_report(run_dir, finalized, manifest, holdout) -> None:
     write_report(run_dir.report_path, rep)
 
 
+def _resume_run_args(args) -> argparse.Namespace:
+    from .config import ConfigError
+    from .rundir import RunDir
+
+    rd = RunDir.open(Path(args.run))
+    manifest = rd.read_manifest()
+    source = manifest.get("source_csv") or manifest.get("source")
+    corpus = manifest.get("corpus") or rd.root.name.rsplit("-", 1)[0]
+    tiers = manifest.get("tiers") or []
+    tier = getattr(args, "tier", None) or manifest.get("tier") or (tiers[0] if tiers else "cached")
+    fallback = (
+        getattr(args, "fallback_tier", None)
+        or manifest.get("fallback_tier")
+        or (manifest.get("fallback") or {}).get("tier")
+        or DEFAULT_FALLBACK_TIER
+    )
+    if not source:
+        raise ConfigError(
+            f"cannot infer source CSV from {rd.manifest_path}. Re-run with the primitive form:\n"
+            f"uv run --project eval goldie run --source <source.csv> --corpus {corpus} "
+            f"--tier {tier} --fallback-tier {fallback} --resume {rd.root}"
+        )
+    if not Path(source).exists():
+        raise ConfigError(
+            f"source CSV recorded in manifest is missing: {source}. Re-run with:\n"
+            f"uv run --project eval goldie run --source <source.csv> --corpus {corpus} "
+            f"--tier {tier} --fallback-tier {fallback} --resume {rd.root}"
+        )
+    return argparse.Namespace(
+        source=source,
+        corpus=corpus,
+        tier=tier,
+        model=getattr(args, "model", None),
+        prompt=getattr(args, "prompt", None),
+        concurrency=getattr(args, "concurrency", None),
+        batch_concurrency=getattr(args, "batch_concurrency", None),
+        max_cost_usd=getattr(args, "max_cost_usd", None),
+        batch=None,
+        holdout=getattr(args, "holdout", None),
+        resume=str(rd.root),
+        fallback_tier=fallback,
+        no_fallback=fallback == "none",
+        command_argv=getattr(args, "command_argv", None),
+    )
+
+
 def cmd_run(args, cfg: GoldieConfig) -> int:
     # `run` is the full cascade: tier-2 fallback defaults to cloud (quality-first).
     return _run_pipeline(args, cfg, single_batch=None,
                          default_fallback_tier=DEFAULT_FALLBACK_TIER)
+
+
+def cmd_resume(args, cfg: GoldieConfig) -> int:
+    return cmd_run(_resume_run_args(args), cfg)
+
+
+def cmd_prepare(args, cfg: GoldieConfig) -> int:
+    out, corpus = _operator_source_path(args, cfg)
+    sample_args = argparse.Namespace(
+        target=args.count,
+        out=str(out),
+        gold=_default_gold_path(args),
+        holdout_size=getattr(args, "holdout_size", 0),
+        force=getattr(args, "force", False),
+    )
+    rc = cmd_sample(sample_args, cfg)
+    print(f"corpus={corpus}")
+    print(f"source={out}")
+    print("run command:")
+    print(
+        "  uv run --project eval goldie run "
+        f"--source {out} --corpus {corpus} --tier cached --fallback-tier cloud"
+    )
+    return rc
+
+
+def cmd_random(args, cfg: GoldieConfig) -> int:
+    out, corpus = _operator_source_path(args, cfg)
+    sample_args = argparse.Namespace(
+        target=args.count,
+        out=str(out),
+        gold=_default_gold_path(args),
+        holdout_size=getattr(args, "holdout_size", 0),
+        force=getattr(args, "force", False),
+    )
+    sample_rc = cmd_sample(sample_args, cfg)
+    if sample_rc != 0:
+        return sample_rc
+
+    run_args = argparse.Namespace(
+        source=str(out),
+        corpus=corpus,
+        tier=getattr(args, "tier", "cached"),
+        model=getattr(args, "model", None),
+        prompt=getattr(args, "prompt", None),
+        concurrency=getattr(args, "concurrency", None),
+        batch_concurrency=getattr(args, "batch_concurrency", None),
+        max_cost_usd=getattr(args, "max_cost_usd", None),
+        batch=None,
+        holdout=getattr(args, "holdout", None),
+        resume=None,
+        fallback_tier=getattr(args, "fallback_tier", None),
+        no_fallback=getattr(args, "no_fallback", False),
+        command_argv=getattr(args, "command_argv", None),
+    )
+    run_rc = cmd_run(run_args, cfg)
+    run_dir = _run_dir_from_corpus(corpus, cfg)
+    if run_dir:
+        out_arg = getattr(args, "report_out", None) or str(run_dir / "OPERATOR_REPORT.md")
+        report_args = argparse.Namespace(
+            run=str(run_dir),
+            holdout=getattr(args, "holdout", None),
+            operator=True,
+            out=out_arg,
+        )
+        cmd_report(report_args, cfg)
+        print(f"operator_report={out_arg}")
+    return run_rc
 
 
 def cmd_extract(args, cfg: GoldieConfig) -> int:
@@ -326,13 +503,21 @@ def cmd_extract(args, cfg: GoldieConfig) -> int:
 def cmd_report(args, cfg: GoldieConfig) -> int:
     from .config import ConfigError
     from .io import read_source_rows
-    from .report import FIELD_ORDER, compute_report, summary_report, write_report
+    from .report import (
+        FIELD_ORDER,
+        compute_report,
+        operator_report_markdown,
+        summary_report,
+        write_operator_report,
+        write_report,
+    )
     from .rundir import RunDir
 
     rd = RunDir.open(Path(args.run))
     if not rd.merged_csv.exists():
         raise ConfigError(f"no merged.csv in {rd.root} — run the corpus first")
     produced = read_source_rows(rd.merged_csv)
+    manifest = rd.read_manifest()
     if args.holdout:
         gold = read_source_rows(Path(args.holdout))
         rep = compute_report(gold, produced)
@@ -345,7 +530,7 @@ def cmd_report(args, cfg: GoldieConfig) -> int:
             print(f"  {mark}{f:9} all={fd['accuracy_all']:.1%}  fetch_ok={fd['accuracy_fetch_ok']:.1%}  "
                   f"gap={fd['gap_to_bar']:+.2f}  buckets={fd['failure_buckets'] or '-'}")
     else:
-        rep = summary_report(produced, rd.read_manifest())
+        rep = summary_report(produced, manifest)
         write_report(rd.report_path, rep)
         print(f"summary: rows={rep['rows']} fetch_ok={rep['fetch_ok_rows']}/{rep['rows']} "
               f"extraction_miss={rep['extraction_miss']} → {rd.report_path}")
@@ -384,6 +569,14 @@ def cmd_report(args, cfg: GoldieConfig) -> int:
             filled_s = f" filled={filled}" if filled else ""
             print(f"  fallback={fb.get('tier')} attempted={fb.get('fallback_attempted', 0)}"
                   f"{returned_s} used={fb.get('fallback_used', 0)}{filled_s}{legacy_s}")
+    if getattr(args, "operator", False):
+        out = Path(getattr(args, "out", None) or (rd.root / "OPERATOR_REPORT.md"))
+        markdown = operator_report_markdown(rd.root, rep, manifest)
+        write_operator_report(out, markdown)
+        manifest["report_json"] = str(rd.report_path)
+        manifest["operator_report"] = str(out)
+        rd.write_manifest(manifest)
+        print(f"operator report → {out}")
     return 0
 
 
@@ -604,6 +797,36 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--holdout-size", type=int, default=0, help="optional sealed holdout carve-out size")
     sp.add_argument("--force", action="store_true", help="discard existing output + partial sample state")
 
+    sp = sub.add_parser("prepare", help="Sample random DOI source only for a named operator run")
+    sp.add_argument("--count", type=int, required=True, help="number of random DOIs to sample")
+    sp.add_argument("--name", required=True, help="safe run name prefix, e.g. goldie-10k")
+    sp.add_argument("--out", default=None, help="optional explicit source.csv output path")
+    sp.add_argument("--gold", default=DEFAULT_GOLD_CSV, help="existing gold CSV to dedup against")
+    sp.add_argument("--holdout-size", type=int, default=0, help="optional sealed holdout carve-out size")
+    sp.add_argument("--force", action="store_true", help="discard existing output + partial sample state")
+
+    sp = sub.add_parser("random", help="Sample random DOIs, run cached+fallback extraction, and write report")
+    sp.add_argument("--count", type=int, required=True, help="number of random DOIs to sample")
+    sp.add_argument("--name", required=True, help="safe run name prefix, e.g. goldie-random-100")
+    sp.add_argument("--out", default=None, help="optional explicit source.csv output path")
+    sp.add_argument("--gold", default=DEFAULT_GOLD_CSV, help="existing gold CSV to dedup against")
+    sp.add_argument("--holdout-size", type=int, default=0, help="optional sealed holdout carve-out size")
+    sp.add_argument("--force", action="store_true", help="discard existing output + partial sample state")
+    sp.add_argument("--tier", default="cached", choices=["cached", "cloud", "local_cdp"],
+                    help="entry tier (default: cached)")
+    sp.add_argument("--fallback-tier", default=None, choices=list(FALLBACK_TIERS),
+                    help="tier-2 fallback (default: cloud)")
+    sp.add_argument("--no-fallback", action="store_true",
+                    help="backward-compatible alias for --fallback-tier none")
+    sp.add_argument("--concurrency", type=int, default=None)
+    sp.add_argument("--batch-concurrency", type=int, default=None)
+    sp.add_argument("--max-cost-usd", type=float, default=None,
+                    help="optional safety stop; omit for quality-first runs")
+    sp.add_argument("--prompt", default=None)
+    sp.add_argument("--model", default=None)
+    sp.add_argument("--holdout", default=None)
+    sp.add_argument("--report-out", default=None, help="operator Markdown output path")
+
     sp = sub.add_parser("split", help="Split a corpus CSV into fixed-size batches")
     sp.add_argument("--source", required=True)
     sp.add_argument("--batch-size", type=int, default=100)
@@ -638,9 +861,26 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--no-fallback", action="store_true",
                     help="backward-compatible alias for --fallback-tier none")
 
+    sp = sub.add_parser("resume", help="Resume an existing run directory from its manifest/checkpoints")
+    sp.add_argument("--run", required=True, help="existing run directory")
+    sp.add_argument("--tier", default=None, choices=["cached", "cloud", "local_cdp"],
+                    help="override manifest tier")
+    sp.add_argument("--fallback-tier", default=None, choices=list(FALLBACK_TIERS),
+                    help="override manifest fallback tier")
+    sp.add_argument("--concurrency", type=int, default=None)
+    sp.add_argument("--batch-concurrency", type=int, default=None)
+    sp.add_argument("--max-cost-usd", type=float, default=None,
+                    help="optional safety stop; omit for quality-first runs")
+    sp.add_argument("--prompt", default=None)
+    sp.add_argument("--model", default=None)
+    sp.add_argument("--holdout", default=None)
+
     sp = sub.add_parser("report", help="(Re)build a run report; scored when --holdout is supplied")
     sp.add_argument("--run", required=True)
     sp.add_argument("--holdout", default=None)
+    sp.add_argument("--operator", action="store_true",
+                    help="also write a GitHub-rendered Markdown operator report")
+    sp.add_argument("--out", default=None, help="operator Markdown output path")
 
     sp = sub.add_parser("monitor", help="Read-only TUI over a run directory")
     sp.add_argument("--run", default=None)
@@ -700,12 +940,27 @@ def _dispatch(args: argparse.Namespace, cfg: GoldieConfig) -> int:
         if fb_tier != "none":
             validate_credentials(tier=fb_tier)
         return cmd_run(args, cfg)
+    if cmd == "random":
+        validate_credentials(tier=args.tier)
+        fb_tier = _resolve_fallback_tier(args, default=DEFAULT_FALLBACK_TIER)
+        if fb_tier != "none":
+            validate_credentials(tier=fb_tier)
+        return cmd_random(args, cfg)
+    if cmd == "resume":
+        run_args = _resume_run_args(args)
+        validate_credentials(tier=run_args.tier)
+        fb_tier = _resolve_fallback_tier(run_args, default=DEFAULT_FALLBACK_TIER)
+        if fb_tier != "none":
+            validate_credentials(tier=fb_tier)
+        return cmd_run(run_args, cfg)
     if cmd == "split":
         return cmd_split(args, cfg)
     if cmd == "report":
         return cmd_report(args, cfg)
     if cmd == "sample":
         return cmd_sample(args, cfg)
+    if cmd == "prepare":
+        return cmd_prepare(args, cfg)
     if cmd == "clean":
         return cmd_clean(args, cfg)
     if cmd == "migrate":
@@ -723,6 +978,7 @@ def _dispatch(args: argparse.Namespace, cfg: GoldieConfig) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    args.command_argv = ["goldie", *(argv if argv is not None else sys.argv[1:])]
     logging.basicConfig(
         level=getattr(logging, args.log_level),
         format="%(asctime)s %(levelname)s %(message)s",
