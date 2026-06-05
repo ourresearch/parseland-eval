@@ -1,0 +1,86 @@
+{
+  "corpus": "goldie-quality-benchmark-100-20260605T180319Z",
+  "model": "claude-sonnet-4-6",
+  "tiers": [
+    "cached"
+  ],
+  "concurrency": 200,
+  "batch_concurrency": 4,
+  "max_cost_usd": null,
+  "batches": 1,
+  "rows": 100,
+  "landed": 100,
+  "failed": 3,
+  "cost_usd": 16.2109,
+  "taxicab_reharvest": {
+    "refreshed": 63,
+    "post-timeout": 3,
+    "timeout": 1,
+    "unchanged": 4
+  },
+  "events": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-quality-benchmark-100-20260605T180319Z-20260605T180324Z/logs/live-agent-events.ndjson",
+  "live_html": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-quality-benchmark-100-20260605T180319Z-20260605T180324Z/live.html",
+  "status": "complete",
+  "merged_csv": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-quality-benchmark-100-20260605T180319Z-20260605T180324Z/merged.csv",
+  "source_csv": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-quality-benchmark-100-20260605T180319Z/source.csv",
+  "source_csv_abs": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-quality-benchmark-100-20260605T180319Z/source.csv",
+  "tier": "cached",
+  "fallback_tier": "cloud",
+  "prompt_version": "v1.9.2",
+  "started_at_utc": "2026-06-05T18:03:24Z",
+  "report_json": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-quality-benchmark-100-20260605T180319Z-20260605T180324Z/report.json",
+  "command_argv": [
+    "goldie",
+    "random",
+    "--count",
+    "100",
+    "--name",
+    "goldie-quality-benchmark-100",
+    "--tier",
+    "cached",
+    "--fallback-tier",
+    "cloud"
+  ],
+  "tier1_landed": 100,
+  "tier1_failed": 2,
+  "fallback": {
+    "tier": "cloud",
+    "enabled": true,
+    "status": "complete",
+    "cost_usd": 22.1346,
+    "fallback_attempted": 77,
+    "fallback_returned": 77,
+    "fallback_used": 24,
+    "fallback_noop_returned": 53,
+    "fallback_filled_fields": {
+      "rases": 13,
+      "ca": 5,
+      "abstract": 4,
+      "pdf_url": 10,
+      "authors": 5,
+      "has_bot_check": 1,
+      "broken_doi": 1
+    },
+    "labels": {
+      "iter-R:extraction-miss": 23,
+      "iter-R:paywalled=elsevier": 8,
+      "iter-R:paywalled=sage": 2,
+      "iter-R:terminal:no_english": 4,
+      "iter-R:paywalled=degruyter": 1,
+      "iter-R:paywalled=ieee": 3,
+      "iter-R:paywalled=jstor": 4,
+      "iter-R:paywalled=taylor-francis": 1,
+      "iter-R:bot-check:flagged": 1,
+      "iter-R:terminal:broken_doi": 1,
+      "iter-R:paywalled=oup": 1
+    }
+  },
+  "final_status": {
+    "true": 97,
+    "false": 3,
+    "other": 0
+  },
+  "total_cost_usd": 38.3455,
+  "completed_at_utc": "2026-06-05T19:00:29Z",
+  "operator_report": "/Users/shubh-trips/Documents/OpenAlex/parseland-eval/runs/goldie-quality-benchmark-100-20260605T180319Z-20260605T180324Z/OPERATOR_REPORT.md"
+}

@@ -1,6 +1,6 @@
 # Goldie Learnings
 
-## Current Baseline
+## Current Baselines
 
 The latest full random-100 run is:
 
@@ -8,22 +8,36 @@ The latest full random-100 run is:
 runs/goldie-random-100-20260605T151604Z-20260605T151616Z
 ```
 
-Observed result:
+The latest named quality benchmark run is:
 
-| Metric | Value |
-|---|---:|
-| Landed rows | 100/100 |
-| Fetch OK | 99/100 |
-| Taxicab no-HTML failures | 1 |
-| Authors present | 89/100 |
-| RASES present | 67/100 |
-| Corresponding author present | 39/100 |
-| Abstract present | 83/100 |
-| PDF URL present | 66/100 |
-| Cloud fallback attempted | 82 |
-| Cloud fallback returned | 82 |
-| Cloud fallback used | 32 |
-| Total cost | $38.27 |
+```text
+runs/goldie-quality-benchmark-100-20260605T180319Z-20260605T180324Z
+```
+
+Observed result comparison:
+
+| Metric | Random-100 baseline | Quality benchmark-100 |
+|---|---:|---:|
+| Landed rows | 100/100 | 100/100 |
+| Fetch OK | 99/100 | 98/100 |
+| Failed rows | 1 | 3 |
+| Authors present | 89/100 | 87/100 |
+| RASES present | 67/100 | 66/100 |
+| Corresponding author present | 39/100 | 36/100 |
+| Abstract present | 83/100 | 71/100 |
+| PDF URL present | 66/100 | 74/100 |
+| All-core-empty rows | 6 | 4 |
+| Unresolved all-core-empty rows | 0 | 0 |
+| Extraction-miss rows | 15 | 23 |
+| Cloud fallback attempted | 82 | 77 |
+| Cloud fallback returned | 82 | 77 |
+| Cloud fallback used | 32 | 24 |
+| Total cost | $38.27 | $38.35 |
+
+The second independent random-100 benchmark increases confidence in operator workflow
+stability, cost stability, and empty-row triage, but it is not a uniform extraction-quality
+improvement. PDF URL and all-core-empty handling improved; abstract, authors, RASES, and
+corresponding-author presence dipped on the new random sample.
 
 The prepared 10K source is:
 
@@ -51,13 +65,16 @@ profile or a quality-preserving change that lowers fallback pressure.
 - Crossref is sampling-only. Do not use Crossref metadata to fill field values.
 - DOI.org-resolved publisher pages, Taxicab/cache HTML, and rendered-browser evidence are the
   allowed evidence stack.
-- Cloud fallback materially improves extraction, but the random-100 fallback attempt rate was
-  high enough to make 10K cost a real launch decision.
+- Cloud fallback materially improves extraction, but both random-100 runs show a high enough
+  fallback attempt rate to make 10K cost/runtime a real launch decision.
 - All-core-empty rows must be split into terminal explanations, bot checks, and unresolved
   infrastructure misses.
 - Corresponding-author gaps require conservative triage; absence on a landing page is not the
   same thing as audited absence.
 - Random extraction reports show completeness and failure modes, not verified accuracy.
+- A second independent random run is confidence evidence, not an apples-to-apples parser
+  improvement test. Same-source reruns or audited holdouts are required to prove extraction
+  improvement.
 
 ## 98% Accuracy Gate
 

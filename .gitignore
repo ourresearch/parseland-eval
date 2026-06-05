@@ -61,6 +61,7 @@ runs/goldie-*/source.csv
 runs/goldie-*/*.partial.jsonl
 runs/goldie-*/batches/
 runs/goldie-*/checkpoints/
+runs/goldie-*/failures/
 runs/goldie-*/logs/
 runs/goldie-*/live.html
 runs/goldie-*/merged.csv
