@@ -7,8 +7,11 @@ Crossref call is injectable so the logic tests offline.
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 from typing import Callable
+
+from .schema import GOLD_COLUMNS
 
 CROSSREF_URL = "https://api.crossref.org/works"
 SAMPLE_BATCH = 100
@@ -66,14 +69,21 @@ def sample_dois(
 
 
 def write_corpus_csv(path: Path, dois: list[str]) -> None:
-    """Write a corpus CSV with DOI.org resolver links (the only resolver)."""
+    """Write a full-schema corpus CSV with DOI.org resolver links.
+
+    Operators can pass this output directly to ``goldie run``. Extraction columns
+    are intentionally blank because Crossref is used for DOI sampling only, never
+    as metadata evidence.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
     with tmp.open("w", encoding="utf-8", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(["No", "DOI", "Link"])
+        w = csv.DictWriter(f, fieldnames=GOLD_COLUMNS)
+        w.writeheader()
         for i, doi in enumerate(dois, 1):
-            w.writerow([i, doi, f"https://doi.org/{doi}"])
+            row = {k: "" for k in GOLD_COLUMNS}
+            row.update({"No": str(i), "DOI": doi, "Link": f"https://doi.org/{doi}"})
+            w.writerow(row)
     tmp.replace(path)
 
 
@@ -82,3 +92,30 @@ def load_gold_dois(gold_csv: Path) -> set[str]:
         return set()
     with gold_csv.open(encoding="utf-8") as f:
         return {(r.get("DOI") or "").strip().lower() for r in csv.DictReader(f) if r.get("DOI")}
+
+
+def load_partial(partial_path: Path) -> list[str]:
+    """Load accepted DOI sample state from ``<out>.partial.jsonl``."""
+    if not partial_path.exists():
+        return []
+    accepted: list[str] = []
+    with partial_path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            doi = (obj.get("doi") or "").strip().lower()
+            if doi:
+                accepted.append(doi)
+    return accepted
+
+
+def append_partial(partial_path: Path, doi: str) -> None:
+    """Append one accepted DOI to the sampling resume file."""
+    partial_path.parent.mkdir(parents=True, exist_ok=True)
+    with partial_path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({"doi": doi}, ensure_ascii=False) + "\n")
