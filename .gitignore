@@ -42,3 +42,25 @@ runs/abstract-jsonld-fix/
 runs/cviu-fresh/
 runs/holdout-jsonld-bf/
 runs/holdout-jsonld-fix/
+
+# Goldie generated data and local run internals
+eval/uv.lock
+eval/data/*.partial.jsonl
+eval/data/ai-goldie-*.csv
+eval/data/ai-goldie-*.zip
+eval/data/ai-goldie-10k*/
+eval/data/ai-goldie-*-judged-10k*/
+eval/data/merged-FINAL.csv.bak-*
+eval/human-goldie.csv.bak-*
+eval/data/publisher-grouping*.csv
+eval/data/canvas-by-name.md
+eval/eval_local_taxicab_zyte/runs/
+runs/human-goldie-*/
+runs/10k/
+runs/goldie-*/source.csv
+runs/goldie-*/*.partial.jsonl
+runs/goldie-*/batches/
+runs/goldie-*/checkpoints/
+runs/goldie-*/logs/
+runs/goldie-*/live.html
+runs/goldie-*/merged.csv
