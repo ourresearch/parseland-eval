@@ -1,0 +1,60 @@
+{
+  "agent_id": "codex-wiley-pdf-url-current-kpi",
+  "before": {
+    "artifact": "eval/runs/whole-goldie-after-springer-affiliations-method2-merge-20260606T1451Z.json",
+    "overall_pdf_url_accuracy": 0.9364916773367478,
+    "wiley_pdf_url_accuracy": 0.9568452380952381
+  },
+  "classification": "parser_and_scorer_owned_shipped_full10k_measured",
+  "completed_at": "2026-06-06T16:05:28.771446+00:00",
+  "deltas": {
+    "overall_pdf_url_delta_pp": 0.48655569782329877,
+    "wiley_pdf_url_delta_pp": 2.5297619047618958
+  },
+  "field": "pdf_url",
+  "full_after": {
+    "abstract_ratio_fuzzy": 0.915753091931381,
+    "affiliations_f1_fuzzy": 0.9298246558073652,
+    "artifact": "eval/runs/whole-goldie-after-wiley-pdf-normalization-fmatter-20260606T1548Z.json",
+    "authors_f1_soft": 0.945886521212447,
+    "corresponding_accuracy": 0.9637206544166625,
+    "coverage_total_rows": 10000,
+    "errors": 1,
+    "overall_pdf_url_accuracy": 0.9413572343149808,
+    "retrieval_blocked_rows": 4869,
+    "wiley_pdf_url_accuracy": 0.9821428571428571
+  },
+  "gates": [
+    {
+      "command": "PYTHONPATH=. ./.venv/bin/pytest tests/test_parse_page.py -q",
+      "result": "17 passed"
+    },
+    {
+      "command": "eval/.venv/bin/pytest eval/tests/test_normalize.py eval/tests/test_empty_policy.py -q",
+      "result": "35 passed"
+    },
+    {
+      "command": "eval/.venv/bin/pytest eval/tests -q",
+      "result": "222 passed"
+    },
+    {
+      "command": "PYTHONPATH=. ./.venv/bin/pytest tests/test_parse_page.py tests/test_wiley_abstract.py tests/test_wiley_abstract_recovery.py tests/test_wiley_corresp.py -q",
+      "result": "45 passed"
+    },
+    {
+      "artifact": "eval/runs/whole-goldie-wiley-pdf-normalization-fmatter-20260606T1542Z.json",
+      "command": "whole_goldie_eval.py run --publishers wiley --label wiley-pdf-normalization-fmatter",
+      "result": "695 rows, retrieval_blocked=4, errors=0"
+    },
+    {
+      "artifact": "eval/runs/whole-goldie-after-wiley-pdf-normalization-fmatter-20260606T1548Z.json",
+      "command": "whole_goldie_eval.py run --label after-wiley-pdf-normalization-fmatter",
+      "result": "10000 rows, retrieval_blocked=4869, errors=1"
+    }
+  ],
+  "publisher_id": "wiley",
+  "recommendation": "Ship. Wiley pdf_url crosses 98% on the current 10K slice; remaining rows are retrieval/cache/manual-DOM or gold/cross-publisher conflicts rather than broad parser/scorer patterns.",
+  "shield_source": "parseland-lib/mismatches/workflows/20260604T163736Z-77fe45/results/wiley_pdf_url_normalization_fmatter_shield.json",
+  "status": "green",
+  "task_id": "v2_wiley_pdf_url_ed30e1b3"
+}

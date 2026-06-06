@@ -126,18 +126,73 @@ class TestCanonicalizeUrl:
         for f in forms:
             assert canonicalize_url(f) == canon, f
 
+    def test_wiley_percent_encoded_doi_path_equivalence(self) -> None:
+        # Wiley DOI paths may appear percent-encoded in parser output and
+        # decoded in gold. The DOI identifies the same PDF resource.
+        decoded = (
+            "https://onlinelibrary.wiley.com/doi/pdf/"
+            "10.1002/(SICI)1096-8628(19970414)69:4<400::AID-AJMG12>3.0.CO;2-R"
+        )
+        encoded = (
+            "https://onlinelibrary.wiley.com/doi/pdfdirect/"
+            "10.1002/%28SICI%291096-8628%2819970414%2969%3A4%3C400%3A%3AAID-AJMG12%3E3.0.CO%3B2-R"
+        )
+        assert canonicalize_url(decoded) == canonicalize_url(encoded)
+
+    def test_wiley_subdomain_pdf_equivalence(self) -> None:
+        # Wiley hosts branded subdomains such as agupubs and acsess under the
+        # same Online Library PDF path family. Subdomain drift should not make
+        # the same DOI PDF fail strict comparison.
+        base = "https://onlinelibrary.wiley.com/doi/pdf/10.1029/TE042i004p00408-02"
+        branded = "https://agupubs.onlinelibrary.wiley.com/doi/pdfdirect/10.1029/TE042i004p00408-02"
+        assert canonicalize_url(base) == canonicalize_url(branded)
+
+    def test_wiley_download_param_dropped(self) -> None:
+        # Wiley appends download=true on some PDF anchors; it is viewer state,
+        # not part of the PDF identity.
+        base = "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1111/nan.12654"
+        download = base + "?download=true"
+        assert canonicalize_url(base) == canonicalize_url(download)
+
     def test_wiley_rule_scoped_to_onlinelibrary_wiley_com(self) -> None:
         # /doi/pdfdirect/ on a non-Wiley host must NOT be rewritten.
         u = canonicalize_url("https://example.com/doi/pdfdirect/10.1/foo")
         assert "/doi/pdfdirect/" in u
         v = canonicalize_url("https://example.com/doi/epdf/10.1/foo")
         assert "/doi/epdf/" in v
+        w = canonicalize_url("https://example.com/x?download=true")
+        assert "download=true" in w
 
     def test_wiley_preserves_different_dois(self) -> None:
         # Distinct DOIs must remain distinct after canonicalization, even
         # under the same Wiley equivalence rule.
         a = canonicalize_url("https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/foo")
         b = canonicalize_url("https://onlinelibrary.wiley.com/doi/pdf/10.1002/bar")
+        assert a != b
+
+    def test_jid_legacy_pii_hyphen_equivalence(self) -> None:
+        # JID legacy URLs appear with and without the hyphen inside the
+        # PII-like article id; both resolve to the same article PDF path.
+        gold = "http://www.jidonline.org/article/S0022-202X15321138/pdf"
+        parsed = "http://www.jidonline.org/article/S0022202X15321138/pdf"
+        assert canonicalize_url(gold) == canonicalize_url(parsed)
+
+    def test_jid_hyphen_rule_scoped(self) -> None:
+        # Do not rewrite the same path shape on unrelated hosts.
+        gold = canonicalize_url("https://example.com/article/S0022-202X15321138/pdf")
+        parsed = canonicalize_url("https://example.com/article/S0022202X15321138/pdf")
+        assert gold != parsed
+
+    def test_essoar_pdfjs_http_https_equivalence(self) -> None:
+        # ESS Open Archive pdfjs URLs redirect between http and https while
+        # identifying the same DOI PDF.
+        https_url = "https://www.essoar.org/pdfjs/10.1002/essoar.10504659.1"
+        http_url = "http://www.essoar.org/pdfjs/10.1002/essoar.10504659.1"
+        assert canonicalize_url(https_url) == canonicalize_url(http_url)
+
+    def test_essoar_scheme_rule_scoped_to_pdfjs(self) -> None:
+        a = canonicalize_url("http://www.essoar.org/other/10.1002/essoar.10504659.1")
+        b = canonicalize_url("https://www.essoar.org/other/10.1002/essoar.10504659.1")
         assert a != b
 
     def test_sage_download_param_dropped(self) -> None:

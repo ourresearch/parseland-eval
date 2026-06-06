@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from collections.abc import Mapping, Sequence
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, unquote, urlencode, urlsplit, urlunsplit
 
 from unidecode import unidecode  # type: ignore[import-untyped]
 
@@ -113,9 +113,19 @@ def canonicalize_url(url: str | None) -> str:
     # — the more common user-facing form. Without this equivalence, 216 of
     # 221 Wiley pdf-present rows in the corpus mismatch on path alone.
     # Host-scoped so non-Wiley sites are untouched.
-    if host == "onlinelibrary.wiley.com":
+    if host == "onlinelibrary.wiley.com" or host.endswith(".onlinelibrary.wiley.com"):
+        host = "onlinelibrary.wiley.com"
+        path = unquote(path)
         path = path.replace("/doi/pdfdirect/", "/doi/pdf/")
         path = path.replace("/doi/epdf/", "/doi/pdf/")
+        query_pairs = [(k, v) for k, v in query_pairs if k != "download"]
+    # Journal of Investigative Dermatology legacy links may include or omit
+    # the hyphen in the PII-like article id.
+    if host == "jidonline.org":
+        path = re.sub(r"(/article/S\d{4})-(\d{3}X)", r"\1\2", path, flags=re.I)
+    # ESS Open Archive pdfjs links redirect between http and https.
+    if host == "essoar.org" and path.startswith("/pdfjs/"):
+        scheme = "https"
     # SAGE (journals.sagepub.com): the page emits a /doi/pdf/X anchor with a
     # ?download=true tracking param. Gold drops it. They identify the same PDF.
     if host == "journals.sagepub.com":
