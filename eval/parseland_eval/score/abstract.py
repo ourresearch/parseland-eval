@@ -33,6 +33,7 @@ class AbstractResult:
     length_ratio: float   # parsed length / gold length (1.0 = equal; <1 = truncated)
     present: bool         # did parser return any non-empty abstract?
     match_at_threshold: bool  # fuzzy_ratio >= ABSTRACT_MATCH_THRESHOLD
+    truncated_prefix_match: bool = False
 
 
 def _apply_threshold(fuzzy_ratio: float, present: bool, expected_present: bool) -> bool:
@@ -45,6 +46,20 @@ def _apply_threshold(fuzzy_ratio: float, present: bool, expected_present: bool) 
     if not expected_present or not present:
         return False
     return fuzzy_ratio >= ABSTRACT_MATCH_THRESHOLD
+
+
+def _is_gold_truncated_prefix(gold: str, parsed: str) -> bool:
+    """Goldie sometimes stores a literal ellipsis-terminated abstract prefix.
+
+    Credit this only when the parser text begins with the non-ellipsis Goldie
+    prefix after the same text normalization used for soft matching.
+    """
+    if not gold.endswith("..."):
+        return False
+    prefix = normalize_text(gold[:-3]).rstrip(" .")
+    if len(prefix) < 80:
+        return False
+    return normalize_text(parsed).startswith(prefix)
 
 
 def score_abstract(gold: str | None, parsed: str | None) -> AbstractResult:
@@ -65,6 +80,10 @@ def score_abstract(gold: str | None, parsed: str | None) -> AbstractResult:
     soft = fuzz.ratio(gold_n, parsed_n) / 100.0
     fuzzy = fuzz.ratio(gold_s, parsed_s) / 100.0
     length_ratio = len(parsed_s) / len(gold_s) if gold_s else 0.0
+    truncated_prefix_match = _is_gold_truncated_prefix(gold_s, parsed_s)
+    if truncated_prefix_match:
+        soft = 1.0
+        fuzzy = 1.0
 
     return AbstractResult(
         strict_match=strict,
@@ -73,4 +92,5 @@ def score_abstract(gold: str | None, parsed: str | None) -> AbstractResult:
         length_ratio=length_ratio,
         present=present,
         match_at_threshold=_apply_threshold(fuzzy, present, expected_present),
+        truncated_prefix_match=truncated_prefix_match,
     )

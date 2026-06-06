@@ -41,6 +41,44 @@ class TestMatchAtThreshold:
         res = score_abstract(gold, parsed)
         assert res.match_at_threshold is False
 
+    def test_literal_ellipsis_gold_prefix_matches_full_parser_abstract(self) -> None:
+        gold = (
+            "Objective The primary objective was to construct a high-performing "
+            "prognostic risk model to accurately forecast the prognosis of patients "
+            "diagnosed with intrahepatic cholangiocarcinoma. Method..."
+        )
+        parsed = (
+            "Objective The primary objective was to construct a high-performing "
+            "prognostic risk model to accurately forecast the prognosis of patients "
+            "diagnosed with intrahepatic cholangiocarcinoma. Methods We collected "
+            "clinical data and validated the model on a held-out cohort."
+        )
+
+        res = score_abstract(gold, parsed)
+
+        assert res.truncated_prefix_match is True
+        assert res.fuzzy_ratio == 1.0
+        assert res.soft_ratio == 1.0
+        assert res.match_at_threshold is True
+        assert res.length_ratio > 1.0
+
+    def test_literal_ellipsis_gold_prefix_does_not_mask_different_parser_text(self) -> None:
+        gold = (
+            "Objective The primary objective was to construct a high-performing "
+            "prognostic risk model to accurately forecast the prognosis of patients "
+            "diagnosed with intrahepatic cholangiocarcinoma. Method..."
+        )
+        parsed = (
+            "This article is about an unrelated topic with different aims, methods, "
+            "participants, findings, and implications for practice."
+        )
+
+        res = score_abstract(gold, parsed)
+
+        assert res.truncated_prefix_match is False
+        assert res.fuzzy_ratio < ABSTRACT_MATCH_THRESHOLD
+        assert res.match_at_threshold is False
+
     def test_threshold_boundary_respected(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # Pin threshold so the boundary is unambiguous regardless of future tuning.
         monkeypatch.setattr(abstract_mod, "ABSTRACT_MATCH_THRESHOLD", 0.90)
