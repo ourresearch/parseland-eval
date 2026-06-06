@@ -39,14 +39,18 @@ stability, cost stability, and empty-row triage, but it is not a uniform extract
 improvement. PDF URL and all-core-empty handling improved; abstract, authors, RASES, and
 corresponding-author presence dipped on the new random sample.
 
-The prepared 10K source is:
+The latest fresh 10K source for testing current Parseland/Goldie development is:
 
 ```text
-runs/goldie-10k-20260605T160114Z/source.csv
+runs/goldie-latest-parseland-10k-20260606T015650Z-20260606T015904Z/source.csv
 ```
 
-The 10K extraction was not launched because the random-100 rate projects about `$3.8K`
-and a long cloud retry tail. Launch needs explicit operator acceptance of that cost/runtime
+It contains 10,000 DOI rows, has the full Goldie schema, has zero duplicate DOIs, and has
+zero overlap with `eval/human-goldie.csv`. The prior prepared 10K source remains available at
+`runs/goldie-10k-20260605T160114Z/source.csv`.
+
+The 10K extraction was not launched because the random-100 rate projects about `$3.8K` and
+a long cloud retry tail. Launch needs explicit operator acceptance of that cost/runtime
 profile or a quality-preserving change that lowers fallback pressure.
 
 ## What Improved
@@ -59,6 +63,8 @@ profile or a quality-preserving change that lowers fallback pressure.
 - `goldie random --count N --name NAME` gives operators a simple sample/run/report command.
 - `goldie resume --run RUN_DIR` discovers source, corpus, tier, and fallback from the manifest.
 - `goldie report --operator` writes a GitHub/oxjob-readable Markdown report.
+- Crossref sampling now retries transient read/handshake timeouts and preserves accepted
+  DOI partial state across resumes, which mattered for the 2026-06-06 10K source.
 
 ## Quality Lessons
 

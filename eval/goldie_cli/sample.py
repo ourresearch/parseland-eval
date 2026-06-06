@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import csv
 import json
+import logging
+import time
 from pathlib import Path
 from typing import Callable
 
@@ -16,6 +18,9 @@ from .schema import GOLD_COLUMNS
 CROSSREF_URL = "https://api.crossref.org/works"
 SAMPLE_BATCH = 100
 POLITE_EMAIL = "reach2shubhankar@gmail.com"
+LOG = logging.getLogger(__name__)
+CROSSREF_TIMEOUT_S = 90
+CROSSREF_FETCH_RETRIES = 50
 
 # Crossref `type` values to drop — target journal-article-like content.
 DROP_TYPES = {
@@ -34,7 +39,7 @@ def _default_fetch_sample() -> list[dict]:
     import requests
     headers = {"User-Agent": f"goldie/sample (mailto:{POLITE_EMAIL})"}
     resp = requests.get(CROSSREF_URL, params={"sample": SAMPLE_BATCH, "mailto": POLITE_EMAIL},
-                        headers=headers, timeout=30)
+                        headers=headers, timeout=CROSSREF_TIMEOUT_S)
     resp.raise_for_status()
     return resp.json().get("message", {}).get("items", [])
 
@@ -47,6 +52,8 @@ def sample_dois(
     accepted: list[str] | None = None,
     max_batches: int = 10_000,
     on_accept: Callable[[str], None] | None = None,
+    max_fetch_retries: int = CROSSREF_FETCH_RETRIES,
+    retry_sleep_s: float = 1.0,
 ) -> list[str]:
     """Return up to ``target`` unique article DOIs not in ``exclude``."""
     out: list[str] = list(accepted or [])
@@ -54,7 +61,24 @@ def sample_dois(
     batches = 0
     while len(out) < target and batches < max_batches:
         batches += 1
-        for item in fetch_sample():
+        attempts = 0
+        while True:
+            try:
+                items = fetch_sample()
+                break
+            except Exception as exc:
+                attempts += 1
+                if attempts > max_fetch_retries:
+                    raise
+                LOG.warning(
+                    "Crossref sample fetch failed (%d/%d): %s; retrying",
+                    attempts,
+                    max_fetch_retries,
+                    exc,
+                )
+                if retry_sleep_s > 0:
+                    time.sleep(min(retry_sleep_s * attempts, 10.0))
+        for item in items:
             if not keep_item(item):
                 continue
             doi = (item.get("DOI") or "").strip().lower()

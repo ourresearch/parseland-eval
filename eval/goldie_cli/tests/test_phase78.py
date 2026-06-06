@@ -34,6 +34,21 @@ def test_sample_dois_dedups_and_excludes():
     assert got == ["10.1/c", "10.1/d"]  # lowercased, A excluded, B dropped (dataset), deduped
 
 
+def test_sample_dois_retries_transient_fetch_failure():
+    attempts = {"n": 0}
+
+    def fetch():
+        attempts["n"] += 1
+        if attempts["n"] == 1:
+            raise OSError("crossref read timed out")
+        return [{"DOI": "10.1/A", "type": "journal-article"}]
+
+    got = sample_dois(1, fetch_sample=fetch, retry_sleep_s=0)
+
+    assert got == ["10.1/a"]
+    assert attempts["n"] == 2
+
+
 def test_write_corpus_csv_uses_doi_org_resolver(tmp_path):
     p = tmp_path / "corpus.csv"
     write_corpus_csv(p, ["10.1/x", "10.1/y"])
