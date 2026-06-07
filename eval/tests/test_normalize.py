@@ -210,6 +210,22 @@ class TestCanonicalizeUrl:
         u = canonicalize_url("https://example.com/x?download=true")
         assert "download=true" in u
 
+    def test_aha_download_param_dropped(self) -> None:
+        # AHA page anchors append download=true to the same DOI PDF URL that
+        # gold records without the viewer-state param.
+        canon = "https://ahajournals.org/doi/pdf/10.1161/CIRCOUTCOMES.118.005016"
+        forms = [
+            "https://www.ahajournals.org/doi/pdf/10.1161/CIRCOUTCOMES.118.005016",
+            "https://www.ahajournals.org/doi/pdf/10.1161/CIRCOUTCOMES.118.005016?download=true",
+        ]
+        for f in forms:
+            assert canonicalize_url(f) == canon, f
+
+    def test_aha_rule_scoped_to_ahajournals(self) -> None:
+        # download= remains significant on unrelated hosts.
+        u = canonicalize_url("https://example.com/doi/pdf/10.1161/x?download=true")
+        assert "download=true" in u
+
     def test_taylor_epdf_pdf_and_needaccess_equivalence(self) -> None:
         # tandfonline.com: /doi/epdf/ == /doi/pdf/; needAccess and role are
         # page-state tracking params, not URL identity.

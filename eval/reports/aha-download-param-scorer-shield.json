@@ -1,0 +1,54 @@
+{
+  "gate_id": "aha-download-param-scorer",
+  "timestamp_utc": "2026-06-07T02:13:05Z",
+  "repo": "parseland-eval",
+  "branch": "feat/goldie-cli",
+  "scope": "pdf_url scorer canonicalization",
+  "changed_files": [
+    "eval/parseland_eval/score/normalize.py",
+    "eval/tests/test_normalize.py"
+  ],
+  "supported_equivalence": {
+    "publisher_host": "ahajournals.org",
+    "rule": "drop download query parameter from DOI PDF URLs",
+    "evidence_dois": [
+      "10.1161/circoutcomes.118.005016",
+      "10.1161/hypertensionaha.109.141937"
+    ]
+  },
+  "non_supported_lippincott_pdf_residuals": [
+    {
+      "doi": "10.1212/01.wnl.0000305964.52343.8f",
+      "reason": "Neurology/AAN legacy URL shape; not an AHA download-param equivalence"
+    },
+    {
+      "doi": "10.1097/01.hs9.0000559480.07097.ca",
+      "reason": "Wiley-vs-LWW host disagreement requires Browserbase/gold-auditor evidence"
+    },
+    {
+      "doi": "10.1212/01.con.0000290464.96584.ac",
+      "reason": "Continuum AAN/LWW alias requires Browserbase/gold-auditor evidence"
+    },
+    {
+      "doi": "10.1161/jaha.116.002075",
+      "reason": "AHA reader-vs-PDF relation was not normalized by this focused fix"
+    },
+    {
+      "doi": "10.1161/01.cir.0000136295.14896.e0",
+      "reason": "parser empty row needs cached-HTML/manual-DOM inspection before patch"
+    },
+    {
+      "doi": "10.1097/00007611-192512000-00015",
+      "reason": "gold PDF points to unrelated external UKM URL; route to gold-auditor"
+    }
+  ],
+  "gate_commands": [
+    {
+      "command": "eval/.venv/bin/python -m pytest eval/tests/test_normalize.py eval/tests/test_empty_policy.py -q",
+      "status": "passed",
+      "output_summary": "37 passed in 0.08s"
+    }
+  ],
+  "status": "green",
+  "next_gate": "Run whole-Goldie after scorer normalization and update report 336 with Batch 28 KPI impact."
+}

@@ -130,6 +130,10 @@ def canonicalize_url(url: str | None) -> str:
     # ?download=true tracking param. Gold drops it. They identify the same PDF.
     if host == "journals.sagepub.com":
         query_pairs = [(k, v) for k, v in query_pairs if k != "download"]
+    # AHA journals (ahajournals.org): /doi/pdf/X?download=true is the download
+    # viewer form for the same DOI PDF that gold records without the param.
+    if host.endswith("ahajournals.org"):
+        query_pairs = [(k, v) for k, v in query_pairs if k != "download"]
     # Taylor & Francis (tandfonline.com): /doi/epdf/ and /doi/pdf/ both serve
     # the same article PDF (Taylor's clean_pdf_url already collapses /epdf/ →
     # /pdf/ for the parser path; gold sometimes keeps /epdf/). needAccess and
