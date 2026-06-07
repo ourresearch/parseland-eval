@@ -237,6 +237,54 @@ class TestCanonicalizeUrl:
         )
         assert "licenseType=free" in other
 
+    def test_brill_downloadpdf_aliases_and_imprints(self) -> None:
+        # Brill downloadpdf viewer routes and direct routes identify the same
+        # PDF. Fink/Schoeningh imprint hosts share the same Brill path family.
+        canon = "https://brill.com/downloadpdf/book/edcoll/9783657789085/BP000012.pdf"
+        forms = [
+            "https://brill.com/downloadpdf/book/edcoll/9783657789085/BP000012.pdf",
+            "https://brill.com/downloadpdf/display/book/edcoll/9783657789085/BP000012.pdf",
+            "https://www.schoeningh.de/downloadpdf/book/edcoll/9783657789085/BP000012.pdf",
+        ]
+        for f in forms:
+            assert canonicalize_url(f) == canon, f
+
+        journal = "https://brill.com/downloadpdf/journals/agpt/37/3/article-p550_12.pdf"
+        assert canonicalize_url(
+            "https://brill.com/downloadpdf/view/journals/agpt/37/3/article-p550_12.pdf"
+        ) == journal
+
+        chapter = "https://brill.com/downloadpdf/book/9789004509429/BP000038.pdf"
+        assert canonicalize_url(
+            "https://brill.com/downloadpdf/edcollchap/book/9789004509429/BP000038.pdf"
+        ) == chapter
+
+    def test_brill_rule_scoped_to_downloadpdf_hosts(self) -> None:
+        # Do not rewrite similar routes on unrelated hosts or non-downloadpdf
+        # pages on Brill imprint hosts.
+        other = canonicalize_url(
+            "https://example.com/downloadpdf/display/book/9783657789085/BP000012.pdf"
+        )
+        assert "/downloadpdf/display/" in other
+        html = canonicalize_url("https://www.fink.de/document/doi/10.30965/x/html")
+        assert html == "https://fink.de/document/doi/10.30965/x/html"
+
+    def test_vr_elibrary_reader_pdf_equivalence(self) -> None:
+        # VR eLibrary's reader route is the viewer wrapper for the same DOI PDF
+        # emitted at /doi/pdf/<doi>?download=true.
+        canon = "https://vr-elibrary.de/doi/pdf/10.14220/9783737010900.119"
+        forms = [
+            "https://www.vr-elibrary.de/doi/reader/10.14220/9783737010900.119",
+            "https://www.vr-elibrary.de/doi/pdf/10.14220/9783737010900.119?download=true",
+        ]
+        for f in forms:
+            assert canonicalize_url(f) == canon, f
+
+    def test_vr_elibrary_rule_scoped(self) -> None:
+        # /doi/reader/ and download= remain untouched on unrelated hosts.
+        u = canonicalize_url("https://example.com/doi/reader/10.14220/x?download=true")
+        assert "/doi/reader/" in u and "download=true" in u
+
     def test_aha_download_param_dropped(self) -> None:
         # AHA page anchors append download=true to the same DOI PDF URL that
         # gold records without the viewer-state param.

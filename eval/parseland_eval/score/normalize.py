@@ -144,6 +144,21 @@ def canonicalize_url(url: str | None) -> str:
             for k, v in query_pairs
             if k.lower() not in {"licensetype", "stream"}
         ]
+    # Brill and its imprints expose the same PDF behind several stable path
+    # aliases. Goldie often records the viewer-form route
+    # /downloadpdf/display/... or /downloadpdf/view/..., while page anchors
+    # point directly at /downloadpdf/... . Fink and Schoeningh are Brill/De
+    # Gruyter imprint hosts with the same downloadpdf path family.
+    if host in {"brill.com", "fink.de", "schoeningh.de"} and path.startswith("/downloadpdf/"):
+        host = "brill.com"
+        path = path.replace("/downloadpdf/display/", "/downloadpdf/", 1)
+        path = path.replace("/downloadpdf/view/", "/downloadpdf/", 1)
+        path = path.replace("/downloadpdf/edcollchap/book/", "/downloadpdf/book/", 1)
+    # Vandenhoeck & Ruprecht / Brill pages use /doi/reader/<doi> as a PDF
+    # reader wrapper and /doi/pdf/<doi>?download=true as the direct PDF route.
+    if host == "vr-elibrary.de":
+        path = path.replace("/doi/reader/", "/doi/pdf/", 1)
+        query_pairs = [(k, v) for k, v in query_pairs if k != "download"]
     # AHA journals (ahajournals.org): /doi/pdf/X?download=true is the download
     # viewer form for the same DOI PDF that gold records without the param.
     if host.endswith("ahajournals.org"):
