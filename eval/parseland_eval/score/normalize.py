@@ -159,6 +159,13 @@ def canonicalize_url(url: str | None) -> str:
     if host == "vr-elibrary.de":
         path = path.replace("/doi/reader/", "/doi/pdf/", 1)
         query_pairs = [(k, v) for k, v in query_pairs if k != "download"]
+    # BMJ main-site URLs may include or omit the journal segment in article PDF
+    # paths. Both /content/<volume>/<issue>/<page>.full.pdf and
+    # /content/bmj/<volume>/<issue>/<page>.full.pdf resolve to the same PDF.
+    # Keep this scoped to the main BMJ host so specialty journals such as
+    # emj.bmj.com keep their own /content/emermed/... path identity.
+    if host == "bmj.com":
+        path = path.replace("/content/bmj/", "/content/", 1)
     # AHA journals (ahajournals.org): /doi/pdf/X?download=true is the download
     # viewer form for the same DOI PDF that gold records without the param.
     if host.endswith("ahajournals.org"):

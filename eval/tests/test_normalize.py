@@ -269,6 +269,30 @@ class TestCanonicalizeUrl:
         html = canonicalize_url("https://www.fink.de/document/doi/10.30965/x/html")
         assert html == "https://fink.de/document/doi/10.30965/x/html"
 
+    def test_bmj_main_site_content_bmj_pdf_equivalence(self) -> None:
+        # BMJ's main site accepts PDF paths with and without the repeated
+        # journal segment after /content/. Gold and parser output differ on
+        # this stable alias only.
+        canon = "https://bmj.com/content/331/7530/1427.full.pdf"
+        forms = [
+            "https://www.bmj.com/content/331/7530/1427.full.pdf",
+            "https://www.bmj.com/content/bmj/331/7530/1427.full.pdf",
+        ]
+        for f in forms:
+            assert canonicalize_url(f) == canon, f
+
+    def test_bmj_content_bmj_rule_scoped(self) -> None:
+        # Specialty BMJ journal subdomains keep their journal path segment, and
+        # unrelated hosts must not be rewritten.
+        specialty = canonicalize_url(
+            "https://emj.bmj.com/content/emermed/32/1/85.1.full.pdf"
+        )
+        assert "/content/emermed/" in specialty
+        other = canonicalize_url(
+            "https://example.com/content/bmj/331/7530/1427.full.pdf"
+        )
+        assert "/content/bmj/" in other
+
     def test_vr_elibrary_reader_pdf_equivalence(self) -> None:
         # VR eLibrary's reader route is the viewer wrapper for the same DOI PDF
         # emitted at /doi/pdf/<doi>?download=true.
