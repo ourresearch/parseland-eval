@@ -210,6 +210,33 @@ class TestCanonicalizeUrl:
         u = canonicalize_url("https://example.com/x?download=true")
         assert "download=true" in u
 
+    def test_de_gruyter_host_and_license_type_equivalence(self) -> None:
+        # De Gruyter document PDFs moved from degruyter.com to
+        # degruyterbrill.com. licenseType/stream are viewer-state params, not
+        # PDF identity.
+        canon = "https://degruyterbrill.com/document/doi/10.1515/9783110779707-fm/pdf"
+        forms = [
+            "https://www.degruyterbrill.com/document/doi/10.1515/9783110779707-fm/pdf",
+            "https://www.degruyter.com/document/doi/10.1515/9783110779707-fm/pdf",
+            "https://www.degruyterbrill.com/document/doi/10.1515/9783110779707-fm/pdf?licenseType=free",
+            "https://www.degruyter.com/document/doi/10.1515/9783110779707-fm/pdf/firstPage?stream=true",
+        ]
+        for f in forms:
+            assert canonicalize_url(f) == canon, f
+
+    def test_de_gruyter_rule_scoped_to_document_pdf(self) -> None:
+        # Do not rewrite De Gruyter non-PDF document routes or unrelated hosts.
+        html = canonicalize_url(
+            "https://www.degruyter.com/document/doi/10.1515/9783110779707-fm/html"
+        )
+        assert html == (
+            "https://degruyter.com/document/doi/10.1515/9783110779707-fm/html"
+        )
+        other = canonicalize_url(
+            "https://example.com/document/doi/10.1515/9783110779707-fm/pdf?licenseType=free"
+        )
+        assert "licenseType=free" in other
+
     def test_aha_download_param_dropped(self) -> None:
         # AHA page anchors append download=true to the same DOI PDF URL that
         # gold records without the viewer-state param.

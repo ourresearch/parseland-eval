@@ -130,6 +130,20 @@ def canonicalize_url(url: str | None) -> str:
     # ?download=true tracking param. Gold drops it. They identify the same PDF.
     if host == "journals.sagepub.com":
         query_pairs = [(k, v) for k, v in query_pairs if k != "download"]
+    # De Gruyter rebranded article/chapter document URLs from degruyter.com to
+    # degruyterbrill.com. Both hosts serve the same /document/doi/<doi>/pdf
+    # resource; licenseType and stream are viewer/access-state parameters.
+    if host in {"degruyter.com", "degruyterbrill.com"} and re.search(
+        r"^/document/doi/10\..*/pdf(?:/firstPage)?/?$", path,
+        flags=re.I,
+    ):
+        host = "degruyterbrill.com"
+        path = re.sub(r"/pdf(?:/firstPage)?/?$", "/pdf", path, flags=re.I)
+        query_pairs = [
+            (k, v)
+            for k, v in query_pairs
+            if k.lower() not in {"licensetype", "stream"}
+        ]
     # AHA journals (ahajournals.org): /doi/pdf/X?download=true is the download
     # viewer form for the same DOI PDF that gold records without the param.
     if host.endswith("ahajournals.org"):
