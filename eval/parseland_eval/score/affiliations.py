@@ -20,6 +20,7 @@ _FILLER = {
 }
 _EMAIL = re.compile(r"\S+@\S+")
 _URL = re.compile(r"https?://\S+")
+_SSRN_NO_AFFILIATION = "affiliation not provided to ssrn"
 
 
 @dataclass(frozen=True)
@@ -69,6 +70,8 @@ def _extract_affs(author: Any) -> list[str]:
         for part in str(name).split(";"):
             part = part.strip()
             if not part:
+                continue
+            if _SSRN_NO_AFFILIATION in part.lower():
                 continue
             # Gold sometimes ';'-appends an email/URL to an affiliation
             # ("...University; name@x.edu"); that trailing fragment is not a

@@ -98,3 +98,15 @@ class TestSemicolonRepresentationEquivalence:
         parsed = _author(["Law Faculty of the Hebrew University of Jerusalem"])
         res = score_affiliations(gold, parsed)
         assert res.fuzzy_f1 == 1.0
+
+    def test_ssrn_no_affiliation_placeholder_counts_empty(self) -> None:
+        gold = _author(["affiliation not provided to SSRN"])
+        parsed = _author([])
+        res = score_affiliations(gold, parsed)
+        assert res.fuzzy_f1 == 1.0
+
+    def test_ssrn_independent_no_affiliation_placeholder_counts_empty(self) -> None:
+        gold = _author([])
+        parsed = _author(["Independent - affiliation not provided to SSRN"])
+        res = score_affiliations(gold, parsed)
+        assert res.fuzzy_f1 == 1.0
