@@ -210,6 +210,29 @@ class TestCanonicalizeUrl:
         u = canonicalize_url("https://example.com/x?download=true")
         assert "download=true" in u
 
+    def test_ssrn_delivery_abstractid_equivalence(self) -> None:
+        # SSRN Goldie rows often use the generic Delivery.cfm abstractid URL,
+        # while Parseland sees the concrete delivery PDF object. The abstractid
+        # is the stable paper/PDF identity.
+        gold = "https://papers.ssrn.com/sol3/Delivery.cfm?abstractid=4398349"
+        parsed = (
+            "https://papers.ssrn.com/sol3/Delivery.cfm/"
+            "SSRN_ID4398349_code623849.pdf?abstractid=4398349&mirid=1"
+        )
+        assert canonicalize_url(gold) == canonicalize_url(parsed)
+
+    def test_ssrn_delivery_keeps_distinct_abstractids_distinct(self) -> None:
+        a = canonicalize_url("https://papers.ssrn.com/sol3/Delivery.cfm?abstractid=4398349")
+        b = canonicalize_url("https://papers.ssrn.com/sol3/Delivery.cfm?abstractid=3057469")
+        assert a != b
+
+    def test_ssrn_delivery_rule_scoped_to_ssrn_host(self) -> None:
+        u = canonicalize_url(
+            "https://example.com/sol3/Delivery.cfm/file.pdf?abstractid=4398349&mirid=1"
+        )
+        assert "/file.pdf" in u
+        assert "mirid=1" in u
+
     def test_de_gruyter_host_and_license_type_equivalence(self) -> None:
         # De Gruyter document PDFs moved from degruyter.com to
         # degruyterbrill.com. licenseType/stream are viewer-state params, not

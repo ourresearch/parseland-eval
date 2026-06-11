@@ -166,6 +166,18 @@ def canonicalize_url(url: str | None) -> str:
     # emj.bmj.com keep their own /content/emermed/... path identity.
     if host == "bmj.com":
         path = path.replace("/content/bmj/", "/content/", 1)
+    # SSRN exposes PDF downloads behind a stable Delivery.cfm abstractid route.
+    # Goldie often stores the generic form:
+    #   /sol3/Delivery.cfm?abstractid=<id>
+    # while Parseland/Taxicab sees the concrete delivery object:
+    #   /sol3/Delivery.cfm/<file>.pdf?abstractid=<id>&mirid=1
+    # The abstractid identifies the paper PDF; the concrete file path and
+    # mirid are delivery-state details.
+    if host == "papers.ssrn.com" and path.lower().startswith("/sol3/delivery.cfm"):
+        abstractid = next((v for k, v in query_pairs if k.lower() == "abstractid" and v), None)
+        if abstractid:
+            path = "/sol3/Delivery.cfm"
+            query_pairs = [("abstractid", abstractid)]
     # AHA journals (ahajournals.org): /doi/pdf/X?download=true is the download
     # viewer form for the same DOI PDF that gold records without the param.
     if host.endswith("ahajournals.org"):
